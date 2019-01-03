@@ -203,8 +203,8 @@ public class UserServiceImpl implements UserService {
 //        String salt = RandomUtils.randomSalt();
 //        String password = DigestUtil.encryptMD5(tuser.getPassword(), salt);
         String encryptPass = new BCryptPasswordEncoder().encode(vo.getPassword());
-        vo.setCreateTime(new Date());
-        vo.setDepartid(vo.getDepartmentIds());
+        tuser.setCreateTime(new Date());
+        tuser.setDepartid(vo.getDepartmentIds());
         tuser.setPassword(encryptPass);
         tuser.setStatus(0);
         log.info("添加用户中....,参数为[" + tuser.toString() + "]");
