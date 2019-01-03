@@ -204,6 +204,7 @@ public class UserServiceImpl implements UserService {
 //        String password = DigestUtil.encryptMD5(tuser.getPassword(), salt);
         String encryptPass = new BCryptPasswordEncoder().encode(vo.getPassword());
         vo.setCreateTime(new Date());
+        vo.setDepartid(vo.getDepartmentIds());
         tuser.setPassword(encryptPass);
         log.info("添加用户中....,参数为[" + tuser.toString() + "]");
         tUserMapper.insertSelective(tuser);
@@ -393,7 +394,7 @@ public class UserServiceImpl implements UserService {
             tCompany.setIsAssign(CommonConstant.COMPANY_ASSIGNED);
             tCompanyMapper.updateByPrimaryKeySelective(tCompany);
         }
-
+        tuser.setDepartid(vo.getDepartmentIds());
         tUserMapper.updateByPrimaryKeySelective(tuser);
     }
 

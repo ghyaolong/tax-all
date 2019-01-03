@@ -281,6 +281,7 @@ public class RoleServiceImpl implements RoleService {
 
         }
         tRole.setId(IDGeneratorUtils.getUUID32());
+        tRole.setCreateTime(new Date());
         tRoleMapper.insertSelective(tRole);
         log.info("添加角色成功，输出roleVo=["+tRole.toString()+"]");
     }

@@ -90,6 +90,8 @@ public class UserVo {
      */
     private String roleIds;
 
+    private String departid;
+
     /**
      * 用户拥有的权限
      */
