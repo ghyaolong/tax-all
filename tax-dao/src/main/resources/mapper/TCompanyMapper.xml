@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chinasoft.tax.dao.TCompanyMapper">
+  <resultMap id="BaseResultMap" type="com.chinasoft.tax.po.TCompany">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="TIN" jdbcType="VARCHAR" property="tin" />
+    <result column="establishment_time" jdbcType="TIMESTAMP" property="establishmentTime" />
+    <result column="country_code" jdbcType="VARCHAR" property="countryCode" />
+    <result column="currency_code" jdbcType="VARCHAR" property="currencyCode" />
+    <result column="remarks" jdbcType="VARCHAR" property="remarks" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="creator" jdbcType="VARCHAR" property="creator" />
+    <result column="del_time" jdbcType="TIMESTAMP" property="delTime" />
+    <result column="deletor" jdbcType="VARCHAR" property="deletor" />
+    <result column="is_del" jdbcType="INTEGER" property="isDel" />
+    <result column="user_id" jdbcType="VARCHAR" property="userId" />
+    <result column="is_assign" jdbcType="INTEGER" property="isAssign" />
+  </resultMap>
+
+  <select id="getByUserId" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select * from t_company c where c.id
+    IN (select company_id from t_user_company u where u.user_id = #{userId})
+  </select>
+
+  <select id="getTaskTip" parameterType="java.lang.Integer" resultType="com.chinasoft.tax.po.TaskTipPo">
+    select user_id userId,u.email,count(company_name) as count from t_user_company uc left join  t_user u
+    on uc.user_id = u.id
+    where 1=1 and uc.company_id in
+    (select ta.company_id from t_tax_application ta where 1=1
+    <if test="status!=null">
+      and ta.status = #{status}
+    </if>
+    )
+    group by user_id;
+  </select>
+</mapper>

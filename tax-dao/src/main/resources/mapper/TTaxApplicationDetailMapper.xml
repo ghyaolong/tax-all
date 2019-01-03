@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chinasoft.tax.dao.TTaxApplicationDetailMapper">
+  <resultMap id="BaseResultMap" type="com.chinasoft.tax.po.TTaxApplicationDetail">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="tax_period" jdbcType="VARCHAR" property="taxPeriod" />
+    <result column="tax_dict" jdbcType="VARCHAR" property="taxDict" />
+    <result column="payable_tax" jdbcType="DECIMAL" property="payableTax" />
+    <result column="late_fee_payable" jdbcType="DECIMAL" property="lateFeePayable" />
+    <result column="appl_tax_payment" jdbcType="DECIMAL" property="applTaxPayment" />
+    <result column="deadline" jdbcType="TIMESTAMP" property="deadline" />
+    <result column="tax_paid" jdbcType="DECIMAL" property="taxPaid" />
+    <result column="overdue_payment" jdbcType="DECIMAL" property="overduePayment" />
+    <result column="actual_tax_payment" jdbcType="DECIMAL" property="actualTaxPayment" />
+    <result column="payment_time" jdbcType="TIMESTAMP" property="paymentTime" />
+    <result column="remarks" jdbcType="VARCHAR" property="remarks" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+    <result column="tax_application_id" jdbcType="VARCHAR" property="taxApplicationId" />
+    <result column="tax_returns" jdbcType="VARCHAR" property="taxReturns" />
+    <result column="tax_returns_path" jdbcType="VARCHAR" property="taxReturnsPath" />
+    <result column="is_upload_tax_returns" jdbcType="INTEGER" property="isUploadTaxReturns" />
+    <result column="payment_certificate" jdbcType="VARCHAR" property="paymentCertificate" />
+    <result column="payment_certificate_path" jdbcType="VARCHAR" property="paymentCertificatePath" />
+    <result column="is_upload_certificate" jdbcType="INTEGER" property="isUploadCertificate" />
+    <result column="other_upload" jdbcType="VARCHAR" property="otherUpload" />
+    <result column="other_upload_id" jdbcType="VARCHAR" property="otherUploadId" />
+    <!--2018-11-23 added by yaochenglong-->
+    <result column="pre_tax_returns" jdbcType="VARCHAR" property="preTaxReturns" />
+    <result column="pre_tax_returns_path" jdbcType="VARCHAR" property="preTaxReturnsPath" />
+    <result column="is_upload_pre_tax_returns" jdbcType="INTEGER" property="isUploadPreTaxReturns" />
+
+
+
+  </resultMap>
+
+  <select id="findStatistics" parameterType="com.chinasoft.tax.po.TTaxStatisticsPo" resultType="com.chinasoft.tax.po.TTaxStatisticsPo">
+    select
+      d.id,d.tax_period taxPeriod,d.tax_dict taxDict,d.payable_tax payableTax,
+      d.late_fee_payable lateFeePayable,d.appl_tax_payment applTaxPayment,d.deadline,d.tax_paid taxPaid,
+      d.overdue_payment overduePayment,d.payment_time paymentTime,d.remarks,
+      a.company_id companyId,a.company_name companyName,a.country_name countryName,a.country_code countryCode,a.currency
+      from t_tax_application_detail d left join t_tax_application a
+      on d.tax_application_id = a.id
+
+      where 1=1
+      <if test="startTaxPeriod!=null and startTaxPeriod!='' and endTaxPeriod!=null and endTaxPeriod!=''">
+        and d.tax_period between #{startTaxPeriod} and #{endTaxPeriod}
+      </if>
+
+     <if test="companyName!=null and companyName!=''">
+       and a.company_name like CONCAT('%',#{companyName},'%')
+     </if>
+      <if test="countryCode!=null and countryCode!=''">
+      and a.country_code = #{countryCode}
+      </if>
+    <if test="currency!=null and currency!=''">
+      and a.currency = #{currency}
+    </if>
+    <if test="startDate!=null and endDate!=null and startDate!='' and endDate !=''">
+      and d.payment_time between #{startTime} and #{endTime}
+    </if>
+
+    order by tax_application_id
+  </select>
+</mapper>

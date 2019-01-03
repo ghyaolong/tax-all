@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chinasoft.tax.dao.TRoleMapper">
+  <resultMap id="BaseResultMap" type="com.chinasoft.tax.po.TRole">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="create_by" jdbcType="VARCHAR" property="createBy" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_by" jdbcType="VARCHAR" property="updateBy" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="del_flag" jdbcType="INTEGER" property="delFlag" />
+    <result column="default_role" jdbcType="BIT" property="defaultRole" />
+    <result column="description" jdbcType="VARCHAR" property="description" />
+    <!--12-12 新增流程角色，这里的key指的是流程id-->
+    <result column="process_key" jdbcType="VARCHAR" property="processKey" />
+
+  </resultMap>
+</mapper>

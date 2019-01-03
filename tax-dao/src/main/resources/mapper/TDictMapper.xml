@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chinasoft.tax.dao.TDictMapper">
+  <resultMap id="BaseResultMap" type="com.chinasoft.tax.po.TDict">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="code" jdbcType="VARCHAR" property="code" />
+    <result column="type" jdbcType="INTEGER" property="type" />
+    <result column="remarks" jdbcType="VARCHAR" property="remarks" />
+    <result column="creator" jdbcType="VARCHAR" property="creator" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="is_del" jdbcType="INTEGER" property="isDel" />
+    <result column="del_time" jdbcType="TIMESTAMP" property="delTime" />
+    <result column="deletor" jdbcType="VARCHAR" property="deletor" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+    <result column="sort_order" jdbcType="DECIMAL" property="sortOrder" />
+  </resultMap>
+</mapper>

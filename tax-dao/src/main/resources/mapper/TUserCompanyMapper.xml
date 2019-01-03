@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chinasoft.tax.dao.TUserCompanyMapper">
+  <resultMap id="BaseResultMap" type="com.chinasoft.tax.po.TUserCompany">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="user_id" jdbcType="VARCHAR" property="userId" />
+    <result column="user_name" jdbcType="VARCHAR" property="username" />
+    <result column="company_id" jdbcType="VARCHAR" property="companyId" />
+    <result column="company_name" jdbcType="VARCHAR" property="companyName" />
+    <result column="creator" jdbcType="VARCHAR" property="creator" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="is_del" jdbcType="INTEGER" property="isDel" />
+    <result column="del_time" jdbcType="TIMESTAMP" property="delTime" />
+    <result column="deletor" jdbcType="VARCHAR" property="deletor" />
+  </resultMap>
+
+  <select id="findByUserId" parameterType="java.lang.String" resultType="com.chinasoft.tax.po.TCompany">
+    select * from t_company c where c.id
+    IN (select company_id from t_user_company u where u.user_id = #{userId})
+  </select>
+</mapper>

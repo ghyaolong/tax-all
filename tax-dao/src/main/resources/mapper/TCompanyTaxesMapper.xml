@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chinasoft.tax.dao.TCompanyTaxesMapper">
+  <resultMap id="BaseResultMap" type="com.chinasoft.tax.po.TCompanyTaxes">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="company_id" jdbcType="VARCHAR" property="companyId" />
+    <result column="company_name" jdbcType="VARCHAR" property="companyName" />
+    <result column="dict_id" jdbcType="VARCHAR" property="dictId" />
+    <result column="dict_name" jdbcType="VARCHAR" property="dictName" />
+  </resultMap>
+
+  <select id="findByCompanyId" resultType="com.chinasoft.tax.po.TDict" parameterType="java.lang.String">
+      select * from t_dict d where d.id in
+    (select dict_id from t_company_taxes t where 1=1
+    <if test="companyId!=null and companyId!=''">
+      and t.company_id = #{companyId}
+    </if>
+    )
+
+  </select>
+</mapper>

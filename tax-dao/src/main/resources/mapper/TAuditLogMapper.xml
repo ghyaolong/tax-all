@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chinasoft.tax.dao.TAuditLogMapper">
+  <resultMap id="BaseResultMap" type="com.chinasoft.tax.po.TAuditLog">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="task_name" jdbcType="VARCHAR" property="taskName" />
+    <result column="role_name" jdbcType="VARCHAR" property="roleName" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="audit_result" jdbcType="VARCHAR" property="auditResult" />
+    <result column="advice" jdbcType="VARCHAR" property="advice" />
+    <result column="audit_date" jdbcType="TIMESTAMP" property="auditDate" />
+    <result column="flow_num" jdbcType="VARCHAR" property="flowNum" />
+  </resultMap>
+</mapper>

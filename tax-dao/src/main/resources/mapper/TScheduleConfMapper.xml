@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chinasoft.tax.dao.TScheduleConfMapper">
+  <resultMap id="BaseResultMap" type="com.chinasoft.tax.po.TScheduleConf">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="db_name" jdbcType="VARCHAR" property="dbName" />
+    <result column="path" jdbcType="VARCHAR" property="path" />
+    <result column="corn" jdbcType="VARCHAR" property="corn" />
+    <result column="creat_time" jdbcType="TIMESTAMP" property="creatTime" />
+    <result column="creator" jdbcType="VARCHAR" property="creator" />
+    <result column="is_del" jdbcType="INTEGER" property="isDel" />
+    <result column="del_time" jdbcType="TIMESTAMP" property="delTime" />
+    <result column="deltor" jdbcType="VARCHAR" property="deltor" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+    <result column="is_once" jdbcType="INTEGER" property="isOnce" />
+    <result column="job_class_name" jdbcType="VARCHAR" property="jobClassName" />
+    <result column="parameter" jdbcType="VARCHAR" property="parameter" />
+  </resultMap>
+</mapper>

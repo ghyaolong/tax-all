@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chinasoft.tax.dao.TMaterialMapper">
+  <resultMap id="BaseResultMap" type="com.chinasoft.tax.po.TMaterial">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="material_type" jdbcType="INTEGER" property="materialType" />
+    <result column="process_type" jdbcType="INTEGER" property="processType" />
+    <result column="ori_name" jdbcType="VARCHAR" property="oriName" />
+    <result column="file_name" jdbcType="VARCHAR" property="fileName" />
+    <result column="suffix" jdbcType="VARCHAR" property="suffix" />
+    <result column="path" jdbcType="VARCHAR" property="path" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="creator" jdbcType="VARCHAR" property="creator" />
+    <result column="is_del" jdbcType="INTEGER" property="isDel" />
+    <result column="del_time" jdbcType="TIMESTAMP" property="delTime" />
+    <result column="deletor" jdbcType="VARCHAR" property="deletor" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+    <result column="type" jdbcType="VARCHAR" property="type" />
+    <result column="material_type_dict" jdbcType="VARCHAR" property="materialTypeDict" />
+  </resultMap>
+
+  <select id="findAllMaterial" resultType="com.chinasoft.tax.po.MaterialInfoPo">
+    select
+    am.id,am.application_id applicationId,am.company_id companyId,am.company_name companyName,am.create_time createTime,am.tax_application_id taxApplicationId,
+    m.ori_name oriName,m.file_name fileName,m.path,m.type,m.material_type_dict materialTypeDict
+    from t_application_material am left join t_material m
+    on am.material_id = m.id
+    where 1=1
+    <if test= "companyName!=null and companyName!=''">
+      and am.company_name LIKE CONCAT('%',#{companyName},'%')
+    </if>
+
+    <if test="materialTypeDict!=null  and materialTypeDict!=''">
+      and m.material_type_dict = #{materialTypeDict}
+    </if>
+
+    <if test="startTime!=null and startTime!='' and endTime!=null and endTime!=''">
+      and am.create_time between #{startTime} and #{endTime}
+    </if>
+  </select>
+</mapper>

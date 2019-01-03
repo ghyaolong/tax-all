@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chinasoft.tax.dao.TApplicationMaterialMapper">
+  <resultMap id="BaseResultMap" type="com.chinasoft.tax.po.TApplicationMaterial">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="application_id" jdbcType="VARCHAR" property="applicationId" />
+    <result column="material_id" jdbcType="VARCHAR" property="materialId" />
+    <result column="tax_application_id" jdbcType="VARCHAR" property="taxApplicationId" />
+    <result column="type" jdbcType="INTEGER" property="type" />
+    <result column="company_id" jdbcType="INTEGER" property="companyId" />
+    <result column="company_name" jdbcType="INTEGER" property="companyName" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+  </resultMap>
+</mapper>

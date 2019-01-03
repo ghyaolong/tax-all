@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration
+        PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+
+<generatorConfiguration>
+    <properties resource="generator/application.properties"/>
+
+    <context id="Mysql" targetRuntime="MyBatis3Simple" defaultModelType="flat">
+        <property name="beginningDelimiter" value="`"/>
+        <property name="endingDelimiter" value="`"/>
+        <property name="autoDelimitKeywords" value="true"/>
+
+        <plugin type="tk.mybatis.mapper.generator.MapperPlugin">
+            <property name="mappers" value="com.chinasoft.tax.utils.MyMapper"/>
+        </plugin>
+
+        <jdbcConnection driverClass="${druid.driver-class-name}" connectionURL="${druid.url}" userId="${druid.username}" password="${druid.password}">
+        </jdbcConnection>
+
+        <javaModelGenerator targetPackage="com.chinasoft.tax.po" targetProject="src/main/java"/>
+
+        <sqlMapGenerator targetPackage="mapper" targetProject="../tax-dao/src/main/resources"/>
+
+        <javaClientGenerator targetPackage="com.chinasoft.tax.dao" targetProject="../tax-dao/src/main/java" type="XMLMAPPER"/>
+
+        <!--<table schema="tax" tableName="t_api">
+            &lt;!&ndash;mysql 配置&ndash;&gt;
+            <generatedKey column="id" sqlStatement="Mysql" identity="true"/>
+            &lt;!&ndash;oracle 配置&ndash;&gt;
+            &lt;!&ndash;<generatedKey column="id" sqlStatement="select SEQ_{1}.nextval from dual" identity="false" type="pre"/>&ndash;&gt;
+        </table>
+        <table schema="tax" tableName="t_application_material">
+            <generatedKey column="id" sqlStatement="Mysql" identity="true"/>
+        </table>
+        <table schema="tax" tableName="t_company">
+            <generatedKey column="id" sqlStatement="Mysql" identity="true"/>
+        </table>
+        <table schema="tax" tableName="t_department">
+            <generatedKey column="id" sqlStatement="Mysql" identity="true"/>
+        </table>
+        <table schema="tax" tableName="t_department_permission">
+            <generatedKey column="id" sqlStatement="Mysql" identity="true"/>
+        </table>
+        <table schema="tax" tableName="t_dict">
+            <generatedKey column="id" sqlStatement="Mysql" identity="true"/>
+        </table>
+        <table schema="tax" tableName="t_element_permisson">
+            <generatedKey column="id" sqlStatement="Mysql" identity="true"/>
+        </table>
+        <table schema="tax" tableName="t_log_info">
+            <generatedKey column="id" sqlStatement="Mysql" identity="true"/>
+        </table>
+        <table schema="tax" tableName="t_material">
+            <generatedKey column="id" sqlStatement="Mysql" identity="true"/>
+        </table>
+        <table schema="tax" tableName="t_material_type">
+            <generatedKey column="id" sqlStatement="Mysql" identity="true"/>
+        </table>
+        <table schema="tax" tableName="t_menu">
+            <generatedKey column="id" sqlStatement="Mysql" identity="true"/>
+        </table>
+        <table schema="tax" tableName="t_role">
+            <generatedKey column="id" sqlStatement="Mysql" identity="true"/>
+        </table>
+        <table schema="tax" tableName="t_role_api">
+            <generatedKey column="id" sqlStatement="Mysql" identity="true"/>
+        </table>
+        <table schema="tax" tableName="t_role_company">
+            <generatedKey column="id" sqlStatement="Mysql" identity="true"/>
+        </table>
+        <table schema="tax" tableName="t_role_element">
+            <generatedKey column="id" sqlStatement="Mysql" identity="true"/>
+        </table>
+        <table schema="tax" tableName="t_role_material">
+            <generatedKey column="id" sqlStatement="Mysql" identity="true"/>
+        </table>
+        <table schema="tax" tableName="t_role_menu">
+            <generatedKey column="id" sqlStatement="Mysql" identity="true"/>
+        </table>
+        <table schema="tax" tableName="t_schedule_conf">
+            <generatedKey column="id" sqlStatement="Mysql" identity="true"/>
+        </table>
+
+        <table schema="tax" tableName="t_tax_application">
+            <generatedKey column="id" sqlStatement="Mysql" identity="true"/>
+        </table>
+        <table schema="tax" tableName="t_tax_application_detail">
+            <generatedKey column="id" sqlStatement="Mysql" identity="true"/>
+        </table>
+        <table schema="tax" tableName="t_user">
+            <generatedKey column="id" sqlStatement="Mysql" identity="true"/>
+        </table>
+        <table schema="tax" tableName="t_user_company">
+            <generatedKey column="id" sqlStatement="Mysql" identity="true"/>
+        </table>
+        <table schema="tax" tableName="t_user_department">
+            <generatedKey column="id" sqlStatement="Mysql" identity="true"/>
+        </table>
+        <table schema="tax" tableName="t_user_role">
+            <generatedKey column="id" sqlStatement="Mysql" identity="true"/>
+        </table>
+        <table schema="tax" tableName="tax_config">
+            <generatedKey column="id" sqlStatement="Mysql" identity="true"/>
+        </table>
+
+        <table schema="tax" tableName="t_permission">
+            <generatedKey column="id" sqlStatement="Mysql" identity="true"/>
+        </table>
+        <table schema="tax" tableName="t_role_permission">
+            <generatedKey column="id" sqlStatement="Mysql" identity="true"/>
+        </table>
+
+        <table schema="tax" tableName="t_user">
+            <generatedKey column="id" sqlStatement="Mysql" identity="true"/>
+        </table>
+        -->
+
+        <!--调度相关表start-->
+        <!--
+        <table schema="tax" tableName="qrtz_blob_triggers">
+        </table>
+        <table schema="tax" tableName="qrtz_calendars">
+        </table>
+        <table schema="tax" tableName="qrtz_cron_triggers">
+        </table>
+        <table schema="tax" tableName="qrtz_fired_triggers">
+        </table>
+        <table schema="tax" tableName="qrtz_job_details">
+        </table>
+        <table schema="tax" tableName="qrtz_locks">
+        </table>
+        <table schema="tax" tableName="qrtz_paused_trigger_grps">
+        </table>
+        <table schema="tax" tableName="qrtz_scheduler_state">
+        </table>
+        <table schema="tax" tableName="qrtz_simple_triggers">
+        </table>
+        <table schema="tax" tableName="qrtz_simprop_triggers">
+        </table>
+        <table schema="tax" tableName="qrtz_triggers">
+        </table>
+
+        <table schema="tax" tableName="t_quartz_job">
+            <generatedKey column="id" sqlStatement="Mysql" identity="true"/>
+        </table>
+         -->
+        <!--调度相关表end-->
+
+        <!--12-12 新增-->
+        <table schema="tax" tableName="t_audit_log">
+            <generatedKey column="id" sqlStatement="Mysql" identity="true"/>
+        </table>
+        <table schema="tax" tableName="t_company_taxes">
+            <generatedKey column="id" sqlStatement="Mysql" identity="true"/>
+        </table>
+
+    </context>
+</generatorConfiguration>
