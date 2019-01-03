@@ -38,7 +38,7 @@
     </if>
 
     <if test="startTime!=null and startTime!='' and endTime!=null and endTime!=''">
-      and am.create_time between #{startTime} and #{endTime}
+      and am.create_time between str_to_date(#{startTime},'%Y-%m-%d %H') and str_to_date(#{endTime},'%Y-%m-%d %H')
     </if>
   </select>
 </mapper>
