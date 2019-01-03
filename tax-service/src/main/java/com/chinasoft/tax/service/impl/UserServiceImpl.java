@@ -481,7 +481,11 @@ public class UserServiceImpl implements UserService {
             if(!StringUtils.isEmpty(userVo.getRoleIds())){
                 for (TRole tRole : tRoleList) {
                     if(!tRole.getId().equals(userVo.getRoleIds())){
-                        iterator.remove();
+                        try {
+                            iterator.remove();
+                        }catch (Exception e){
+
+                        }
                     }
                 }
             }
@@ -502,8 +506,10 @@ public class UserServiceImpl implements UserService {
 //
 //        }
         MyPageInfo info = new MyPageInfo(userVoList);
-        info.setTotalElements(count);
-        info.setPageNum(pageVo.getPageNumber());
+        if(!CollectionUtils.isEmpty(userVoList)){
+            info.setTotalElements(count);
+            info.setPageNum(pageVo.getPageNumber());
+        }
         return info;
 
     }

@@ -3,6 +3,7 @@ package com.chinasoft.tax.service;
 import com.chinasoft.tax.vo.LogInfoVo;
 import com.chinasoft.tax.vo.MyPageInfo;
 import com.chinasoft.tax.vo.PageVo;
+import com.chinasoft.tax.vo.SearchVo;
 import com.github.pagehelper.PageInfo;
 
 public interface LogInfoService {
@@ -13,7 +14,7 @@ public interface LogInfoService {
      * @param pageVo
      * @return
      */
-    MyPageInfo<LogInfoVo> getAllPage(PageVo pageVo, LogInfoVo logInfoVo);
+    MyPageInfo<LogInfoVo> getAllPage(PageVo pageVo, SearchVo searchVo, LogInfoVo logInfoVo);
 
     /**
      * 保存日志

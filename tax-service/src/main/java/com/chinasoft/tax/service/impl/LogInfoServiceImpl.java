@@ -5,10 +5,7 @@ import com.chinasoft.tax.common.utils.MyBeanUtils;
 import com.chinasoft.tax.dao.TLogInfoMapper;
 import com.chinasoft.tax.po.TLogInfo;
 import com.chinasoft.tax.service.LogInfoService;
-import com.chinasoft.tax.vo.LogInfoVo;
-import com.chinasoft.tax.vo.LoginFailLimitException;
-import com.chinasoft.tax.vo.MyPageInfo;
-import com.chinasoft.tax.vo.PageVo;
+import com.chinasoft.tax.vo.*;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +15,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import tk.mybatis.mapper.entity.Example;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -30,7 +29,7 @@ public class LogInfoServiceImpl implements LogInfoService {
     private TLogInfoMapper tLogInfoMapper;
 
     @Override
-    public MyPageInfo<LogInfoVo> getAllPage(PageVo pageVo, LogInfoVo logInfoVo) {
+    public MyPageInfo<LogInfoVo> getAllPage(PageVo pageVo, SearchVo searchVo, LogInfoVo logInfoVo) {
         PageHelper.startPage(pageVo.getPageNumber(),pageVo.getPageSize());
         Example example = new Example(TLogInfo.class);
         example.setOrderByClause("create_time desc");
@@ -53,6 +52,16 @@ public class LogInfoServiceImpl implements LogInfoService {
             }
             if(logInfoVo.getStatus()!=null){
                 criteria.andEqualTo("state","%"+logInfoVo.getStatus()+"%");
+            }
+        }
+        if(searchVo!=null){
+            if(!StringUtils.isEmpty(searchVo.getStartDate())&&!StringUtils.isEmpty(searchVo.getEndDate())){
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                try {
+                    criteria.andBetween("createTime",sdf.parse(searchVo.getStartDate()),sdf.parse(searchVo.getEndDate()));
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
             }
         }
         List<TLogInfo> tLogInfoList = tLogInfoMapper.selectByExample(example);

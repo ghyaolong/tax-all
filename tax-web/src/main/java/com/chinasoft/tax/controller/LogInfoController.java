@@ -29,10 +29,11 @@ public class LogInfoController {
         log.info("查询日志,输入参数："+logInfoQo.toString());
         PageVo pageVo = logInfoQo.getPageVo();
         LogInfoVo logInfoVo = logInfoQo.getLogInfoVo();
+        SearchVo searchVo = logInfoQo.getSearchVo();
         if(pageVo==null){
             throw new BizException(ExceptionCode.REQUEST_PARAM_ERROR);
         }
-        MyPageInfo<LogInfoVo> allPage = logInfoService.getAllPage(pageVo, logInfoVo);
+        MyPageInfo<LogInfoVo> allPage = logInfoService.getAllPage(pageVo,searchVo, logInfoVo);
         return ResponseUtil.responseBody(allPage);
     }
 
