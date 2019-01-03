@@ -206,6 +206,7 @@ public class UserServiceImpl implements UserService {
         vo.setCreateTime(new Date());
         vo.setDepartid(vo.getDepartmentIds());
         tuser.setPassword(encryptPass);
+        tuser.setStatus(0);
         log.info("添加用户中....,参数为[" + tuser.toString() + "]");
         tUserMapper.insertSelective(tuser);
 
