@@ -147,6 +147,7 @@ public class CompanyServiceImpl implements CompanyService {
         TCompany tCompany = MyBeanUtils.copy(companyVo, TCompany.class);
         tCompany.setId(IDGeneratorUtils.getUUID32());
         tCompany.setCreateTime(new Date());
+        tCompany.setEstablishmentTime(new Date());
         tCompany.setIsAssign(CommonConstant.COMPANY_UNASSGINED);
         tCompanyMapper.insertSelective(tCompany);
         log.info("保存公司成功");
