@@ -460,7 +460,7 @@ public class UserServiceImpl implements UserService {
 
             }
         }
-        if(StringUtils.isEmpty(userVo.getDepartmentIds())){
+        if(!StringUtils.isEmpty(userVo.getDepartmentIds())){
             criteria.andEqualTo("departid", userVo.getDepartmentIds());
         }
 
