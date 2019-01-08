@@ -38,7 +38,19 @@
 
   <select id="findStatistics" parameterType="com.chinasoft.tax.po.TTaxStatisticsPo" resultType="com.chinasoft.tax.po.TTaxStatisticsPo">
     select
-      d.id,d.tax_period taxPeriod,d.tax_dict taxDict,d.payable_tax payableTax,
+      d.id,d.tax_period taxPeriod,
+
+     <if test="taxDict!=null and taxDict!=''">
+       case
+       when d.tax_dict = #{taxDict} then d.tax_dict
+       WHEN d.tax_dict != #{taxDict} THEN 0
+       end
+       taxDict
+     </if>
+    <if test="taxDict == null or taxDict==''">
+      d.tax_dict taxDict
+    </if>
+      ,d.payable_tax payableTax,
       d.late_fee_payable lateFeePayable,d.appl_tax_payment applTaxPayment,d.deadline,d.tax_paid taxPaid,
       d.overdue_payment overduePayment,d.payment_time paymentTime,d.remarks,
       a.company_id companyId,a.company_name companyName,a.country_name countryName,a.country_code countryCode,a.currency

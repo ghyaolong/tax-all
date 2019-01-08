@@ -39,6 +39,15 @@ public class CompanyVo implements java.io.Serializable{
      */
     private String currencyName;
 
+
+    /**
+     * 税金类型
+     * ALL     实缴税金/实缴滞纳金
+     * PAID    实缴税金
+     * LATEFEE 实缴指南金
+     */
+    private String taxType;
+
     /**
      * 备注
      */
