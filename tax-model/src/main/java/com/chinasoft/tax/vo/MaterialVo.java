@@ -10,6 +10,16 @@ public class MaterialVo {
 
     private Integer materialType;
 
+
+    /**
+     * 税种
+     */
+    private String taxDict;
+
+    /***
+     * 币种
+     */
+    private String currency;
     /**
      * 资料类型代码，对应资料类型表的code字段
      */

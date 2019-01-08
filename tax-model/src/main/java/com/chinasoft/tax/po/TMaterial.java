@@ -9,6 +9,18 @@ public class TMaterial {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private String id;
 
+
+    /**
+     * 税种
+     */
+    @Column(name="tax_dict")
+    private String taxDict;
+
+    /***
+     * 币种
+     */
+    private String currency;
+
     @Column(name = "material_type")
     private Integer materialType;
 

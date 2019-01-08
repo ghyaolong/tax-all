@@ -11,6 +11,20 @@ public class MaterialInfoPo {
 
      private String companyName;
 
+     /***
+      * 税种
+      */
+     private String taxDict;
+
+     private String taxDictName;
+
+     /**
+      * 币种
+      */
+     private String currency;
+
+     private String currencyName;
+
      private String createTime;
 
      private String taxApplicationId;

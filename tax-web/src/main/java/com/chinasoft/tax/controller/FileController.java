@@ -58,7 +58,10 @@ public class FileController {
     @SystemLog(description = "上传资料")
     @PostMapping("/upload")
     public Message uploadFile(@RequestParam(value = "file", required = false) MultipartFile[] files,
-                              @RequestParam(value = "materialTypeDict") String materialTypeDict) {
+                              @RequestParam(value = "materialTypeDict") String materialTypeDict,
+                              @RequestParam(value="taxDict") String taxDict,  // 税种
+                              @RequestParam(value="currency") String currency // 币种
+                                ) {
 
         if(StringUtils.isEmpty(materialTypeDict)){
             throw new BizException(ExceptionCode.REQUEST_PARAM_ERROR);
@@ -95,6 +98,8 @@ public class FileController {
                         vo.setPath(filePath+newFileName);
                         vo.setSuffix(ext);
                         vo.setMaterialTypeDict(materialTypeDict);
+                        vo.setTaxDict(taxDict);
+                        vo.setCurrency(currency);
                         materialService.add(vo);
 
                         return ResponseUtil.responseBody(vo);

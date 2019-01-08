@@ -2,6 +2,7 @@ package com.chinasoft.tax.service;
 
 import com.chinasoft.tax.po.MaterialInfoPo;
 import com.chinasoft.tax.vo.MaterialVo;
+import com.chinasoft.tax.vo.MyPageInfo;
 import com.chinasoft.tax.vo.PageVo;
 import com.chinasoft.tax.vo.SearchVo;
 import com.github.pagehelper.PageInfo;
@@ -20,7 +21,7 @@ public interface MaterialService {
      * @param
      * @return
      */
-    PageInfo<MaterialInfoPo> getAllPage(PageVo pageVo, SearchVo searchVo, String companyName, String materialTypeDict);
+    MyPageInfo<MaterialInfoPo> getAllPage(PageVo pageVo, SearchVo searchVo, String companyName, String materialTypeDict);
 
     /**
      * 保存资料
