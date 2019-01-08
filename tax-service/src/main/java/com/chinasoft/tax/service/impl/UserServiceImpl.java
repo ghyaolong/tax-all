@@ -313,16 +313,22 @@ public class UserServiceImpl implements UserService {
     public void editUser(UserVo vo) {
         //TUser tuser = new TUser();
 
+        Example queryExample = new Example(TUser.class);
         if(!StringUtils.isEmpty(vo.getUsername())){
-            Example queryExample = new Example(TUser.class);
             TUser tUser = tUserMapper.selectByPrimaryKey(vo.getId());
-            if(tUser!=null){
+            if(!tUser.getUsername().equals(vo.getUsername())){
                 if(!tUser.getUsername().equals(vo.getUsername())){
                     queryExample.createCriteria().andEqualTo("username",vo.getUsername());
                     int i = tUserMapper.selectCountByExample(queryExample);
                     if(i>0){
                         throw new BizException(ExceptionCode.DATA_AREADY_EXIST.getCode(),"用户名已存在");
                     }
+                }
+            }else if(!tUser.getWorkNumber().equals(vo.getWorkNumber())){
+                queryExample.createCriteria().andEqualTo("workNumber",vo.getUsername());
+                int i = tUserMapper.selectCountByExample(queryExample);
+                if(i>0){
+                    throw new BizException(ExceptionCode.DATA_AREADY_EXIST.getCode(),"工号已存在");
                 }
             }
         }

@@ -45,7 +45,7 @@ public enum ExceptionCode {
     PARSE_TOKEN_ERROR("A-000035","解析token失败"),
     HAS_NO_PERMISSION("A-000036","抱歉，您没有访问权限"),
     ROLE_NOT_EXIST("A-000037","角色不存在"),
-    OLD_PASSWORD_INCORRECT("A-000038","就密码不正确"),
+    OLD_PASSWORD_INCORRECT("A-000038","原密码不正确"),
     DEPARTMENT_HAS_USER("A-000039","该部门下有关联用户，无法删除"),
     PARAM_IS_NOT_NULL("A-000040","参数不能为空"),
     FILE_IS_NOT_NULL("A-000041","上传的文件不能位空"),

@@ -6,20 +6,24 @@ import com.chinasoft.tax.constant.CommonConstant;
 import com.chinasoft.tax.dao.TCompanyMapper;
 import com.chinasoft.tax.dao.TCompanyTaxesMapper;
 import com.chinasoft.tax.dao.TDictMapper;
+import com.chinasoft.tax.dao.TUserCompanyMapper;
 import com.chinasoft.tax.enums.ExceptionCode;
 import com.chinasoft.tax.po.TCompany;
 import com.chinasoft.tax.po.TCompanyTaxes;
 import com.chinasoft.tax.po.TDict;
+import com.chinasoft.tax.po.TUserCompany;
 import com.chinasoft.tax.service.CompanyService;
 import com.chinasoft.tax.vo.*;
 import com.github.pagehelper.PageHelper;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.IteratorUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import tk.mybatis.mapper.entity.Example;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -37,12 +41,14 @@ public class CompanyServiceImpl implements CompanyService {
     private TCompanyTaxesMapper tCompanyTaxesMapper;
 
 
+    @Autowired
+    private TUserCompanyMapper tUserCompanyMapper;
+
+
     @Override
     public List<CompanyVo> getByUserId(String userId) {
         List<TCompany> tCompanyList = tCompanyMapper.getByUserId(userId);
         List<CompanyVo> companyVos = MyBeanUtils.copyList(tCompanyList, CompanyVo.class);
-
-
         return companyVos;
     }
 
@@ -98,7 +104,18 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
-    public MyPageInfo<CompanyVo> findByCondition(PageVo pageVo, CompanyVo companyVo) {
+    public MyPageInfo<CompanyVo> findByCondition(String userId,List<RoleVo> roleVo,PageVo pageVo, CompanyVo companyVo) {
+        boolean isAdmin = false;
+        for (RoleVo rVo : roleVo) {
+            //如果是管理员，就显示所有公司，如果不是管理员，就显示当前用户的公司
+            if(rVo.getCode().equals("ROLE_ADMINISTRATOR")){
+                isAdmin = true;
+                break;
+            }
+        }
+
+
+
         PageHelper.startPage(pageVo.getPageNumber(),pageVo.getPageSize());
         Example example = new Example(TCompany.class);
         //example.setOrderByClause("create_time desc");
@@ -117,8 +134,27 @@ public class CompanyServiceImpl implements CompanyService {
             if(companyVo.getIsAssign()!=null){
                 criteria.andEqualTo("isAssign",companyVo.getIsAssign());
             }
+
+            if(!isAdmin){
+
+                List<String> companyIds = new ArrayList<>();
+                Example ucExample = new Example(TUserCompany.class);
+                ucExample.createCriteria().andEqualTo("userId",userId);
+                List<TUserCompany> tUserCompanies = tUserCompanyMapper.selectByExample(ucExample);
+                for (TUserCompany tUserCompany : tUserCompanies) {
+                    companyIds.add(tUserCompany.getCompanyId());
+                }
+
+                if(!CollectionUtils.isEmpty(companyIds)){
+                    criteria.orIn("id",(Iterable)companyIds);
+                }
+            }
+
+
         }
         List<TCompany> tCompaniesList = tCompanyMapper.selectByExample(example);
+
+
         int count = tCompanyMapper.selectCountByExample(example);
         List<CompanyVo> companyVos = MyBeanUtils.copyList(tCompaniesList, CompanyVo.class);
         //查询公司下所有的税种
@@ -131,6 +167,7 @@ public class CompanyServiceImpl implements CompanyService {
         pageInfo.setTotalElements(count);
         pageInfo.setPageNum(pageVo.getPageNumber());
         return pageInfo;
+
     }
 
     @Override
@@ -157,15 +194,27 @@ public class CompanyServiceImpl implements CompanyService {
     public void edit(CompanyVo companyVo) {
         log.info("修改公司，输入参数："+companyVo.toString());
         //公司名称唯一验证
-        if(!StringUtils.isEmpty(companyVo.getName())){
-            TCompany tCompany = tCompanyMapper.selectByPrimaryKey(companyVo.getId());
-            if(!tCompany.getName().equals(companyVo.getName())||!tCompany.getTin().equals(companyVo.getTin())){
-                Example example = new Example(TCompany.class);
-                example.createCriteria().orEqualTo("name",companyVo.getName()).orEqualTo("tin",companyVo.getTin());
-                int count = tCompanyMapper.selectCountByExample(example);
-                if(count>0){
-                    throw new BizException(ExceptionCode.DATA_AREADY_EXIST.getCode(),"公司名称或税务识别号码已存在");
+        TCompany tCompany1 = tCompanyMapper.selectByPrimaryKey(companyVo.getId());
+        Example example = new Example(TCompany.class);
+        if(!tCompany1.getName().equals(companyVo.getName())){
+            if(!StringUtils.isEmpty(companyVo.getName())){
+
+                TCompany tCompany = tCompanyMapper.selectByPrimaryKey(companyVo.getId());
+                if(!tCompany.getName().equals(companyVo.getName())||!tCompany.getTin().equals(companyVo.getTin())){
+
+                    example.createCriteria().orEqualTo("name",companyVo.getName()).orEqualTo("tin",companyVo.getTin());
+                    int count = tCompanyMapper.selectCountByExample(example);
+                    if(count>0){
+                        throw new BizException(ExceptionCode.DATA_AREADY_EXIST.getCode(),"公司名称或税务识别号码已存在");
+                    }
                 }
+            }
+        }else{
+            //判断税务识别号码是否唯一
+            example.createCriteria().orEqualTo("tin",companyVo.getTin());
+            int count = tCompanyMapper.selectCountByExample(example);
+            if(count>0){
+                throw new BizException(ExceptionCode.DATA_AREADY_EXIST.getCode(),"税务识别号码已存在");
             }
         }
 

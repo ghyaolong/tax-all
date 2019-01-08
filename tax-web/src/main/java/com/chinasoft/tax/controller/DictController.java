@@ -26,7 +26,7 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("/dict")
-public class DitcController {
+public class DictController {
 
     @Autowired
     private DictService dictService;

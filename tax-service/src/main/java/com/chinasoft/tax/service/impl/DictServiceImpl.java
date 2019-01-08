@@ -89,16 +89,27 @@ public class DictServiceImpl implements DictService {
     @Override
     public void edit(DictVo dictVo) {
         log.info("修改字典,输入参数："+dictVo);
-
-        //字典唯一性验证
+        TDict tDict1 = tDictMapper.selectByPrimaryKey(dictVo.getId());
         Example example = new Example(TDict.class);
-        Example.Criteria criteria = example.createCriteria();
-        criteria.orEqualTo("name",dictVo.getName());
-        criteria.orEqualTo("code",dictVo.getCode());
-        int count = tDictMapper.selectCountByExample(example);
-        if(count>0){
-            throw new BizException(ExceptionCode.DATA_AREADY_EXIST);
+        if(!tDict1.getName().equals(dictVo.getName())){
+            //字典唯一性验证
+            Example.Criteria criteria = example.createCriteria();
+            criteria.orEqualTo("name",dictVo.getName());
+            criteria.orEqualTo("code",dictVo.getCode());
+            int count = tDictMapper.selectCountByExample(example);
+            if(count>0){
+                throw new BizException(ExceptionCode.DATA_AREADY_EXIST.getCode(),"字典名称或字典代码已存在");
+            }
+        }else{
+            //字典唯一性验证
+            Example.Criteria criteria = example.createCriteria();
+            criteria.orEqualTo("code",dictVo.getCode());
+            int count = tDictMapper.selectCountByExample(example);
+            if(count>0){
+                throw new BizException(ExceptionCode.DATA_AREADY_EXIST.getCode(),"字典代码已存在");
+            }
         }
+
         TDict tDict = MyBeanUtils.copy(dictVo, TDict.class);
         tDictMapper.updateByPrimaryKeySelective(tDict);
         log.info("修改字典成功");

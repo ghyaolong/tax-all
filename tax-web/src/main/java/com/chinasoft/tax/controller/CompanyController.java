@@ -4,22 +4,18 @@ import com.chinasoft.tax.annotation.SystemLog;
 import com.chinasoft.tax.aop.EnableGameleyLog;
 import com.chinasoft.tax.aopUtils.ModifyName;
 import com.chinasoft.tax.common.utils.ResponseUtil;
-import com.chinasoft.tax.constant.CommonConstant;
+import com.chinasoft.tax.config.security.CurrentUserUtils;
 import com.chinasoft.tax.dao.TCompanyMapper;
 import com.chinasoft.tax.enums.ExceptionCode;
 import com.chinasoft.tax.qo.CompanyQo;
 import com.chinasoft.tax.service.CompanyService;
 import com.chinasoft.tax.vo.*;
-import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.ModelMap;
-import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
-import static java.awt.SystemColor.info;
 
 /**
  * @Description: 公司管理
@@ -32,6 +28,9 @@ public class CompanyController {
 
     @Autowired
     private CompanyService companyService;
+
+    @Autowired
+    private CurrentUserUtils currentUserUtils;
     /**
      * 通过userId获取该用户所拥有的公司
      * @param userId
@@ -56,7 +55,9 @@ public class CompanyController {
     public Message getAllByPage(@RequestBody CompanyQo companyQo){
         PageVo pageVo = companyQo.getPageVo();
         CompanyVo companyVo = companyQo.getCompanyVo();
-        MyPageInfo<CompanyVo> companyVoPageInfo = companyService.findByCondition(pageVo,companyVo);
+        String userId = currentUserUtils.getUserId();
+        List<RoleVo> roleVos = currentUserUtils.getCurrUserRole();
+        MyPageInfo<CompanyVo> companyVoPageInfo = companyService.findByCondition(userId,roleVos,pageVo,companyVo);
         return ResponseUtil.responseBody(companyVoPageInfo);
     }
 
