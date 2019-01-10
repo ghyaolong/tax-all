@@ -50,6 +50,6 @@
         and r.process_key = #{key}
       </if>
       )
-      );
+      )
   </select>
 </mapper>
