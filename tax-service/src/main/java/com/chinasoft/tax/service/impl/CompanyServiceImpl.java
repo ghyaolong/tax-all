@@ -202,14 +202,14 @@ public class CompanyServiceImpl implements CompanyService {
                 TCompany tCompany = tCompanyMapper.selectByPrimaryKey(companyVo.getId());
                 if(!tCompany.getName().equals(companyVo.getName())||!tCompany.getTin().equals(companyVo.getTin())){
 
-                    example.createCriteria().orEqualTo("name",companyVo.getName()).orEqualTo("tin",companyVo.getTin());
+                    example.createCriteria().orEqualTo("name",companyVo.getName());
                     int count = tCompanyMapper.selectCountByExample(example);
                     if(count>0){
-                        throw new BizException(ExceptionCode.DATA_AREADY_EXIST.getCode(),"公司名称或税务识别号码已存在");
+                        throw new BizException(ExceptionCode.DATA_AREADY_EXIST.getCode(),"公司名称已存在");
                     }
                 }
             }
-        }else{
+        }else if(!tCompany1.getTin().equals(companyVo.getTin())){
             //判断税务识别号码是否唯一
             example.createCriteria().orEqualTo("tin",companyVo.getTin());
             int count = tCompanyMapper.selectCountByExample(example);

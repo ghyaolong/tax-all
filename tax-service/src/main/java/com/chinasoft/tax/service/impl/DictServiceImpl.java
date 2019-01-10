@@ -98,9 +98,9 @@ public class DictServiceImpl implements DictService {
             criteria.orEqualTo("code",dictVo.getCode());
             int count = tDictMapper.selectCountByExample(example);
             if(count>0){
-                throw new BizException(ExceptionCode.DATA_AREADY_EXIST.getCode(),"字典名称或字典代码已存在");
+                throw new BizException(ExceptionCode.DATA_AREADY_EXIST.getCode(),"字典名称已存在");
             }
-        }else{
+        }else if(!tDict1.getCode().equals(dictVo.getCode())){
             //字典唯一性验证
             Example.Criteria criteria = example.createCriteria();
             criteria.orEqualTo("code",dictVo.getCode());
