@@ -27,7 +27,7 @@
   <select id="findAllMaterial" resultType="com.chinasoft.tax.po.MaterialInfoPo">
     select
     am.id,am.application_id applicationId,am.company_id companyId,am.company_name companyName,am.create_time createTime,am.tax_application_id taxApplicationId,
-    m.ori_name oriName,m.file_name fileName,m.path,m.type,m.material_type_dict materialTypeDict,m.tax_dict,m.currency
+    m.ori_name oriName,m.file_name fileName,m.path,m.type,m.material_type_dict materialTypeDict,m.tax_dict taxDict,m.currency currency
     from t_application_material am left join t_material m
     on am.material_id = m.id
     where 1=1
