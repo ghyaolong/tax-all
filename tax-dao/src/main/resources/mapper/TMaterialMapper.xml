@@ -25,14 +25,25 @@
   </resultMap>
 
   <select id="findAllMaterial" resultType="com.chinasoft.tax.po.MaterialInfoPo">
-    select
-    am.id,am.application_id applicationId,am.company_id companyId,am.company_name companyName,am.create_time createTime,am.tax_application_id taxApplicationId,
-    m.ori_name oriName,m.file_name fileName,m.path,m.type,m.material_type_dict materialTypeDict,m.tax_dict taxDict,m.currency currency
-    from t_application_material am left join t_material m
-    on am.material_id = m.id
-    where 1=1
+
+    select a.company_id companyId,a.company_name companyName,m.ori_name oriName,m.file_name fileName,m.path,
+    DATE_FORMAT(m.create_time,'%Y-%m-%d') createTime,
+    m.tax_dict taxDict,m.currency ,m.material_type_dict materialTypeDict,
+    d.tax_application_id as detailId
+    from
+    (t_material m
+    left join t_tax_application_detail d on
+    m.id = d.tax_returns
+    or m.id = d.payment_certificate
+    or m.id = d.pre_tax_returns
+    or m.id = d.other_upload_id
+    )
+    left join
+    t_tax_application a
+    on d.tax_application_id = a.id
+    where 1=1 and a.company_id != '' and m.tax_dict != ''
     <if test= "companyName!=null and companyName!=''">
-      and am.company_name LIKE CONCAT('%',#{companyName},'%')
+      and a.company_name LIKE CONCAT('%',#{companyName},'%')
     </if>
 
     <if test="materialTypeDict!=null  and materialTypeDict!=''">
@@ -40,7 +51,29 @@
     </if>
 
     <if test="startTime!=null and startTime!='' and endTime!=null and endTime!=''">
-      and am.create_time between str_to_date(#{startTime},'%Y-%m-%d %H') and str_to_date(#{endTime},'%Y-%m-%d %H')
+      and m.create_time between str_to_date(#{startTime},'%Y-%m-%d %H') and str_to_date(#{endTime},'%Y-%m-%d %H')
     </if>
+    union
+    select ta.company_id companyId,ta.company_name companyName,m.ori_name oriName,m.file_name fileName,m.path,
+    DATE_FORMAT(m.create_time,'%Y-%m-%d') createTime,
+    m.tax_dict taxDict,m.currency ,m.material_type_dict materialTypeDict,
+    'detailId'
+    from
+    t_material m
+    left join t_tax_application ta on
+    m.id = ta.financial_report
+    where 1=1 and ta.company_id != '' and m.tax_dict!= ''
+    <if test= "companyName!=null and companyName!=''">
+      and ta.company_name LIKE CONCAT('%',#{companyName},'%')
+    </if>
+
+    <if test="materialTypeDict!=null  and materialTypeDict!=''">
+      and m.material_type_dict = #{materialTypeDict}
+    </if>
+
+    <if test="startTime!=null and startTime!='' and endTime!=null and endTime!=''">
+      and m.create_time between str_to_date(#{startTime},'%Y-%m-%d %H') and str_to_date(#{endTime},'%Y-%m-%d %H')
+    </if>
+
   </select>
 </mapper>

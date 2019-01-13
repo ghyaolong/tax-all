@@ -231,7 +231,31 @@ public class UserServiceImpl implements UserService {
             tUserDepartmentMapper.insert(tUserDepartment);
             log.debug("保存用户-部门成功，结果:" + tUserDepartment);
         }
+
+        //保存用户-公司关系
+        String companyIds = vo.getCompanyIds();
+        saveUserCompany(vo, companyIds);
+        tuser.setDepartid(vo.getDepartmentIds());
+        tUserMapper.updateByPrimaryKeySelective(tuser);
         log.info("添加用户成功");
+    }
+
+    private void saveUserCompany(UserVo vo, String companyIds) {
+        String[] ids = companyIds.split(",");
+        for (String id : ids) {
+            TUserCompany tUserCompany = new TUserCompany();
+            tUserCompany.setId(IDGeneratorUtils.getUUID32());
+            tUserCompany.setUserId(vo.getId());
+            tUserCompany.setCompanyId(id);
+            tUserCompany.setCreateTime(new Date());
+            tUserCompanyMapper.insertSelective(tUserCompany);
+
+            //设置该公司已被分配
+            TCompany tCompany = new TCompany();
+            tCompany.setId(id);
+            tCompany.setIsAssign(CommonConstant.COMPANY_ASSIGNED);
+            tCompanyMapper.updateByPrimaryKeySelective(tCompany);
+        }
     }
 
     /**
@@ -386,21 +410,7 @@ public class UserServiceImpl implements UserService {
 
         tUserCompanyMapper.deleteByExample(tuserCompanyExample);
         log.info("修改用户......删除用户原来的公司信息");
-        String[] ids = companyIds.split(",");
-        for (String id : ids) {
-            TUserCompany tUserCompany = new TUserCompany();
-            tUserCompany.setId(IDGeneratorUtils.getUUID32());
-            tUserCompany.setUserId(vo.getId());
-            tUserCompany.setCompanyId(id);
-            tUserCompany.setCreateTime(new Date());
-            tUserCompanyMapper.insertSelective(tUserCompany);
-
-            //设置该公司已被分配
-            TCompany tCompany = new TCompany();
-            tCompany.setId(id);
-            tCompany.setIsAssign(CommonConstant.COMPANY_ASSIGNED);
-            tCompanyMapper.updateByPrimaryKeySelective(tCompany);
-        }
+        saveUserCompany(vo, companyIds);
         tuser.setDepartid(vo.getDepartmentIds());
         tUserMapper.updateByPrimaryKeySelective(tuser);
     }

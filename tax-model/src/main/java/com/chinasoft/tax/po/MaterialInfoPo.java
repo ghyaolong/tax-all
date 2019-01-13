@@ -2,6 +2,9 @@ package com.chinasoft.tax.po;
 
 import lombok.Data;
 
+import javax.persistence.Column;
+
+
 @Data
 public class MaterialInfoPo {
      private String id;
@@ -38,4 +41,6 @@ public class MaterialInfoPo {
      private String type;
 
      private String materialTypeDict;
+
+     private String detailId;
 }
