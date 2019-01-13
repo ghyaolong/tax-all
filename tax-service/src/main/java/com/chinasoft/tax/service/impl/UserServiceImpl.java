@@ -234,18 +234,16 @@ public class UserServiceImpl implements UserService {
 
         //保存用户-公司关系
         String companyIds = vo.getCompanyIds();
-        saveUserCompany(vo, companyIds);
-        tuser.setDepartid(vo.getDepartmentIds());
-        tUserMapper.updateByPrimaryKeySelective(tuser);
+        saveUserCompany(tuser.getId(), companyIds);
         log.info("添加用户成功");
     }
 
-    private void saveUserCompany(UserVo vo, String companyIds) {
+    private void saveUserCompany(String userId, String companyIds) {
         String[] ids = companyIds.split(",");
         for (String id : ids) {
             TUserCompany tUserCompany = new TUserCompany();
             tUserCompany.setId(IDGeneratorUtils.getUUID32());
-            tUserCompany.setUserId(vo.getId());
+            tUserCompany.setUserId(userId);
             tUserCompany.setCompanyId(id);
             tUserCompany.setCreateTime(new Date());
             tUserCompanyMapper.insertSelective(tUserCompany);
@@ -410,7 +408,7 @@ public class UserServiceImpl implements UserService {
 
         tUserCompanyMapper.deleteByExample(tuserCompanyExample);
         log.info("修改用户......删除用户原来的公司信息");
-        saveUserCompany(vo, companyIds);
+        saveUserCompany(vo.getId(), companyIds);
         tuser.setDepartid(vo.getDepartmentIds());
         tUserMapper.updateByPrimaryKeySelective(tuser);
     }
