@@ -175,10 +175,10 @@ public class CompanyServiceImpl implements CompanyService {
         log.info("保存公司，输入参数："+companyVo.toString());
         //公司名称唯一验证
         Example example = new Example(TCompany.class);
-        example.createCriteria().andEqualTo("name",companyVo.getName());
+        example.createCriteria().orEqualTo("name",companyVo.getName()).orEqualTo("tin",companyVo.getTin());
         int count = tCompanyMapper.selectCountByExample(example);
         if(count>0){
-            throw new BizException(ExceptionCode.DATA_AREADY_EXIST);
+            throw new BizException(ExceptionCode.DATA_AREADY_EXIST.getCode(),"公司已存在");
         }
 
         TCompany tCompany = MyBeanUtils.copy(companyVo, TCompany.class);

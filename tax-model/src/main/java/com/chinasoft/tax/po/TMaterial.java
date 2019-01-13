@@ -19,6 +19,8 @@ public class TMaterial {
     /***
      * 币种
      */
+
+    @Column(name="currency")
     private String currency;
 
     @Column(name = "material_type")
@@ -80,6 +82,23 @@ public class TMaterial {
 
     public String getMaterialTypeDict() {
         return materialTypeDict;
+    }
+
+
+    public String getTaxDict() {
+        return taxDict;
+    }
+
+    public void setTaxDict(String taxDict) {
+        this.taxDict = taxDict;
+    }
+
+    public String getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(String currency) {
+        this.currency = currency;
     }
 
     public void setMaterialTypeDict(String materialTypeDict) {
