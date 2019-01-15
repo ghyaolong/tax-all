@@ -35,4 +35,11 @@ public interface MaterialService {
      * @return
      */
     MaterialVo findById(String id);
+
+    /**
+     * 通过fileName查询文件
+     * @param fileName
+     * @return
+     */
+    MaterialVo findByFileName(String fileName);
 }

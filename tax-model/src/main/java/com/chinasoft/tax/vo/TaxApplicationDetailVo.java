@@ -92,6 +92,8 @@ public class TaxApplicationDetailVo implements Serializable {
      */
     private String taxReturnsPath;
 
+    private String taxReturnsFileName;
+
     /**
      * 是否上传了税务申报表
      */
@@ -102,10 +104,14 @@ public class TaxApplicationDetailVo implements Serializable {
      */
     private String paymentCertificate;
 
+    private String paymentCertificateFileName;
+
     /**
      * 扣款凭证附件路径
      */
     private String paymentCertificatePath;
+
+    private String paymentCertificatePathFileName;
 
     /**
      * 是否上传了扣款凭证
@@ -116,6 +122,8 @@ public class TaxApplicationDetailVo implements Serializable {
      * 其他上传的文件
      */
     private String otherUpload;
+
+    private String otherFileName;
 
     private String otherUploadId;
 
@@ -128,6 +136,9 @@ public class TaxApplicationDetailVo implements Serializable {
      * 预税务申报表
      */
     private String preTaxReturnsPath;
+    private String preTaxReturnsPathFileName;
+
+
 
     /**
      * 是否上传了预税务申报表

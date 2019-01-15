@@ -9,6 +9,7 @@ import com.chinasoft.tax.constant.CommonConstant;
 import com.chinasoft.tax.dao.TTaxApplicationMapper;
 import com.chinasoft.tax.enums.ExceptionCode;
 import com.chinasoft.tax.qo.TaxQo;
+import com.chinasoft.tax.service.MaterialService;
 import com.chinasoft.tax.service.TaxApplicationService;
 import com.chinasoft.tax.service.UserService;
 import com.chinasoft.tax.vo.*;
@@ -37,6 +38,9 @@ public class TaxApplicationController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private MaterialService materialService;
 
 
 
@@ -182,10 +186,17 @@ public class TaxApplicationController {
         return ResponseUtil.responseBody("删除待提任务成功");
     }
 
+    /**
+     * 页面编辑跳转
+     * @param id
+     * @return
+     */
     @GetMapping("/get/{id}")
     public Message getTaxApplicationById(@PathVariable String id){
-
         TaxApplicationVo taxApplicationVo = taxApplicationService.getById(id);
+        String financialReportPath = taxApplicationVo.getFinancialReportPath();
+        MaterialVo byFileName = materialService.findByFileName(financialReportPath);
+        taxApplicationVo.setOriName(byFileName.getOriName());
         return ResponseUtil.responseBody(taxApplicationVo);
     }
 

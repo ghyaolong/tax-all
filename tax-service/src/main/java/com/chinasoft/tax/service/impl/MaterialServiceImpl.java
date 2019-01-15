@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
+import tk.mybatis.mapper.entity.Example;
 
 import java.util.Date;
 import java.util.List;
@@ -62,5 +63,14 @@ public class MaterialServiceImpl implements MaterialService {
         TMaterial tMaterial = tMaterialMapper.selectByPrimaryKey(id);
         MaterialVo materialVo = MyBeanUtils.copy(tMaterial, MaterialVo.class);
         return materialVo;
+    }
+
+    @Override
+    public MaterialVo findByFileName(String fileName) {
+        Example example = new Example(TMaterial.class);
+        example.createCriteria().andEqualTo("fileName",fileName);
+        TMaterial tMaterial = tMaterialMapper.selectOneByExample(example);
+        MaterialVo copy = MyBeanUtils.copy(tMaterial, MaterialVo.class);
+        return copy;
     }
 }

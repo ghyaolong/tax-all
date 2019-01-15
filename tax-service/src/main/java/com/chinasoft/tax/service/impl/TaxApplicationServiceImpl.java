@@ -12,8 +12,10 @@ import com.chinasoft.tax.po.TApplicationMaterial;
 import com.chinasoft.tax.po.TAuditLog;
 import com.chinasoft.tax.po.TTaxApplication;
 import com.chinasoft.tax.po.TTaxApplicationDetail;
+import com.chinasoft.tax.service.MaterialService;
 import com.chinasoft.tax.service.TaxApplicationService;
 import com.chinasoft.tax.vo.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -38,6 +40,9 @@ public class TaxApplicationServiceImpl implements TaxApplicationService {
 
     @Resource
     private TAuditLogMapper tAuditLogMapper;
+
+    @Autowired
+    private MaterialService materialService;
 
     @Transactional
     @Override
@@ -256,6 +261,26 @@ public class TaxApplicationServiceImpl implements TaxApplicationService {
             List<TTaxApplicationDetail> tTaxApplicationDetails = tTaxApplicationDetailMapper.selectByExample(example);
             if(!CollectionUtils.isEmpty(tTaxApplicationDetails)){
                 List<TaxApplicationDetailVo> detailVos = MyBeanUtils.copyList(tTaxApplicationDetails, TaxApplicationDetailVo.class);
+
+                for (TaxApplicationDetailVo detailVo : detailVos) {
+                    if(!StringUtils.isEmpty(detailVo.getTaxReturnsPath())){
+                        MaterialVo taxReturnPath = materialService.findByFileName(detailVo.getTaxReturnsPath());
+                        detailVo.setTaxReturnsFileName(taxReturnPath.getOriName());
+                    }
+                    if(!StringUtils.isEmpty(detailVo.getPaymentCertificatePath())) {
+                        MaterialVo certificatePath = materialService.findByFileName(detailVo.getPaymentCertificatePath());
+                        detailVo.setPaymentCertificateFileName(certificatePath.getOriName());
+                    }
+                    if(!StringUtils.isEmpty(detailVo.getPreTaxReturnsPath())){
+
+                        MaterialVo preTaxReturn = materialService.findByFileName(detailVo.getPreTaxReturnsPath());
+                        detailVo.setPreTaxReturnsPathFileName(preTaxReturn.getOriName());
+                    }
+                    if(!StringUtils.isEmpty(detailVo.getOtherUpload())){
+                        MaterialVo otherName = materialService.findByFileName(detailVo.getOtherUpload());
+                        detailVo.setOtherFileName(otherName.getOriName());
+                    }
+                }
                 vo.setDetails(detailVos);
             }
             return vo;

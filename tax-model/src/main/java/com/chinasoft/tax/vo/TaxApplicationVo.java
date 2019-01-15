@@ -77,6 +77,11 @@ public class TaxApplicationVo implements Serializable {
     private String financialReportPath;
 
     /**
+     * 文件名称
+     */
+    private String oriName;
+
+    /**
      * 是否上传了财务报表
      */
     private Integer isUploadReport;
