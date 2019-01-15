@@ -1,5 +1,6 @@
 package com.chinasoft.tax.service.impl;
 
+import com.chinasoft.tax.common.utils.DateUtil;
 import com.chinasoft.tax.common.utils.IDGeneratorUtils;
 import com.chinasoft.tax.common.utils.MyBeanUtils;
 import com.chinasoft.tax.constant.CommonConstant;
@@ -223,9 +224,10 @@ public class TaxApplicationServiceImpl implements TaxApplicationService {
 //                DateTime endTime = DateUtil.parse(searchVo.getEndDate());
 //                criteria.andLessThanOrEqualTo("saveTime",endTime);
 //            }
-            if(!StringUtils.isEmpty(searchVo.getStartDate())&&!StringUtils.isEmpty(searchVo.getEndDate())){
-
-                criteria.andBetween("saveTime",searchVo.getStartDate(),searchVo.getEndDate());
+            if(!StringUtils.isEmpty(searchVo.getStartDate())&&!StringUtils.isEmpty(searchVo.getEndDate())) {
+                String startDate = String.format("%s 00:00:00", searchVo.getStartDate());
+                String endDate = String.format("%s 23:59:59", searchVo.getEndDate());
+                criteria.andBetween("saveTime", startDate, endDate);
             }
         }
 

@@ -12,10 +12,7 @@ import com.chinasoft.tax.service.TaxProcessService;
 import com.chinasoft.tax.service.UserService;
 import com.chinasoft.tax.vo.*;
 import com.github.pagehelper.PageHelper;
-import org.activiti.engine.HistoryService;
-import org.activiti.engine.RepositoryService;
-import org.activiti.engine.RuntimeService;
-import org.activiti.engine.TaskService;
+import org.activiti.engine.*;
 import org.activiti.engine.history.HistoricActivityInstance;
 import org.activiti.engine.history.HistoricProcessInstance;
 import org.activiti.engine.history.HistoricTaskInstance;
@@ -42,6 +39,9 @@ import java.util.stream.Collectors;
 public class TaxProcessServiceImpl implements TaxProcessService {
 
     private final static String TAX_PROCESS_KEY = "taxProcess";
+
+    @Autowired
+    private IdentityService identityService;
 
     @Autowired
     private RuntimeService runtimeService;
@@ -143,7 +143,6 @@ public class TaxProcessServiceImpl implements TaxProcessService {
                 return true;
             }).collect(Collectors.toList());
 
-            System.out.println("2");
             MyPageInfo<TaxApplicationVo> page = new MyPageInfo<>(taxApplicationVoList);
             page.setTotalElements(taxApplicationVoList.size());
             page.setPageNum(pageVo.getPageNumber());
@@ -190,10 +189,33 @@ public class TaxProcessServiceImpl implements TaxProcessService {
                 bean = (TaxApplicationVo) runtimeService.getVariable(pi.getId(), "bean");
             }
 
+            String isOperateApprove;
+            if (operateApprove == 0) {
+                isOperateApprove = "true";
+                bean.setCurrentHandler(currentHandler);
+                bean.setStatus(2);
+                comment = String.format("同意,%s", comment);
+            } else {
+                isOperateApprove = "false";
+                bean.setCurrentHandler(bean.getApplicantId());
+                bean.setStatus(3);
+                comment = String.format("驳回,%s", comment);
+            }
+
+            // 添加批注时候的审核人，通常应该从session获取
+            Authentication.setAuthenticatedUserId(userId);
+            // 添加审批备注
+            taskService.addComment(taskId, processInstancesId, comment);
+
             // 审批意见
             List<Comment> commentList = taskService.getProcessInstanceComments(task.getProcessInstanceId());
 
             List<AuditLogVo> auditLogVoList = new ArrayList<>();
+
+            // 处理启动流程审批记录
+            /*HistoricProcessInstance historicProcessInstance = historyService.createHistoricProcessInstanceQuery().processInstanceId(pi.getId()).singleResult();
+            AuditLogVo startAuditLogVo = getStartAuditLogVo(historicProcessInstance.getStartUserId(), historicProcessInstance.getStartTime());
+            auditLogVoList.add(startAuditLogVo);*/
 
             commentList.stream().forEach(commentBean -> {
 
@@ -223,25 +245,6 @@ public class TaxProcessServiceImpl implements TaxProcessService {
             });
 
             bean.setAuditLogVoList(auditLogVoList);
-
-            String isOperateApprove;
-            if (operateApprove == 0) {
-                isOperateApprove = "true";
-                bean.setCurrentHandler(currentHandler);
-                bean.setStatus(2);
-                comment = String.format("同意,%s", comment);
-            } else {
-                isOperateApprove = "false";
-                bean.setCurrentHandler(bean.getApplicantId());
-                bean.setStatus(3);
-                comment = String.format("驳回,%s", comment);
-            }
-
-            // 添加批注时候的审核人，通常应该从session获取
-            Authentication.setAuthenticatedUserId(userId);
-            // 添加审批备注
-            taskService.addComment(taskId, processInstancesId, comment);
-
 
             String executionId = task.getExecutionId();
             runtimeService.setVariable(executionId, "bean", bean);
@@ -307,6 +310,11 @@ public class TaxProcessServiceImpl implements TaxProcessService {
                 List<Comment> commentList = taskService.getProcessInstanceComments(processInstanceId);
 
                 List<AuditLogVo> auditLogVoList = new ArrayList<>();
+
+                // 处理启动流程审批记录
+                /*HistoricProcessInstance historicProcessInstance = historyService.createHistoricProcessInstanceQuery().processInstanceId(task.getProcessInstanceId()).singleResult();
+                AuditLogVo startAuditLogVo = getStartAuditLogVo(historicProcessInstance.getStartUserId(), historicProcessInstance.getStartTime());
+                auditLogVoList.add(startAuditLogVo);*/
 
                 commentList.stream().forEach(comment -> {
 
@@ -448,6 +456,8 @@ public class TaxProcessServiceImpl implements TaxProcessService {
                 saveTaxFlowPrcess(taxApplicationVo);
             }
 
+            identityService.setAuthenticatedUserId(taxApplicationVo.getApplicantId());
+
             // 启动流程
             pi = runtimeService.startProcessInstanceByKey(pd.getKey(), bussinessKey, vars);
             // 流程编号
@@ -477,6 +487,7 @@ public class TaxProcessServiceImpl implements TaxProcessService {
             String userId = searchVo.getUserId();
 
             List<HistoricTaskInstance> hisTaskList = historyService.createHistoricTaskInstanceQuery().taskAssignee(userId).orderByTaskId().desc().list();
+
             Map<String, List<HistoricTaskInstance>> collect = hisTaskList.stream().collect(Collectors.groupingBy(HistoricTaskInstance::getProcessInstanceId));
             Set<String> processInstanceIds = collect.keySet();
 
@@ -527,9 +538,15 @@ public class TaxProcessServiceImpl implements TaxProcessService {
 
                 List<AuditLogVo> auditLogVoList = new ArrayList<>();
 
+                // 处理启动流程审批记录
+                AuditLogVo startAuditLogVo = getStartAuditLogVo(historicProcessInstance.getStartUserId(), historicProcessInstance.getStartTime());
+                auditLogVoList.add(startAuditLogVo);
+
+                // 处理正常审批记录
                 commentList.stream().forEach(bean -> {
 
                     HistoricTaskInstance historicTaskInstance = historyService.createHistoricTaskInstanceQuery().taskId(bean.getTaskId()).singleResult();
+
                     AuditLogVo auditLogVo = new AuditLogVo();
                     auditLogVo.setTaskName(historicTaskInstance.getName());
 
@@ -648,6 +665,64 @@ public class TaxProcessServiceImpl implements TaxProcessService {
     }
 
     /**
+     * 处理启动流程审批记录
+     * @param userId 发起人
+     * @param startTime 发起时间
+     * @return
+     */
+    private AuditLogVo getStartAuditLogVo(String userId, Date startTime) {
+        // 处理启动节点审批记录
+        AuditLogVo startAuditLogVo = new AuditLogVo() {
+
+            UserVo userVo = userService.getUserInfoByUserIdAndKey(userId, "approvalProcess");
+
+            @Override
+            public String getName() {
+                if (userVo != null) {
+                    return userVo.getUsername();
+                } else {
+                    return "";
+                }
+            }
+
+            @Override
+            public String getRoleName() {
+                List<RoleVo> roles = null;
+                if (userVo != null) {
+                    roles = userVo.getRoles();
+                }
+                if (roles != null) {
+                    RoleVo roleVo = roles.get(0);
+                    return roleVo.getName();
+                } else {
+                    return "";
+                }
+            }
+
+            @Override
+            public String getTaskName() {
+                return "启动流程";
+            }
+
+            @Override
+            public String getAuditResult() {
+                return "启动";
+            }
+
+            @Override
+            public String getAdvice() {
+                return "启动流程";
+            }
+
+            @Override
+            public Date getAuditDate() {
+                return startTime;
+            }
+        };
+        return startAuditLogVo;
+    }
+
+    /**
      * 转换流程对象
      *
      * @param taskList 任务列表
@@ -658,11 +733,22 @@ public class TaxProcessServiceImpl implements TaxProcessService {
         for (Task task : taskList) {
             ProcessInstance pi = runtimeService.createProcessInstanceQuery().processInstanceId(task.getProcessInstanceId()).singleResult();
             TaxApplicationVo bean = (TaxApplicationVo) runtimeService.getVariable(pi.getId(), "bean");
-            bean.setSerialNumber(task.getId());
-            bean.setCurrentLink(task.getTaskDefinitionKey());
             if (bean != null) {
+                bean.setSerialNumber(task.getId());
+                bean.setCurrentLink(task.getTaskDefinitionKey());
+                // 处理启动流程审批记录
+                List<AuditLogVo> auditLogVoList = new ArrayList<>();
+                HistoricProcessInstance historicProcessInstance = historyService.createHistoricProcessInstanceQuery().processInstanceId(pi.getId()).singleResult();
+                AuditLogVo auditLogVo = getStartAuditLogVo(historicProcessInstance.getStartUserId(), historicProcessInstance.getStartTime());
+                auditLogVoList.add(auditLogVo);
+                List<AuditLogVo> auditLogVoListByBean = bean.getAuditLogVoList();
+                if (auditLogVoListByBean != null && auditLogVoListByBean.size() > 0) {
+                    auditLogVoList.addAll(bean.getAuditLogVoList());
+                }
+                bean.setAuditLogVoList(auditLogVoList);
                 result.add(bean);
             }
+
         }
         return result;
     }
