@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartException;
 
 @Slf4j
 @ControllerAdvice
@@ -23,6 +24,10 @@ public class MyExceptionHandler {
     public Message handler(Exception ex){
         StringBuilder builder = new StringBuilder();
         BizException bizException = null;
+
+        if(ex instanceof MultipartException){
+            return ResponseUtil.responseBody("A-000046", "上传文件不能超过4MB",null);
+        }
         if( ex instanceof BizException){
             builder.append("\n【业务异常】"+ex);
             logger.warn("【业务异常】"+ex);

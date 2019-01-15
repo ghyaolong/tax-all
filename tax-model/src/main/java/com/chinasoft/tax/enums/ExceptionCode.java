@@ -52,6 +52,7 @@ public enum ExceptionCode {
     FILE_UPLOAD_ERROR("A-000042","上传文件失败"),
     SCHEUDAL_ERROR("A-000043","操作定时任务失败"),
     DEL_TAX_ERROR("A-000044","任务不存在或不是待提任务"),
+    CANNOT_DELETE("A-000045","不能删除系统用户或角色"),
 
 
 

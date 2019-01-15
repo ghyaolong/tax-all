@@ -55,9 +55,10 @@ public class CompanyController {
     public Message getAllByPage(@RequestBody CompanyQo companyQo){
         PageVo pageVo = companyQo.getPageVo();
         CompanyVo companyVo = companyQo.getCompanyVo();
+        SearchVo searchVo = companyQo.getSearchVo();
         String userId = currentUserUtils.getUserId();
         List<RoleVo> roleVos = currentUserUtils.getCurrUserRole();
-        MyPageInfo<CompanyVo> companyVoPageInfo = companyService.findByCondition(userId,roleVos,pageVo,companyVo);
+        MyPageInfo<CompanyVo> companyVoPageInfo = companyService.findByCondition(userId,roleVos,pageVo,companyVo,searchVo);
         return ResponseUtil.responseBody(companyVoPageInfo);
     }
 

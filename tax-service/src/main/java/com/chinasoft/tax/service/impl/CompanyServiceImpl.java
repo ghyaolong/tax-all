@@ -23,6 +23,8 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import tk.mybatis.mapper.entity.Example;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -104,7 +106,7 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
-    public MyPageInfo<CompanyVo> findByCondition(String userId,List<RoleVo> roleVo,PageVo pageVo, CompanyVo companyVo) {
+    public MyPageInfo<CompanyVo> findByCondition(String userId,List<RoleVo> roleVo,PageVo pageVo, CompanyVo companyVo,SearchVo searchVo) {
         boolean isAdmin = false;
         for (RoleVo rVo : roleVo) {
             //如果是管理员，就显示所有公司，如果不是管理员，就显示当前用户的公司
@@ -123,16 +125,27 @@ public class CompanyServiceImpl implements CompanyService {
 
         if(companyVo!=null){
             if(!StringUtils.isEmpty(companyVo.getName())){
-                criteria.orLike("name","%"+companyVo.getName()+"%");
+                criteria.orLike("name","%"+companyVo.getName().trim()+"%");
             }
             if(!StringUtils.isEmpty(companyVo.getTin())){
-                criteria.orLike("tin","%"+companyVo.getTin()+"%");
+                criteria.orLike("tin","%"+companyVo.getTin().trim()+"%");
             }
             if(!StringUtils.isEmpty(companyVo.getCountryCode())){
                 criteria.orLike("countryCode","%"+companyVo.getCountryCode()+"%");
             }
             if(companyVo.getIsAssign()!=null){
                 criteria.andEqualTo("isAssign",companyVo.getIsAssign());
+            }
+
+            if(searchVo!=null){
+                if(!StringUtils.isEmpty(searchVo.getStartDate())&&!StringUtils.isEmpty(searchVo.getEndDate())){
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+                    try {
+                        criteria.andBetween("createTime",sdf.parse(searchVo.getStartDate()+"  00:00:00"),sdf.parse(searchVo.getEndDate()+" 23:59:59"));
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
 
             if(!isAdmin){

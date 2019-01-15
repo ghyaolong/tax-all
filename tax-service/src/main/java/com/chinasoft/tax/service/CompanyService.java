@@ -1,9 +1,6 @@
 package com.chinasoft.tax.service;
 
-import com.chinasoft.tax.vo.CompanyVo;
-import com.chinasoft.tax.vo.MyPageInfo;
-import com.chinasoft.tax.vo.PageVo;
-import com.chinasoft.tax.vo.RoleVo;
+import com.chinasoft.tax.vo.*;
 import com.github.pagehelper.PageInfo;
 
 import java.util.List;
@@ -48,7 +45,7 @@ public interface CompanyService {
      * @param companyVo
      * @return
      */
-    MyPageInfo<CompanyVo> findByCondition(String userid, List<RoleVo> roleVos,PageVo pageVo, CompanyVo companyVo);
+    MyPageInfo<CompanyVo> findByCondition(String userid, List<RoleVo> roleVos, PageVo pageVo, CompanyVo companyVo, SearchVo searchVo);
 
     /**
      * 添加公司

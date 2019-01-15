@@ -39,7 +39,7 @@ public class LogInfoServiceImpl implements LogInfoService {
                 criteria.andLike("username","%"+logInfoVo.getUsername()+"%");
             }
             if(!StringUtils.isEmpty(logInfoVo.getMethod())){
-                criteria.andLike("method","%"+logInfoVo.getMethod()+"%");
+                criteria.andLike("method","%"+logInfoVo.getMethod().trim()+"%");
             }
             if(!StringUtils.isEmpty(logInfoVo.getMethodCode())){
                 criteria.andLike("methodCode","%"+logInfoVo.getMethodCode()+"%");
@@ -56,9 +56,9 @@ public class LogInfoServiceImpl implements LogInfoService {
         }
         if(searchVo!=null){
             if(!StringUtils.isEmpty(searchVo.getStartDate())&&!StringUtils.isEmpty(searchVo.getEndDate())){
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
                 try {
-                    criteria.andBetween("createTime",sdf.parse(searchVo.getStartDate()),sdf.parse(searchVo.getEndDate()));
+                    criteria.andBetween("createTime",sdf.parse(searchVo.getStartDate()+"  00:00:00"),sdf.parse(searchVo.getEndDate()+" 23:59:59"));
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }

@@ -432,6 +432,9 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public MyPageInfo<UserVo> findByCondition(PageVo pageVo, SearchVo searchVo, UserVo userVo){
+
+
+        //去空格处理
         String username = userVo.getUsername();
         String email = userVo.getEmail();
         Integer sex = userVo.getSex();
@@ -445,10 +448,10 @@ public class UserServiceImpl implements UserService {
         //
 
         if (!StringUtils.isEmpty(username)) {
-            criteria.andLike("username", "%" + username + "%");
+            criteria.andLike("username", "%" + username.trim() + "%");
         }
         if (!StringUtils.isEmpty(email)) {
-            criteria.andLike("email", "%" + email + "%");
+            criteria.andLike("email", "%" + email.trim() + "%");
         }
         if (sex != null) {
             criteria.andEqualTo("sex", sex);
@@ -457,16 +460,16 @@ public class UserServiceImpl implements UserService {
             criteria.andEqualTo("status", status);
         }
         if(!StringUtils.isEmpty(userVo.getTel())){
-            criteria.andLike("tel",""+userVo.getTel()+"%");
+            criteria.andLike("tel",""+userVo.getTel().trim()+"%");
         }
 
 
         if (searchVo != null) {
             if (!StringUtils.isEmpty(searchVo.getStartDate()) && !StringUtils.isEmpty(searchVo.getEndDate())) {
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 
                 try {
-                    criteria.andBetween("createTime", sdf.parse(searchVo.getStartDate()), sdf.parse(searchVo.getEndDate()));
+                    criteria.andBetween("createTime", sdf.parse(searchVo.getStartDate()+" 00:00:00"), sdf.parse(searchVo.getEndDate()+" 23:59:59"));
                     //criteria.andGreaterThanOrEqualTo("createTime",sdf.parse(searchVo.getStartDate()));
                     //criteria.andLessThanOrEqualTo("createTime",sdf.parse(searchVo.getEndDate()));
 

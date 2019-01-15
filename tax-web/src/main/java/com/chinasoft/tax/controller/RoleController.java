@@ -219,6 +219,9 @@ public class RoleController {
     @RequestMapping(value = "/del/{ids}",method = RequestMethod.DELETE)
     public Message delRoleByIds(@PathVariable String[] ids){
         for(String id:ids){
+            if("496138616573952".equals(id)){
+                throw new BizException(ExceptionCode.CANNOT_DELETE);
+            }
             roleService.delById(id);
         }
         return ResponseUtil.responseBody("删除角色成功");

@@ -37,13 +37,13 @@ public class DictServiceImpl implements DictService {
 
         if(dictVo!=null){
             if(!StringUtils.isEmpty(dictVo.getName())){
-                criteria.andLike("name","%"+dictVo.getName()+"%");
+                criteria.andLike("name","%"+dictVo.getName().trim()+"%");
             }
             if(!StringUtils.isEmpty(dictVo.getCode())){
-                criteria.andLike("code","%"+dictVo.getCode()+"%");
+                criteria.andLike("code","%"+dictVo.getCode().trim()+"%");
             }
             if(!StringUtils.isEmpty(dictVo.getType())){
-                criteria.andLike("type","%"+dictVo.getType()+"%");
+                criteria.andLike("type","%"+dictVo.getType().toString()+"%");
             }
         }
         List<TDict> tDicts = tDictMapper.selectByExample(example);

@@ -2,6 +2,7 @@ package com.chinasoft.tax.qo;
 
 import com.chinasoft.tax.vo.CompanyVo;
 import com.chinasoft.tax.vo.PageVo;
+import com.chinasoft.tax.vo.SearchVo;
 import com.github.pagehelper.PageInfo;
 import lombok.Data;
 
@@ -15,4 +16,5 @@ import lombok.Data;
 public class CompanyQo {
     PageVo pageVo;
     CompanyVo companyVo;
+    SearchVo searchVo;
 }

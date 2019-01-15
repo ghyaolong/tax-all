@@ -27,6 +27,8 @@ import javax.persistence.PersistenceContext;
 import java.text.ParseException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @Description:
@@ -160,9 +162,25 @@ public class UserController {
            ){
             throw new BizException(ExceptionCode.REQUEST_PARAM_ERROR);
         }
+
+        //用户名：英文+数字
+        boolean b = checkInput(vo.getUsername());
+        if(!b){
+            throw new BizException(ExceptionCode.REQUEST_PARAM_ERROR.getCode(),"用户名只能包含数字＋英文");
+        }
         userService.addUser(vo);
         return ResponseUtil.responseBody("添加成功");
     }
+
+    private boolean checkInput(String input){
+        Pattern pattern = Pattern.compile("^[A-Za-z0-9]+$");
+        Matcher m = pattern.matcher(input);
+        if( !m.matches() ){ //匹配不到,說明輸入的不符合條件
+            return false;
+        }
+        return true;
+    }
+
 
     /**
      * 分配公司给用户
@@ -191,6 +209,9 @@ public class UserController {
     @RequestMapping(value = "/delByIds/{ids}",method = RequestMethod.DELETE)
     public Message delAllByIds(@PathVariable String[] ids){
         for(String id:ids){
+            if("682265633886208".equals(id)){
+                throw new BizException(ExceptionCode.CANNOT_DELETE);
+            }
             userService.delUser(id);
         }
         return ResponseUtil.responseBody("删除用户成功");
