@@ -92,7 +92,7 @@ public class TaxApplicationDetailVo implements Serializable {
      */
     private String taxReturnsPath;
 
-    private String taxReturnsFileName;
+    private String taxReturnsPathFileName;
 
     /**
      * 是否上传了税务申报表
@@ -123,7 +123,7 @@ public class TaxApplicationDetailVo implements Serializable {
      */
     private String otherUpload;
 
-    private String otherFileName;
+    private String otherUploadFileName;
 
     private String otherUploadId;
 

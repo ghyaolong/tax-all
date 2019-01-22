@@ -55,7 +55,7 @@
     </if>
     union
     select ta.company_id companyId,ta.company_name companyName,m.ori_name oriName,m.file_name fileName,m.path,
-    DATE_FORMAT(m.create_time,'%Y-%m-%d %H:%i:%s') createTime,
+    DATE_FORMAT(m.create_time,'%Y-%m-%d') createTime,
     m.tax_dict taxDict,m.currency ,m.material_type_dict materialTypeDict,
     'detailId'
     from

@@ -15,18 +15,19 @@ server:
 spring:
   # 数据源
   datasource:
-    url: jdbc:mysql://114.116.93.197:3306/tax?useUnicode=true&characterEncoding=utf-8&useSSL=false
-    #url: jdbc:mysql://localhost:3306/tax?useUnicode=true&characterEncoding=utf-8&useSSL=false
-    #username: root
+    #url: jdbc:mysql://114.116.93.197:3306/tax?useUnicode=true&characterEncoding=utf-8&useSSL=false
+    url: jdbc:mysql://localhost:3306/tax?useUnicode=true&characterEncoding=utf-8&useSSL=false
+    username: root
     # Jasypt加密 可到common-utils中找到JasyptUtil加解密工具类生成加密结果 格式为ENC(加密结果)
     #password: ENC(ngsRLf40KOVqOJ0PatYiOQ==)
-    password: Yaolong0827!
-    #password: 123456
+    #password: Yaolong0827!
+    password: 123456789
     type: com.alibaba.druid.pool.DruidDataSource
     driverClassName: com.mysql.jdbc.Driver
     multipart:
       max-file-size: 5Mb
       max-request-size: 5Mb
+
   #java mail
   mail:
     host: smtp.qq.com
@@ -41,6 +42,11 @@ spring:
             required: true
   activiti:
     history-level: full
+  # 限制文件大小
+  http:
+    multipart:
+      max-file-size: 4MB
+      max-request-size: 4MB
 #MyBatis配置
 mybatis:
   type-aliases-package: com.chinasoft.tax.po
@@ -110,9 +116,7 @@ ignored:
     - /test/**
     - /process/**
     - /file/download/**
-    - /**
     #- /statistics/**
-    - /**/*
 # 日志
 logging:
   file: tax-logs/tax.log

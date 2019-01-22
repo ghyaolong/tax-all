@@ -76,6 +76,12 @@ public class TTaxApplication {
     private String financialReportPath;
 
     /**
+     * 财务报表附件名称
+     */
+    @Column(name="financial_report_name")
+    private String oriName;
+
+    /**
      * 是否上传了财务报表
      */
     @Column(name = "is_upload_report")
@@ -413,5 +419,13 @@ public class TTaxApplication {
 
     public void setSerialNumber(String serialNumber) {
         this.serialNumber = serialNumber;
+    }
+
+    public String getOriName() {
+        return oriName;
+    }
+
+    public void setOriName(String oriName) {
+        this.oriName = oriName;
     }
 }

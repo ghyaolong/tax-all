@@ -267,12 +267,12 @@ public class TaxApplicationServiceImpl implements TaxApplicationService {
                 for (TaxApplicationDetailVo detailVo : detailVos) {
                     if(!StringUtils.isEmpty(detailVo.getTaxReturnsPath())){
                         MaterialVo taxReturnPath = materialService.findByFileName(detailVo.getTaxReturnsPath());
-                        detailVo.setTaxReturnsFileName(taxReturnPath.getOriName());
+                        detailVo.setTaxReturnsPathFileName(taxReturnPath.getOriName());
                     }
                     if(!StringUtils.isEmpty(detailVo.getPaymentCertificatePath())) {
                         MaterialVo certificatePath = materialService.findByFileName(detailVo.getPaymentCertificatePath());
                         detailVo.setPaymentCertificateFileName(certificatePath.getOriName());
-                    }
+                     }
                     if(!StringUtils.isEmpty(detailVo.getPreTaxReturnsPath())){
 
                         MaterialVo preTaxReturn = materialService.findByFileName(detailVo.getPreTaxReturnsPath());
@@ -280,7 +280,7 @@ public class TaxApplicationServiceImpl implements TaxApplicationService {
                     }
                     if(!StringUtils.isEmpty(detailVo.getOtherUpload())){
                         MaterialVo otherName = materialService.findByFileName(detailVo.getOtherUpload());
-                        detailVo.setOtherFileName(otherName.getOriName());
+                        detailVo.setOtherUploadFileName(otherName.getOriName());
                     }
                 }
                 vo.setDetails(detailVos);

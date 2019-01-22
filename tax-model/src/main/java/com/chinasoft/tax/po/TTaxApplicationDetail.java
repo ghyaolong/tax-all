@@ -100,6 +100,12 @@ public class TTaxApplicationDetail {
     private String taxReturnsPath;
 
     /**
+     * 财务报表附件名称
+     */
+    @Column(name="tax_returns_name")
+    private String taxReturnsPathFileName;
+
+    /**
      * 是否上传了税务申报表
      */
     @Column(name = "is_upload_tax_returns")
@@ -110,6 +116,12 @@ public class TTaxApplicationDetail {
      */
     @Column(name = "payment_certificate")
     private String paymentCertificate;
+
+    /**
+     * 扣款凭证附件名称
+     */
+    @Column(name = "payment_certificate_name")
+    private String paymentCertificateFileName;
 
     /**
      * 扣款凭证附件路径
@@ -132,6 +144,12 @@ public class TTaxApplicationDetail {
     @Column(name = "other_upload_id")
     private String otherUploadId;
 
+    /**
+     * 其他附件名称
+     */
+    @Column(name = "other_name")
+    private String otherUploadFileName;
+
 
 
     ///////added by yaochenglong at 2018-11-23 start
@@ -147,6 +165,12 @@ public class TTaxApplicationDetail {
      */
     @Column(name = "pre_tax_returns_path")
     private String preTaxReturnsPath;
+
+    /**
+     * 预申报表附件名称
+     */
+    @Column(name = "pre_tax_returns_name")
+    private String preTaxReturnsPathFileName;
 
     /**
      * 是否上传了预税务申报表
@@ -554,5 +578,37 @@ public class TTaxApplicationDetail {
 
     public void setActualTaxPayment(Double actualTaxPayment) {
         this.actualTaxPayment = actualTaxPayment;
+    }
+
+    public String getTaxReturnsPathFileName() {
+        return taxReturnsPathFileName;
+    }
+
+    public void setTaxReturnsPathFileName(String taxReturnsPathFileName) {
+        this.taxReturnsPathFileName = taxReturnsPathFileName;
+    }
+
+    public String getPaymentCertificateFileName() {
+        return paymentCertificateFileName;
+    }
+
+    public void setPaymentCertificateFileName(String paymentCertificateFileName) {
+        this.paymentCertificateFileName = paymentCertificateFileName;
+    }
+
+    public String getOtherUploadFileName() {
+        return otherUploadFileName;
+    }
+
+    public void setOtherUploadFileName(String otherUploadFileName) {
+        this.otherUploadFileName = otherUploadFileName;
+    }
+
+    public String getPreTaxReturnsPathFileName() {
+        return preTaxReturnsPathFileName;
+    }
+
+    public void setPreTaxReturnsPathFileName(String preTaxReturnsPathFileName) {
+        this.preTaxReturnsPathFileName = preTaxReturnsPathFileName;
     }
 }

@@ -41,6 +41,11 @@ spring:
             required: true
   activiti:
     history-level: full
+  # 限制文件大小
+  http:
+    multipart:
+      max-file-size: 4MB
+      max-request-size: 4MB
 #MyBatis配置
 mybatis:
   type-aliases-package: com.chinasoft.tax.po
@@ -110,8 +115,9 @@ ignored:
   - /test/**
   - /process/**
   - /file/download/**
-  - /**
-  - /**/*
+
+#  - /**
+#  - /**/*
   #- /statistics/**
 # 日志
 logging:

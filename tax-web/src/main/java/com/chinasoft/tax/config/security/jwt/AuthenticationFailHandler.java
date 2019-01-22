@@ -70,7 +70,7 @@ public class AuthenticationFailHandler extends SimpleUrlAuthenticationFailureHan
             ResponseUtils.out(response,ResponseUtil.responseBody(ExceptionCode.LOGIN_FAILURE.getCode(),((LoginFailLimitException) e).getMessage()));
         } else {
 
-            ResponseUtils.out(response,ResponseUtil.responseBody(ExceptionCode.LOGIN_FAILURE.getCode(),"登录失败，其他内部错误"));
+            ResponseUtils.out(response,ResponseUtil.responseBody(ExceptionCode.LOGIN_FAILURE.getCode(),e.getMessage()));
         }
     }
 
