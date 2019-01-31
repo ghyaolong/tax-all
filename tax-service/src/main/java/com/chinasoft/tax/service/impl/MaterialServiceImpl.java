@@ -29,7 +29,7 @@ public class MaterialServiceImpl implements MaterialService {
     private TMaterialMapper tMaterialMapper;
 
     @Override
-    public MyPageInfo<MaterialInfoPo> getAllPage(PageVo pageVo, SearchVo searchVo, String companyName, String materialTypeDict) {
+    public MyPageInfo<MaterialInfoPo> getAllPage(PageVo pageVo, SearchVo searchVo, String[] companyIds,String companyName, String[] taxDicts,String materialTypeDict) {
         PageHelper.startPage(pageVo.getPageNumber(),pageVo.getPageSize(),true);
         if(searchVo!=null){
             if(!StringUtils.isEmpty(searchVo.getStartDate())){
@@ -38,7 +38,7 @@ public class MaterialServiceImpl implements MaterialService {
             if(!StringUtils.isEmpty(searchVo.getEndDate())){
                 searchVo.setEndDate(searchVo.getEndDate()+" 23:59:59");
             }
-            List<MaterialInfoPo> allMaterial = tMaterialMapper.findAllMaterial(companyName, materialTypeDict, searchVo.getStartDate(), searchVo.getEndDate());
+            List<MaterialInfoPo> allMaterial = tMaterialMapper.findAllMaterial(companyName,companyIds, taxDicts,materialTypeDict, searchVo.getStartDate(), searchVo.getEndDate());
             MyPageInfo<MaterialInfoPo> page = new MyPageInfo<>(allMaterial);
             if(!CollectionUtils.isEmpty(allMaterial)){
                 page.setTotalElements(allMaterial.size());

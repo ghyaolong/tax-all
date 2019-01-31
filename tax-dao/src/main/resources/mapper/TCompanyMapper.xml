@@ -9,6 +9,7 @@
     <result column="name" jdbcType="VARCHAR" property="name" />
     <result column="TIN" jdbcType="VARCHAR" property="tin" />
     <result column="establishment_time" jdbcType="TIMESTAMP" property="establishmentTime" />
+    <result column="write_off_time" jdbcType="TIMESTAMP" property="writeOffTime" />
     <result column="country_code" jdbcType="VARCHAR" property="countryCode" />
     <result column="currency_code" jdbcType="VARCHAR" property="currencyCode" />
     <result column="remarks" jdbcType="VARCHAR" property="remarks" />

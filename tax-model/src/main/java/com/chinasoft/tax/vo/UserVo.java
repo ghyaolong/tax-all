@@ -93,6 +93,11 @@ public class UserVo {
     private String departid;
 
     /**
+     * 用户角色名称，用于在用户列表展示用户角色
+     */
+    private String roleNames;
+
+    /**
      * 用户拥有的权限
      */
     private List<PermissionVo> permissions;
@@ -116,5 +121,10 @@ public class UserVo {
      * 用于接收前端用户发送的公司ids
      */
     private String companyIds;
+
+    /**
+     * E编码
+     */
+    private String eCode;
 
 }

@@ -8,7 +8,9 @@ import lombok.Data;
 public class MaterialQo {
     private PageVo pageVo;
     private String companyId;
+    private String companyIds;
     private String companyName;
     private String materialTypeDict;
+    private String taxDicts;
     private SearchVo searchVo;
 }

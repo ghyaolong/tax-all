@@ -29,7 +29,11 @@ public class MaterialController {
         String companyName = materialQo.getCompanyName();
         String materialTypeDict = materialQo.getMaterialTypeDict();
         SearchVo searchVo = materialQo.getSearchVo();
-        MyPageInfo<MaterialInfoPo> allPage = materialService.getAllPage(pageVo, searchVo, companyName, materialTypeDict);
+        String companyId = materialQo.getCompanyId();
+        String taxDict = materialQo.getTaxDicts();
+        String[] ids = companyId.split(",");
+        String[] taxDicts = taxDict.split(",");
+        MyPageInfo<MaterialInfoPo> allPage = materialService.getAllPage(pageVo, searchVo, ids,companyName,taxDicts,materialTypeDict);
         return ResponseUtil.responseBody(allPage);
     }
 

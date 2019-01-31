@@ -79,6 +79,7 @@ public enum ExceptionCode {
     CONTACT_ID_EXCEPTION("B-00028","联系人ID为空"),
     ORDER_NUM_IS_NOT_EXIST("B-00029","订单号不存在"),
     SMS_EXCEPTION("B-00040","发送短信失败"),
+    DATA_NOT_EXIST("B-00041","数据不存在"),
     ;
     private final String code;
     private final String msg;

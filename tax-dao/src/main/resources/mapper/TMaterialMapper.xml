@@ -29,6 +29,7 @@
     select a.company_id companyId,a.company_name companyName,m.ori_name oriName,m.file_name fileName,m.path,
     DATE_FORMAT(m.create_time,'%Y-%m-%d') createTime,
     m.tax_dict taxDict,m.currency ,m.material_type_dict materialTypeDict,
+    DATE_FORMAT(d.tax_period,'%Y-%m-%d') as taxPeriod,
     d.tax_application_id as detailId
     from
     (t_material m
@@ -42,29 +43,51 @@
     t_tax_application a
     on d.tax_application_id = a.id
     where 1=1 and a.company_id != '' and m.tax_dict != ''
-    <if test= "companyName!=null and companyName!=''">
-      and a.company_name LIKE CONCAT('%',#{companyName},'%')
+    <!--<if test= "companyName!=null and companyName!=''">-->
+      <!--and a.company_name LIKE CONCAT('%',#{companyName},'%')-->
+    <!--</if>-->
+    <if test= "companyIds!=null and companyIds!=''">
+      and a.company_id in
+      <foreach collection="array" item="id" index="index" open="(" close=")" separator=",">
+        #{companyIds}
+      </foreach>
+    </if>
+
+    <if test= "taxDicts!=null and taxDicts!=''">
+      and m.tax_dict in
+      <foreach collection="array" item="id" index="index" open="(" close=")" separator=",">
+        #{taxDicts}
+      </foreach>
     </if>
 
     <if test="materialTypeDict!=null  and materialTypeDict!=''">
       and m.material_type_dict = #{materialTypeDict}
     </if>
 
+    <!--<if test="startTime!=null and startTime!='' and endTime!=null and endTime!=''">-->
+      <!--and m.create_time between str_to_date(#{startTime},'%Y-%m-%d %H:%i:%s') and str_to_date(#{endTime},'%Y-%m-%d %H:%i:%s')-->
+    <!--</if>-->
     <if test="startTime!=null and startTime!='' and endTime!=null and endTime!=''">
-      and m.create_time between str_to_date(#{startTime},'%Y-%m-%d %H:%i:%s') and str_to_date(#{endTime},'%Y-%m-%d %H:%i:%s')
+      and d.tax_period between str_to_date(#{startTime},'%Y-%m-%d %H:%i:%s') and str_to_date(#{endTime},'%Y-%m-%d %H:%i:%s')
     </if>
     union
     select ta.company_id companyId,ta.company_name companyName,m.ori_name oriName,m.file_name fileName,m.path,
     DATE_FORMAT(m.create_time,'%Y-%m-%d') createTime,
-    m.tax_dict taxDict,m.currency ,m.material_type_dict materialTypeDict,
+    m.tax_dict taxDict,m.currency ,m.material_type_dict materialTypeDict,'taxPeriod',
     'detailId'
     from
     t_material m
     left join t_tax_application ta on
     m.id = ta.financial_report
     where 1=1 and ta.company_id != '' and m.tax_dict!= ''
-    <if test= "companyName!=null and companyName!=''">
-      and ta.company_name LIKE CONCAT('%',#{companyName},'%')
+    <!--<if test= "companyName!=null and companyName!=''">-->
+      <!--and ta.company_name LIKE CONCAT('%',#{companyName},'%')-->
+    <!--</if>-->
+    <if test= "companyIds!=null and companyIds!=''">
+      and ta.company_id in
+      <foreach collection="array" item="id" index="index" open="(" close=")" separator=",">
+        #{companyIds}
+      </foreach>
     </if>
 
     <if test="materialTypeDict!=null  and materialTypeDict!=''">

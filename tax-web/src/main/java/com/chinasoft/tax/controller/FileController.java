@@ -36,6 +36,8 @@ public class FileController {
     @Value("${tax.file.maxSize}")
     private Long fileMaxSize;
 
+
+    private String tempPath;
     @Autowired
     private MaterialService materialService;
 
@@ -66,10 +68,13 @@ public class FileController {
         if(StringUtils.isEmpty(materialTypeDict)){
             throw new BizException(ExceptionCode.REQUEST_PARAM_ERROR);
         }
+        tempPath = filePath+"temp"+File.separator;
         if (files != null && files.length>0) {
-            if(StringUtils.isEmpty(filePath)){
-                filePath = ClassUtils.getDefaultClassLoader().getResource("upload").getPath();
+            //filePath=filePath+"temp"+File.separator;
+            if(StringUtils.isEmpty(tempPath)){
+                tempPath = ClassUtils.getDefaultClassLoader().getResource("upload/temp").getPath();
             }
+
             String newFileName;
             for (MultipartFile file : files) {
                 if (!file.isEmpty()) {
@@ -88,7 +93,7 @@ public class FileController {
                         }
                         newFileName = IDGeneratorUtils.getUUID32() + ext;
                         //Files.copy(file.getInputStream(), Paths.get(filePath+imgPath, newFileName));
-                        MyFileUtils.uploadFile(file.getBytes(), filePath, newFileName);
+                        MyFileUtils.uploadFile(file.getBytes(), tempPath, newFileName);
 
                         //将此文件保存到数据库，并返回文件相关信息
                         MaterialVo vo = new MaterialVo();
@@ -180,6 +185,27 @@ public class FileController {
             }
         }
         log.info("download success");
+    }
+
+    /**
+     * @fileName 例如：0e3ef28c0f704f2d9b78f4cc9a2c38e2.xls
+     * @return
+     */
+    @DeleteMapping("delete/{fileName:.+}")
+    public Message deleteFile(@PathVariable String fileName){
+        //正式目录和临时目录都要删除
+        File file = new File(filePath+"temp"+File.separator+fileName);
+        if(file.exists()){
+            file.deleteOnExit();
+            return ResponseUtil.responseBody("删除成功");
+        }
+
+        File file1 = new File(filePath+fileName);
+        if(file1.exists()){
+            file1.delete();
+            return ResponseUtil.responseBody("删除成功");
+        }
+        throw new BizException(ExceptionCode.DATA_NOT_EXIST.getCode(),"文件不存在");
     }
 
 }

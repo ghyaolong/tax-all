@@ -27,6 +27,12 @@ public class TCompany {
     private Date establishmentTime;
 
     /**
+     * 注销时间
+     */
+    @Column(name = "write_off_time")
+    private Date writeOffTime;
+
+    /**
      * 所在国家
      */
     @Column(name = "country_code")
@@ -61,6 +67,14 @@ public class TCompany {
 
     @Column(name = "is_assign")
     private Integer isAssign;
+
+    public Date getWriteOffTime() {
+        return writeOffTime;
+    }
+
+    public void setWriteOffTime(Date writeOffTime) {
+        this.writeOffTime = writeOffTime;
+    }
 
     public Integer getIsAssign() {
         return isAssign;

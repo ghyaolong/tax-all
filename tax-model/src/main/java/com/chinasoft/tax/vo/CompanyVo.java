@@ -25,6 +25,11 @@ public class CompanyVo implements java.io.Serializable{
     private Date establishmentTime;
 
     /**
+     * 注销日期
+     */
+    private Date writeOffTime;
+
+    /**
      * 所在国家
      */
     private String countryCode;

@@ -80,6 +80,12 @@ public class TUser {
     private String deletor;
 
     /**
+     * E编码
+     */
+    @Column(name = "eCode")
+    private String eCode;
+
+    /**
      * @return id
      */
     public String getId() {
@@ -365,5 +371,13 @@ public class TUser {
      */
     public void setDeletor(String deletor) {
         this.deletor = deletor;
+    }
+
+    public String geteCode() {
+        return eCode;
+    }
+
+    public void seteCode(String eCode) {
+        this.eCode = eCode;
     }
 }

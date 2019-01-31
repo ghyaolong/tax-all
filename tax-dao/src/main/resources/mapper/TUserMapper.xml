@@ -23,6 +23,7 @@
     <result column="del_time" jdbcType="TIMESTAMP" property="delTime" />
     <result column="department_id" jdbcType="VARCHAR" property="departmentId" />
     <result column="work_number" jdbcType="VARCHAR" property="workNumber" />
+    <result column="eCode" jdbcType="VARCHAR" property="eCode" />
   </resultMap>
 
   <select id="getPrevReview" resultMap="BaseResultMap" parameterType="java.util.Map">

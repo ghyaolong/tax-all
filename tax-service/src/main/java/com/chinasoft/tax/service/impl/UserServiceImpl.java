@@ -196,6 +196,10 @@ public class UserServiceImpl implements UserService {
         if (bool) {
             throw new BizException(ExceptionCode.WORK_NUMBER_AREADY_EXIST);
         }
+        boolean isExistECode = isExistByECode(vo.getECode());
+        if(isExistECode){
+            throw new BizException(ExceptionCode.DATA_AREADY_EXIST.getCode(),"E编码已存在");
+        }
         log.info("验证用户唯一性通过，");
         //这里将密码加密成暗文
         BeanUtils.copyProperties(vo, tuser);
@@ -237,6 +241,8 @@ public class UserServiceImpl implements UserService {
         saveUserCompany(tuser.getId(), companyIds);
         log.info("添加用户成功");
     }
+
+
 
     private void saveUserCompany(String userId, String companyIds) {
         String[] ids = companyIds.split(",");
@@ -286,6 +292,17 @@ public class UserServiceImpl implements UserService {
         Example example = new Example(TUser.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.orEqualTo("workNumber", workNumber);
+        int i = tUserMapper.selectCountByExample(example);
+        return i > 0;
+    }
+
+    private boolean isExistByECode(String eCode) {
+        if (StringUtils.isEmpty(eCode)) {
+            throw new BizException(ExceptionCode.REQUEST_PARAM_MISSING);
+        }
+        Example example = new Example(TUser.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.orEqualTo("eCode", eCode);
         int i = tUserMapper.selectCountByExample(example);
         return i > 0;
     }
@@ -352,6 +369,12 @@ public class UserServiceImpl implements UserService {
                 if(i>0){
                     throw new BizException(ExceptionCode.DATA_AREADY_EXIST.getCode(),"工号已存在");
                 }
+            }else if(!vo.getECode().equals(tUser.geteCode())){
+                queryExample.createCriteria().andEqualTo("eCode",vo.getECode());
+                int i = tUserMapper.selectCountByExample(queryExample);
+                if(i>0){
+                    throw new BizException(ExceptionCode.DATA_AREADY_EXIST.getCode(),"E编码已存在");
+                }
             }
         }
         TUser tuser = tUserMapper.selectByPrimaryKey(vo.getId());
@@ -408,7 +431,9 @@ public class UserServiceImpl implements UserService {
 
         tUserCompanyMapper.deleteByExample(tuserCompanyExample);
         log.info("修改用户......删除用户原来的公司信息");
-        saveUserCompany(vo.getId(), companyIds);
+        if(!StringUtils.isEmpty(companyIds)){
+            saveUserCompany(vo.getId(), companyIds);
+        }
         tuser.setDepartid(vo.getDepartmentIds());
         tUserMapper.updateByPrimaryKeySelective(tuser);
     }
@@ -450,18 +475,23 @@ public class UserServiceImpl implements UserService {
         if (!StringUtils.isEmpty(username)) {
             criteria.andLike("username", "%" + username.trim() + "%");
         }
-        if (!StringUtils.isEmpty(email)) {
-            criteria.andLike("email", "%" + email.trim() + "%");
+//        if (!StringUtils.isEmpty(email)) {
+//            criteria.andLike("email", "%" + email.trim() + "%");
+//        }
+//        if (sex != null) {
+//            criteria.andEqualTo("sex", sex);
+//        }
+//        if (status != null) {
+//            criteria.andEqualTo("status", status);
+//        }
+//        if(!StringUtils.isEmpty(userVo.getTel())){
+//            criteria.andLike("tel",""+userVo.getTel().trim()+"%");
+//        }
+
+        if(!StringUtils.isEmpty(userVo.getECode())){
+            criteria.andLike("eCode",""+userVo.getECode().trim()+"%");
         }
-        if (sex != null) {
-            criteria.andEqualTo("sex", sex);
-        }
-        if (status != null) {
-            criteria.andEqualTo("status", status);
-        }
-        if(!StringUtils.isEmpty(userVo.getTel())){
-            criteria.andLike("tel",""+userVo.getTel().trim()+"%");
-        }
+
 
 
         if (searchVo != null) {
@@ -470,8 +500,6 @@ public class UserServiceImpl implements UserService {
 
                 try {
                     criteria.andBetween("createTime", sdf.parse(searchVo.getStartDate()+" 00:00:00"), sdf.parse(searchVo.getEndDate()+" 23:59:59"));
-                    //criteria.andGreaterThanOrEqualTo("createTime",sdf.parse(searchVo.getStartDate()));
-                    //criteria.andLessThanOrEqualTo("createTime",sdf.parse(searchVo.getEndDate()));
 
                 } catch (ParseException e) {
                     e.printStackTrace();
@@ -479,31 +507,40 @@ public class UserServiceImpl implements UserService {
 
             }
         }
-        if(!StringUtils.isEmpty(userVo.getDepartmentIds())){
-            criteria.andEqualTo("departid", userVo.getDepartmentIds());
-        }
 
         PageHelper.startPage(pageVo.getPageNumber(), pageVo.getPageSize(), true);
         List<TUser> tUsers = tUserMapper.selectByExample(example);
         int count = tUserMapper.selectCountByExample(example);
         List<UserVo> userVoList = MyBeanUtils.copyList(tUsers, UserVo.class, "password", "password2");
         Iterator<UserVo> iterator = userVoList.iterator();
+        String roleName="";
         while (iterator.hasNext()){
             UserVo vo = iterator.next();
             List<TRole> tRoleList = tUserRoleMapper.findByUserId(vo.getId());
+            roleName="";
             if (!CollectionUtils.isEmpty(tRoleList)) {
+                for (TRole tRole : tRoleList) {
+                    roleName+=tRole.getName()+",";
+                }
                 List<RoleVo> roleVos = MyBeanUtils.copyList(tRoleList, RoleVo.class);
                 vo.setRoles(roleVos);
+
             }
 
             if(!StringUtils.isEmpty(userVo.getRoleIds())){
+                boolean flag = false;
                 for (TRole tRole : tRoleList) {
-                    if(!tRole.getId().equals(userVo.getRoleIds())){
-                        try {
-                            iterator.remove();
-                        }catch (Exception e){
 
-                        }
+                    if(tRole.getId().equals(userVo.getRoleIds())){
+                       flag = true;
+                       break;
+                    }
+                }
+                if(!flag){
+                    try {
+                        iterator.remove();
+                    }catch (Exception e){
+
                     }
                 }
             }
@@ -518,11 +555,11 @@ public class UserServiceImpl implements UserService {
                 List<CompanyVo> companyVoList = MyBeanUtils.copyList(tCompanyList, CompanyVo.class);
                 vo.setCompanys(companyVoList);
             }
+            if(!StringUtils.isEmpty(roleName)){
+                vo.setRoleNames(roleName.trim().substring(0,roleName.trim().lastIndexOf(",")));
+            }
+
         }
-//        for (UserVo vo : userVoList) {
-//
-//
-//        }
         MyPageInfo info = new MyPageInfo(userVoList);
         if(!CollectionUtils.isEmpty(userVoList)){
             info.setTotalElements(count);

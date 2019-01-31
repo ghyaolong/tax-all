@@ -3,6 +3,7 @@ package com.chinasoft.tax.service.impl;
 import com.chinasoft.tax.common.utils.DateUtil;
 import com.chinasoft.tax.common.utils.IDGeneratorUtils;
 import com.chinasoft.tax.common.utils.MyBeanUtils;
+import com.chinasoft.tax.common.utils.MyFileUtils;
 import com.chinasoft.tax.constant.CommonConstant;
 import com.chinasoft.tax.dao.TApplicationMaterialMapper;
 import com.chinasoft.tax.dao.TAuditLogMapper;
@@ -16,7 +17,9 @@ import com.chinasoft.tax.po.TTaxApplicationDetail;
 import com.chinasoft.tax.service.MaterialService;
 import com.chinasoft.tax.service.TaxApplicationService;
 import com.chinasoft.tax.vo.*;
+import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -24,6 +27,13 @@ import org.springframework.util.StringUtils;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
+import java.io.File;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -45,6 +55,10 @@ public class TaxApplicationServiceImpl implements TaxApplicationService {
     @Autowired
     private MaterialService materialService;
 
+
+    @Value("${tax.file.upload}")
+    private String filePath;
+
     @Transactional
     @Override
     public void add(TaxApplicationVo taxApplicationVo) {
@@ -63,6 +77,7 @@ public class TaxApplicationServiceImpl implements TaxApplicationService {
             if(StringUtils.isEmpty(tTaxApplication.getFinancialReport())){
                 throw new BizException(ExceptionCode.REQUEST_PARAM_ERROR.getCode(),"请上传财务报表");
             }else{
+                MyFileUtils.evictUselessFile(filePath,taxApplicationVo.getOriName());
                 saveApplicationMaterial(taxApplicationVo, tTaxApplication);
                 tTaxApplication.setIsUploadReport(CommonConstant.FILE_UPLOADED);
             }
@@ -78,6 +93,7 @@ public class TaxApplicationServiceImpl implements TaxApplicationService {
                 if(StringUtils.isEmpty(tTaxApplicationDetail.getPreTaxReturns())){
                     throw new BizException(ExceptionCode.REQUEST_PARAM_ERROR.getCode(),"请上传预申报表");
                 }else{
+                    MyFileUtils.evictUselessFile(filePath,tTaxApplicationDetail.getPreTaxReturnsPathFileName());
                     tTaxApplicationDetail.setIsUploadPreTaxReturns(CommonConstant.FILE_UPLOADED);
                 }
             }
@@ -89,6 +105,8 @@ public class TaxApplicationServiceImpl implements TaxApplicationService {
 
         }
     }
+
+
 
     @Override
     public void input(TaxApplicationVo taxApplicationVo) {
@@ -121,6 +139,7 @@ public class TaxApplicationServiceImpl implements TaxApplicationService {
             if(StringUtils.isEmpty(tTaxApplication.getFinancialReport())){
                 throw new BizException(ExceptionCode.REQUEST_PARAM_ERROR.getCode(),"请上传财务报表");
             }else{
+                MyFileUtils.evictUselessFile(filePath,taxApplicationVo.getOriName());
                 saveApplicationMaterial(taxApplicationVo, tTaxApplication);
                 tTaxApplication.setIsUploadReport(CommonConstant.FILE_UPLOADED);
             }
@@ -137,6 +156,7 @@ public class TaxApplicationServiceImpl implements TaxApplicationService {
                 if(StringUtils.isEmpty(tTaxApplicationDetail.getPreTaxReturns())){
                     throw new BizException(ExceptionCode.REQUEST_PARAM_ERROR.getCode(),"请上传预申报表");
                 }else{
+                    MyFileUtils.evictUselessFile(filePath,tTaxApplicationDetail.getPreTaxReturnsPathFileName());
                     tTaxApplicationDetail.setIsUploadPreTaxReturns(CommonConstant.FILE_UPLOADED);
                 }
             }

@@ -21,7 +21,7 @@ public interface MaterialService {
      * @param
      * @return
      */
-    MyPageInfo<MaterialInfoPo> getAllPage(PageVo pageVo, SearchVo searchVo, String companyName, String materialTypeDict);
+    MyPageInfo<MaterialInfoPo> getAllPage(PageVo pageVo, SearchVo searchVo, String[] companyIds,String companyName,String[] taxDicts, String materialTypeDict);
 
     /**
      * 保存资料
