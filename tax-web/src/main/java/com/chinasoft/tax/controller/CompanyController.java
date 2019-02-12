@@ -70,6 +70,17 @@ public class CompanyController {
     }
 
     /**
+     * 通过用户Id查询公司(税务专员),审核人，查询人
+     * @param userId
+     * @return
+     */
+    @GetMapping("/getAll/{userId}")
+    public Message getAllByUserId(@PathVariable String userId){
+        List<CompanyVo> vo = companyService.findByUserId(userId);
+        return ResponseUtil.responseBody(vo);
+    }
+
+    /**
      *
      * @param companyVo
      * @return

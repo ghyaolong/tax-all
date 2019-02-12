@@ -9,6 +9,7 @@ import com.chinasoft.tax.vo.*;
 import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,8 +32,14 @@ public class MaterialController {
         SearchVo searchVo = materialQo.getSearchVo();
         String companyId = materialQo.getCompanyId();
         String taxDict = materialQo.getTaxDicts();
-        String[] ids = companyId.split(",");
-        String[] taxDicts = taxDict.split(",");
+        String[] ids = null;
+        String[] taxDicts = null;
+        if(!StringUtils.isEmpty(companyId)){
+            ids = companyId.split(",");
+        }
+        if(!StringUtils.isEmpty(taxDict)){
+            taxDicts = taxDict.split(",");
+        }
         MyPageInfo<MaterialInfoPo> allPage = materialService.getAllPage(pageVo, searchVo, ids,companyName,taxDicts,materialTypeDict);
         return ResponseUtil.responseBody(allPage);
     }
