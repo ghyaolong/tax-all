@@ -46,17 +46,17 @@
     <!--<if test= "companyName!=null and companyName!=''">-->
       <!--and a.company_name LIKE CONCAT('%',#{companyName},'%')-->
     <!--</if>-->
-    <if test= "companyIds!=null and companyIds!=''">
+    <if test = "companyIds!=null and companyIds!=''">
       and a.company_id in
-      <foreach collection="array" item="id" index="index" open="(" close=")" separator=",">
-        #{companyIds}
+      <foreach collection="companyIds" item="id" index="index" open="(" close=")" separator=",">
+        #{id}
       </foreach>
     </if>
 
     <if test= "taxDicts!=null and taxDicts!=''">
       and m.tax_dict in
-      <foreach collection="array" item="id" index="index" open="(" close=")" separator=",">
-        #{taxDicts}
+      <foreach collection="taxDicts" item="id" index="index" open="(" close=")" separator=",">
+        #{id}
       </foreach>
     </if>
 
@@ -85,9 +85,12 @@
     <!--</if>-->
     <if test= "companyIds!=null and companyIds!=''">
       and ta.company_id in
-      <foreach collection="array" item="id" index="index" open="(" close=")" separator=",">
-        #{companyIds}
+      <foreach collection="companyIds" item="id" index="index" open="(" close=")" separator=",">
+        #{id}
       </foreach>
+    </if>
+    <if test= "taxDicts!=null and taxDicts!=''">
+      and m.tax_dict !='none'
     </if>
 
     <if test="materialTypeDict!=null  and materialTypeDict!=''">

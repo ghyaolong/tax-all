@@ -38,4 +38,12 @@
     )
     group by user_id;
   </select>
+
+  <select id="findByUserId" parameterType="java.lang.String" resultMap="BaseResultMap">
+    SELECT * from t_company where id in
+    (select uc.company_id from t_user_company uc
+    where uc.user_id = #{userId}
+    )
+  </select>
+
 </mapper>

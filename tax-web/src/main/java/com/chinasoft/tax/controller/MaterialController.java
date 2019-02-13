@@ -30,7 +30,7 @@ public class MaterialController {
         String companyName = materialQo.getCompanyName();
         String materialTypeDict = materialQo.getMaterialTypeDict();
         SearchVo searchVo = materialQo.getSearchVo();
-        String companyId = materialQo.getCompanyId();
+        String companyId = materialQo.getCompanyIds();
         String taxDict = materialQo.getTaxDicts();
         String[] ids = null;
         String[] taxDicts = null;

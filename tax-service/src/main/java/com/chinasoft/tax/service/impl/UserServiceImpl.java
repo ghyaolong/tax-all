@@ -495,8 +495,8 @@ public class UserServiceImpl implements UserService {
 
 
         if (searchVo != null) {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
             if (!StringUtils.isEmpty(searchVo.getStartDate()) && !StringUtils.isEmpty(searchVo.getEndDate())) {
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 
                 try {
                     criteria.andBetween("createTime", sdf.parse(searchVo.getStartDate()+" 00:00:00"), sdf.parse(searchVo.getEndDate()+" 23:59:59"));
@@ -505,6 +505,18 @@ public class UserServiceImpl implements UserService {
                     e.printStackTrace();
                 }
 
+            }else if(!StringUtils.isEmpty(searchVo.getStartDate()) && StringUtils.isEmpty(searchVo.getEndDate())){
+                try {
+                    criteria.andGreaterThanOrEqualTo("createTime",sdf.parse(searchVo.getStartDate()+" 00:00:00"));
+                }catch (ParseException e){
+                    e.printStackTrace();
+                }
+            }else if(StringUtils.isEmpty(searchVo.getStartDate()) && !StringUtils.isEmpty(searchVo.getEndDate())){
+                try {
+                    criteria.andLessThanOrEqualTo("createTime",sdf.parse(searchVo.getEndDate()+" 23:59:59"));
+                }catch (ParseException e){
+                    e.printStackTrace();
+                }
             }
         }
 

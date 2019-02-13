@@ -38,13 +38,15 @@ public class MaterialServiceImpl implements MaterialService {
             if(!StringUtils.isEmpty(searchVo.getEndDate())){
                 searchVo.setEndDate(searchVo.getEndDate()+" 23:59:59");
             }
-            List<MaterialInfoPo> allMaterial = tMaterialMapper.findAllMaterial(companyName,companyIds, taxDicts,materialTypeDict, searchVo.getStartDate(), searchVo.getEndDate());
-            MyPageInfo<MaterialInfoPo> page = new MyPageInfo<>(allMaterial);
-            if(!CollectionUtils.isEmpty(allMaterial)){
-                page.setTotalElements(allMaterial.size());
-                page.setPageNum(pageVo.getPageNumber());
+            if(!StringUtils.isEmpty(companyIds)){
+                List<MaterialInfoPo> allMaterial = tMaterialMapper.findAllMaterial(companyName,companyIds, taxDicts,materialTypeDict, searchVo.getStartDate(), searchVo.getEndDate());
+                MyPageInfo<MaterialInfoPo> page = new MyPageInfo<>(allMaterial);
+                if(!CollectionUtils.isEmpty(allMaterial)){
+                    page.setTotalElements(allMaterial.size());
+                    page.setPageNum(pageVo.getPageNumber());
+                }
+                return page;
             }
-            return page;
         }
         return null;
     }

@@ -71,4 +71,6 @@ public interface CompanyService {
      * @param taxesIds
      */
     void assignTaxes(String companyId, String taxesIds);
+
+    List<CompanyVo> findByUserId(String userId);
 }

@@ -16,7 +16,6 @@ import com.chinasoft.tax.service.CompanyService;
 import com.chinasoft.tax.vo.*;
 import com.github.pagehelper.PageHelper;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.IteratorUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -200,6 +199,17 @@ public class CompanyServiceImpl implements CompanyService {
         tCompany.setEstablishmentTime(new Date());
         tCompany.setIsAssign(CommonConstant.COMPANY_UNASSGINED);
         tCompanyMapper.insertSelective(tCompany);
+
+
+        //默认给当前公司分配所有税种
+        Example dictExmaple = new Example(TDict.class);
+        dictExmaple.createCriteria().andEqualTo("type", 2);
+        List<TDict> tDicts = tDictMapper.selectByExample(dictExmaple);
+        StringBuffer sbTaxIds = new StringBuffer();
+        for (TDict tDict : tDicts) {
+            sbTaxIds.append(tDict.getId()).append(",");
+        }
+        assignTaxes(tCompany.getId(),sbTaxIds.substring(0,sbTaxIds.length()-1));
         log.info("保存公司成功");
     }
 
@@ -278,5 +288,12 @@ public class CompanyServiceImpl implements CompanyService {
             tCompanyTaxesMapper.insertSelective(tt);
         }
         log.info("分配税种成功");
+    }
+
+    @Override
+    public List<CompanyVo> findByUserId(String userId) {
+        List<TCompany> tCompanies = tCompanyMapper.findByUserId(userId);
+        List<CompanyVo> companyVos = MyBeanUtils.copyList(tCompanies, CompanyVo.class);
+        return companyVos;
     }
 }

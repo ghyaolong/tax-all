@@ -22,4 +22,7 @@ public interface TCompanyMapper extends MyMapper<TCompany> {
      * @return
      */
     List<TaskTipPo> getTaskTip(@Param("status") Integer status);
+
+    List<TCompany> findByUserId(@Param("userId") String userId);
+
 }
