@@ -32,7 +32,9 @@
       LEFT JOIN t_role r
       ON ur.role_id = r.id
       WHERE user_Id = #{userId}
-      and r.process_key = #{key}
+      <if test="key!=null and key!=''">
+        and r.process_key like concat( '%', #{key} ,'%' )
+      </if>
     </select>
 
 </mapper>
