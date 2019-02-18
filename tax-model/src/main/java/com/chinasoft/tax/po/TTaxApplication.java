@@ -10,6 +10,11 @@ public class TTaxApplication {
     private String id;
 
     /**
+     * 业务流水号
+     */
+    private String businessFlowNumber;
+
+    /**
      * 公司id
      */
     @Column(name = "company_id")
@@ -427,5 +432,13 @@ public class TTaxApplication {
 
     public void setOriName(String oriName) {
         this.oriName = oriName;
+    }
+
+    public String getBusinessFlowNumber() {
+        return businessFlowNumber;
+    }
+
+    public void setBusinessFlowNumber(String businessFlowNumber) {
+        this.businessFlowNumber = businessFlowNumber;
     }
 }

@@ -3,6 +3,7 @@ package com.chinasoft.tax.service.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.chinasoft.tax.common.utils.DateUtil;
 import com.chinasoft.tax.common.utils.IDGeneratorUtils;
+import com.chinasoft.tax.common.utils.BusinessFlowNumberUtil;
 import com.chinasoft.tax.dao.TTaxApplicationDetailMapper;
 import com.chinasoft.tax.dao.TTaxApplicationMapper;
 import com.chinasoft.tax.dao.TUserMapper;
@@ -417,6 +418,10 @@ public class TaxProcessServiceImpl implements TaxProcessService {
         } else {
             bussinessKey = taxApplicationVo.getId();
         }
+
+        // 生成流水号
+        String businessFlowNumber = BusinessFlowNumberUtil.getBusinessFlowNumber();
+        taxApplicationVo.setBusinessFlowNumber(businessFlowNumber);
 
         taxApplicationVo.setCreateTime(new Date());
 

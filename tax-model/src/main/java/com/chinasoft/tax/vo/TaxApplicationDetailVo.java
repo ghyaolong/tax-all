@@ -13,6 +13,11 @@ public class TaxApplicationDetailVo implements Serializable {
     private String id;
 
     /**
+     * 业务流水号
+     */
+    private String businessFlowNumber;
+
+    /**
      * 纳税所属期
      */
     @Excel(name = "所属期间")

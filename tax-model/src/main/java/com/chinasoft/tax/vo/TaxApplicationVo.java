@@ -14,6 +14,11 @@ public class TaxApplicationVo implements Serializable {
     private String id;
 
     /**
+     * 业务流水号
+     */
+    private String businessFlowNumber;
+
+    /**
      * 公司id
      */
     private String companyId;
