@@ -4,11 +4,14 @@ import com.chinasoft.tax.annotation.SystemLog;
 import com.chinasoft.tax.common.utils.IDGeneratorUtils;
 import com.chinasoft.tax.common.utils.MyFileUtils;
 import com.chinasoft.tax.common.utils.ResponseUtil;
+import com.chinasoft.tax.constant.CommonConstant;
 import com.chinasoft.tax.enums.ExceptionCode;
 import com.chinasoft.tax.service.MaterialService;
+import com.chinasoft.tax.service.SysConfigService;
 import com.chinasoft.tax.vo.BizException;
 import com.chinasoft.tax.vo.MaterialVo;
 import com.chinasoft.tax.vo.Message;
+import com.chinasoft.tax.vo.SysConfigVo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +45,9 @@ public class FileController {
     private MaterialService materialService;
 
     private final ResourceLoader resourceLoader;
+
+    @Autowired
+    private SysConfigService sysConfigService;
 
 
     @Autowired
@@ -87,9 +93,16 @@ public class FileController {
                             return ResponseUtil.responseBody(ExceptionCode.FILE_UPLOAD_ERROR.getCode(), "无法识别的文件");
                         } else {
                             // 判断文件大小
-                            if (!MyFileUtils.isAllowSize(file.getSize(), fileMaxSize)) {
+                            SysConfigVo vo = sysConfigService.getMsgByKey(CommonConstant.FILE_SIZE);
+                            String propertyValue = vo.getPropertyValue();
+                            if (!MyFileUtils.isAllowSize(file.getSize(), Integer.valueOf(propertyValue))) {
                                 return ResponseUtil.responseBody(ExceptionCode.FILE_UPLOAD_ERROR.getCode(), "文件过大，不能超过4M");
                             }
+
+                            //判断文件类型
+                            SysConfigVo msgByKey = sysConfigService.getMsgByKey(CommonConstant.FILE_TYPE);
+                            String fileTypes = msgByKey.getPropertyValue();
+                            if(MyFileUtils.isAllFileType(ext,fileTypes.split(",")));
                         }
                         newFileName = IDGeneratorUtils.getUUID32() + ext;
                         //Files.copy(file.getInputStream(), Paths.get(filePath+imgPath, newFileName));

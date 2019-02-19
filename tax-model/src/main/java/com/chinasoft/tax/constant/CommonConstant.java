@@ -185,5 +185,8 @@ public interface CommonConstant {
     /**驳回*/
     Integer TAX_REJECT = 8;
 
+    String FILE_SIZE="fileSize";
+    String FILE_TYPE="fileType";
+
 
 }

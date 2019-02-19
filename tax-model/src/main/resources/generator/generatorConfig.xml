@@ -148,12 +148,16 @@
         <!--调度相关表end-->
 
         <!--12-12 新增-->
+        <!--
         <table schema="tax" tableName="t_audit_log">
             <generatedKey column="id" sqlStatement="Mysql" identity="true"/>
         </table>
         <table schema="tax" tableName="t_company_taxes">
             <generatedKey column="id" sqlStatement="Mysql" identity="true"/>
         </table>
-
+        -->
+        <table schema="tax" tableName="t_sys_config">
+            <generatedKey column="id" sqlStatement="Mysql" identity="true"/>
+        </table>
     </context>
 </generatorConfiguration>

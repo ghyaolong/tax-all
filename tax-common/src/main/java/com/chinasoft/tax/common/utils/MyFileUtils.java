@@ -1,7 +1,5 @@
 package com.chinasoft.tax.common.utils;
 
-import cn.hutool.core.io.resource.ClassPathResource;
-import org.springframework.beans.factory.config.YamlMapFactoryBean;
 import org.springframework.util.StringUtils;
 
 import java.io.File;
@@ -13,11 +11,9 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Map;
 import java.util.TimeZone;
 
 public class MyFileUtils {
-
     /**
      * 获取文件扩展名
      *
@@ -42,6 +38,21 @@ public class MyFileUtils {
      */
     public static boolean isAllowSize(long fileSize,long maxSize){
         return fileSize<=maxSize;
+    }
+
+    /**
+     * 判断文件类型是否允许上传
+     * @param ext
+     * @param fileTypes
+     * @return
+     */
+    public static boolean isAllFileType(String ext,String[] fileTypes){
+        for (String fileType : fileTypes) {
+            if(ext.equals(fileType)){
+                return true;
+            }
+        }
+        return false;
     }
 
     public static void uploadFile(byte[] file, String filePath, String fileName) throws Exception {

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chinasoft.tax.dao.TSysConfigMapper">
+  <resultMap id="BaseResultMap" type="com.chinasoft.tax.po.TSysConfig">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="property" jdbcType="VARCHAR" property="property" />
+    <result column="property_name" jdbcType="VARCHAR" property="propertyName" />
+    <result column="property_value" jdbcType="VARCHAR" property="propertyValue" />
+    <result column="unit" jdbcType="VARCHAR" property="unit" />
+  </resultMap>
+</mapper>

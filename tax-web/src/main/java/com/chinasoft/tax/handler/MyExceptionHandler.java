@@ -1,11 +1,15 @@
 package com.chinasoft.tax.handler;
 import com.chinasoft.tax.common.utils.ResponseUtil;
+import com.chinasoft.tax.constant.CommonConstant;
 import com.chinasoft.tax.enums.ExceptionCode;
+import com.chinasoft.tax.service.SysConfigService;
 import com.chinasoft.tax.vo.BizException;
 import com.chinasoft.tax.vo.Message;
+import com.chinasoft.tax.vo.SysConfigVo;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -17,6 +21,8 @@ public class MyExceptionHandler {
 
     private final static Logger logger = LoggerFactory.getLogger(MyExceptionHandler.class);
 
+    @Autowired
+    private SysConfigService sysConfigService;
 
     //@SecurityParameter(outEncode = true,inDecode = false)
     @ExceptionHandler(value = Exception.class)
@@ -24,9 +30,9 @@ public class MyExceptionHandler {
     public Message handler(Exception ex){
         StringBuilder builder = new StringBuilder();
         BizException bizException = null;
-
+        SysConfigVo msgByKey = sysConfigService.getMsgByKey(CommonConstant.FILE_SIZE);
         if(ex instanceof MultipartException){
-            return ResponseUtil.responseBody("A-000046", "上传文件不能超过4MB",null);
+            return ResponseUtil.responseBody("A-000046", "上传文件不能超过"+msgByKey.getPropertyValue()+msgByKey.getUnit(),null);
         }
         if( ex instanceof BizException){
             builder.append("\n【业务异常】"+ex);
