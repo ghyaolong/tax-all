@@ -99,7 +99,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserVo> getAllUserByRoleCode(String roleCode) {
         List<TUser> tusers = tUserMapper.findAllUserByRoleCode(roleCode);
-        List<UserVo> userVos = MyBeanUtils.copyList(tusers, UserVo.class);
+        List<UserVo> userVos = MyBeanUtils.copyList(tusers, UserVo.class,new String[]{"password"});
         return userVos;
     }
 

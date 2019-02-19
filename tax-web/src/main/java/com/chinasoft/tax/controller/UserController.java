@@ -270,7 +270,7 @@ public class UserController {
      * @return
      */
     @GetMapping("/getUsers/{roleCode}")
-    public Message getUserByRoleCode(String roleCode){
+    public Message getUserByRoleCode(@PathVariable String roleCode){
         List<UserVo> allUserByRoleCode = userService.getAllUserByRoleCode(roleCode);
         return ResponseUtil.responseBody(allUserByRoleCode);
     }

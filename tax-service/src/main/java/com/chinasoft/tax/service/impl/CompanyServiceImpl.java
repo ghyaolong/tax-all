@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
+import tk.mybatis.mapper.common.ExampleMapper;
 import tk.mybatis.mapper.entity.Example;
 
 import java.text.ParseException;
@@ -173,19 +174,44 @@ public class CompanyServiceImpl implements CompanyService {
         List<TCompany> tCompaniesList = tCompanyMapper.selectByExample(example);
 
 
+
         int count = tCompanyMapper.selectCountByExample(example);
         List<CompanyVo> companyVos = MyBeanUtils.copyList(tCompaniesList, CompanyVo.class);
+
         //查询公司下所有的税种
         for (CompanyVo vo : companyVos) {
             List<TDict> tDicts = tCompanyTaxesMapper.findByCompanyId(vo.getId());
             List<DictVo> dictVos = MyBeanUtils.copyList(tDicts, DictVo.class);
             vo.setDicts(dictVos);
+
+            //查询改公司下分配的人
+            String taxationIds = getUserOfCompany(CommonConstant.USER_TAXATION);
+            String reviewerIds = getUserOfCompany(CommonConstant.USER_REVIEWS);
+            String viewerIds = getUserOfCompany(CommonConstant.USER_VIEWS);
+            vo.setTaxationIds(taxationIds);
+            vo.setReviewerIds(reviewerIds);
+            vo.setViewerIds(viewerIds);
         }
         MyPageInfo<CompanyVo> pageInfo = new MyPageInfo<>(companyVos);
         pageInfo.setTotalElements(count);
         pageInfo.setPageNum(pageVo.getPageNumber());
         return pageInfo;
 
+    }
+
+    private String getUserOfCompany(String roleCode){
+        Example userComExmaple = new Example(TUserCompany.class);
+        Example.Criteria criteria1 = userComExmaple.createCriteria();
+        criteria1.andEqualTo("roleCode",roleCode);
+        List<TUserCompany> tUserCompanies = tUserCompanyMapper.selectByExample(userComExmaple);
+        StringBuffer sb = new StringBuffer();
+        for (TUserCompany tUserCompany : tUserCompanies) {
+            sb.append(tUserCompany.getId()).append(",");
+        }
+        if(!StringUtils.isEmpty(sb)){
+           return sb.substring(0,sb.length()-1);
+        }
+        return "";
     }
 
     @Override
@@ -216,6 +242,7 @@ public class CompanyServiceImpl implements CompanyService {
             sbTaxIds.append(tDict.getId()).append(",");
         }
         assignTaxes(tCompany.getId(),sbTaxIds.substring(0,sbTaxIds.length()-1));
+
         log.info("保存公司成功");
     }
 
@@ -301,5 +328,30 @@ public class CompanyServiceImpl implements CompanyService {
         List<TCompany> tCompanies = tCompanyMapper.findByUserId(userId);
         List<CompanyVo> companyVos = MyBeanUtils.copyList(tCompanies, CompanyVo.class);
         return companyVos;
+    }
+
+    @Override
+    public void assignUser(String companyId,String taxationIds, String reviewerIds, String viewerIds) {
+        saveUserCompany(companyId, taxationIds,CommonConstant.USER_TAXATION);
+
+        saveUserCompany(companyId, reviewerIds,CommonConstant.USER_REVIEWS);
+
+        saveUserCompany(companyId, viewerIds,CommonConstant.USER_VIEWS);
+
+    }
+
+    private void saveUserCompany(String companyId, String userIds,String roleCode) {
+        if(!StringUtils.isEmpty(userIds)){
+            String[] split = userIds.split(",");
+            for (String s : split) {
+                TUserCompany uc = new TUserCompany();
+                uc.setId(IDGeneratorUtils.getUUID32());
+                uc.setCompanyId(companyId);
+                uc.setCreateTime(new Date());
+                uc.setUserId(s);
+                uc.setRoleCode(roleCode);
+                tUserCompanyMapper.insertSelective(uc);
+            }
+        }
     }
 }

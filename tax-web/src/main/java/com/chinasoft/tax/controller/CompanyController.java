@@ -5,6 +5,7 @@ import com.chinasoft.tax.aop.EnableGameleyLog;
 import com.chinasoft.tax.aopUtils.ModifyName;
 import com.chinasoft.tax.common.utils.ResponseUtil;
 import com.chinasoft.tax.config.security.CurrentUserUtils;
+import com.chinasoft.tax.constant.CommonConstant;
 import com.chinasoft.tax.dao.TCompanyMapper;
 import com.chinasoft.tax.enums.ExceptionCode;
 import com.chinasoft.tax.qo.CompanyQo;
@@ -118,6 +119,22 @@ public class CompanyController {
     public Message edit(@RequestBody CompanyVo companyVo){
         companyService.edit(companyVo);
         return ResponseUtil.responseBody("修改公司成功");
+    }
+
+    /**
+     * 将当前公司分配给用户
+     * @param companyVo
+     * @return
+     */
+    @EnableGameleyLog(name = ModifyName.UPDATE,serviceclass = TCompanyMapper.class)
+    @PostMapping("/assignUsers")
+    public Message assignUsers(@RequestBody CompanyVo companyVo){
+        //分配公司给人
+        String taxationIds = companyVo.getTaxationIds();
+        String reviewerIds = companyVo.getReviewerIds();
+        String viewerIds = companyVo.getViewerIds();
+        companyService.assignUser(companyVo.getId(),taxationIds,reviewerIds,viewerIds);
+        return ResponseUtil.responseBody("设置成功");
     }
 
 

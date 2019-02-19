@@ -189,4 +189,9 @@ public interface CommonConstant {
     String FILE_TYPE="fileType";
 
 
+
+    String USER_TAXATION="taxationIds";
+    String USER_REVIEWS="reviewerIds";
+    String USER_VIEWS ="viewerIds";
+
 }

@@ -34,11 +34,22 @@ public class TUserCompany {
 
     private String deletor;
 
+    @Column(name = "role_code")
+    private String roleCode;
+
     /**
      * @return id
      */
     public String getId() {
         return id;
+    }
+
+    public String getRoleCode() {
+        return roleCode;
+    }
+
+    public void setRoleCode(String roleCode) {
+        this.roleCode = roleCode;
     }
 
     /**

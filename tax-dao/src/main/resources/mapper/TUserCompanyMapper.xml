@@ -15,6 +15,7 @@
     <result column="is_del" jdbcType="INTEGER" property="isDel" />
     <result column="del_time" jdbcType="TIMESTAMP" property="delTime" />
     <result column="deletor" jdbcType="VARCHAR" property="deletor" />
+    <result column="role_code" jdbcType="VARCHAR" property="roleCode" />
   </resultMap>
 
   <select id="findByUserId" parameterType="java.lang.String" resultType="com.chinasoft.tax.po.TCompany">

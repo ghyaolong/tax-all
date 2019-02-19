@@ -27,4 +27,6 @@ public class UserCompanyVo {
     private Date delTime;
 
     private String deletor;
+
+    private String roleCode;
 }

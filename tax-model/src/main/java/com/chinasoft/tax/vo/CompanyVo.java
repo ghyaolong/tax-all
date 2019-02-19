@@ -68,6 +68,9 @@ public class CompanyVo implements java.io.Serializable{
 
     private Integer isDel;
 
+    /**
+     * 用户id，用于通过userId查询公司时候，接受前端传过来的参数
+     */
     private String userId;
 
     private Integer isAssign;
@@ -77,4 +80,21 @@ public class CompanyVo implements java.io.Serializable{
 
     /**税种集合*/
     private List<DictVo> dicts;
+
+    /**
+     * 税务专员
+     */
+    private String taxationIds;
+
+    /**
+     * 审核人
+     */
+    private String reviewerIds;
+
+    /**
+     * 查看人
+     */
+    private String viewerIds;
+
+
 }
