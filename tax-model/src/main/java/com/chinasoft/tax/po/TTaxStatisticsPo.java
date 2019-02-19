@@ -26,19 +26,26 @@ public class TTaxStatisticsPo {
     private String taxDict;
 
     /**
+     * 税种,已逗号隔开
+     */
+    private String taxDicts;
+
+    private String[] pTaxDicts;
+
+    /**
      * 应交税额
      */
-    private Long payableTax;
+    private Float payableTax;
 
     /**
      * 应缴滞纳金
      */
-    private Long lateFeePayable;
+    private Float lateFeePayable;
 
     /**
      * 申请缴纳税款
      */
-    private Long applTaxPayment;
+    private Float applTaxPayment;
 
     /**
      * 缴款截止日期
@@ -48,12 +55,12 @@ public class TTaxStatisticsPo {
     /**
      * 实缴税额
      */
-    private Long taxPaid;
+    private Float taxPaid;
 
     /**
      * 实缴滞纳金
      */
-    private Long overduePayment;
+    private Float overduePayment;
 
     /**
      * 实际缴税时间
@@ -81,6 +88,12 @@ public class TTaxStatisticsPo {
     private String countryName;
 
     /**
+     * 公司ids
+     */
+    private String companyIds;
+    private String[] pCompanyIds;
+
+    /**
      * 币种
      */
     private String currency;
@@ -89,9 +102,9 @@ public class TTaxStatisticsPo {
      * 税金类型
      * ALL     实缴税金/实缴滞纳金
      * PAID    实缴税金
-     * LATEFEE 实缴指南金
+     * LATEFEE 实缴滞纳金
      */
-    private String taxType;
+    private String taxTypes;
 
     @Transient
     private String startDate;

@@ -53,6 +53,12 @@ public class CompanyServiceImpl implements CompanyService {
         return companyVos;
     }
 
+    public List<CompanyVo> findAll(){
+        List<TCompany> tCompanies = tCompanyMapper.selectAll();
+        List<CompanyVo> companyVos = MyBeanUtils.copyList(tCompanies, CompanyVo.class);
+        return companyVos;
+    }
+
     @Override
     public CompanyVo getByName(String name) {
         Example example = new Example(TCompany.class);

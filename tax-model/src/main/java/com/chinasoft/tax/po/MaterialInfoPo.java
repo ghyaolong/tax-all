@@ -43,4 +43,6 @@ public class MaterialInfoPo {
      private String materialTypeDict;
 
      private String detailId;
+
+     private String taxPeriod;
 }

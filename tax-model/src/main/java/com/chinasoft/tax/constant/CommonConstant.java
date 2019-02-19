@@ -127,6 +127,11 @@ public interface CommonConstant {
      */
     Integer EXECUTE_TYPE_DONE = 2;
 
+    /***
+     * 异常提交
+     */
+    Integer EXCEPTION_TYPE_COMMIT = 3;
+
     /**
      * 分配公司
      */

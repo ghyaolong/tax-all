@@ -273,7 +273,13 @@ public class RoleServiceImpl implements RoleService {
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("name",roleVo.getName());
         criteria.orEqualTo("code", roleVo.getCode());
-        criteria.orLike("processKey","%"+roleVo.getProcessKey()+"%");
+        String[] split = roleVo.getProcessKey().split(",");
+        if(!"none".equals(roleVo.getProcessKey())){
+            for (String s : split) {
+                criteria.orLike("processKey","%"+s+"%");
+            }
+        }
+
         int i = tRoleMapper.selectCountByExample(example);
         if(i>0){
             log.error("该角色名称或者流程角色已经存在!");
@@ -293,17 +299,33 @@ public class RoleServiceImpl implements RoleService {
             throw new BizException(ExceptionCode.REQUEST_PARAM_MISSING);
         }
         log.info("修改角色,入参roleVo=["+roleVo.toString()+"]");
-
-        //TRole oriRoleVo = tRoleMapper.selectByPrimaryKey(roleVo.getId());
+        TRole oriRoleVo = tRoleMapper.selectByPrimaryKey(roleVo.getId());
+        String oriProcessKey = oriRoleVo.getProcessKey();
         TRole tRole = new TRole();
         BeanUtils.copyProperties(roleVo,tRole);
         if(!StringUtils.isEmpty(roleVo.getProcessKey())){
             if(!"none".equals(roleVo.getProcessKey())){
                 Example roleExmaple = new Example(TRole.class);
-                roleExmaple.createCriteria().andLike("processKey","%"+roleVo.getProcessKey()+"%");
-                List<TRole> tRoles = tRoleMapper.selectByExample(roleExmaple);
-                if(tRoles.size()>0){
-                    throw new BizException(ExceptionCode.ROLE_AREADY_EXIST.getCode(),ExceptionCode.ROLE_AREADY_EXIST.getMsg());
+                //Example.Criteria criteria = roleExmaple.createCriteria().andLike("processKey", "%" + roleVo.getProcessKey() + "%");
+                Example.Criteria criteria = roleExmaple.createCriteria();
+                String replace;
+                if(roleVo.getProcessKey().length()>oriProcessKey.length()){
+                    replace = roleVo.getProcessKey().replace(oriProcessKey, "");
+                    if(replace.indexOf(",")==0){
+                        replace = replace.replaceFirst(",","");
+                    }
+                    if(!StringUtils.isEmpty(replace)){
+                        String[] split = replace.split(",");
+                        for (String s : split) {
+                            criteria.orLike("processKey","%"+s+"%");
+                        }
+                    }
+                    List<TRole> tRoles = tRoleMapper.selectByExample(roleExmaple);
+                    if(tRoles.size()>0){
+                        throw new BizException(ExceptionCode.ROLE_AREADY_EXIST.getCode(),"节点已分配，无法再分配给其他角色");
+                    }
+                }else{
+                    replace = oriProcessKey.replace(roleVo.getProcessKey(),"");
                 }
             }
 

@@ -42,9 +42,23 @@ public class CompanyController {
         if(StringUtils.isEmpty(userId)){
             throw new BizException(ExceptionCode.REQUEST_PARAM_ERROR);
         }
-        //todo userId当前用户不是税务专员，审核人，查询人的时候查询所有公司
 
-        List<CompanyVo> companyVoList = companyService.getByUserId(userId);
+
+        List<CompanyVo> companyVoList;
+        //todo userId当前用户不是税务专员，审核人，查询人的时候查询所有公司
+        List<RoleVo> currUserRole = currentUserUtils.getCurrUserRole();
+        boolean flag = false;
+        for (RoleVo roleVo : currUserRole) {
+            if("ROLE_COMMISSIONER_OF_TAX".equals(roleVo.getCode())||"ROLE_ REVIEWER".equals(roleVo.getCode())){
+                flag = true;
+                break;
+            }
+        }
+        if(flag){
+            companyVoList = companyService.getByUserId(userId);
+        }else{
+            companyVoList = companyService.findAll();
+        }
         return ResponseUtil.responseBody(companyVoList);
     }
     /**

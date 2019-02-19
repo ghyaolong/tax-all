@@ -18,6 +18,8 @@ public interface CompanyService {
      * @return
      */
     List<CompanyVo> getByUserId(String userId);
+    List<CompanyVo> findAll();
+
 
     /**
      * 通过公司名称获取公司信息

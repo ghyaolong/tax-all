@@ -38,16 +38,8 @@
 
   <select id="findStatistics" parameterType="com.chinasoft.tax.po.TTaxStatisticsPo" resultType="com.chinasoft.tax.po.TTaxStatisticsPo">
     select
-      d.id,d.tax_period taxPeriod,
-
-     <if test="taxDict!=null and taxDict!=''">
-       case
-       when d.tax_dict = #{taxDict} then d.tax_dict
-       WHEN d.tax_dict != #{taxDict} THEN 0
-       end
-       taxDict
-     </if>
-    <if test="taxDict == null or taxDict==''">
+      d.id,d.tax_period taxPeriod,d.tax_dict taxDict
+    <if test="pTaxDicts == null or pTaxDicts==''">
       d.tax_dict taxDict
     </if>
       ,d.payable_tax payableTax,
@@ -62,9 +54,23 @@
         and d.tax_period between #{startTaxPeriod} and #{endTaxPeriod}
       </if>
 
-     <if test="companyName!=null and companyName!=''">
-       and a.company_name like CONCAT('%',#{companyName},'%')
-     </if>
+     <!--<if test="companyName!=null and companyName!=''">-->
+       <!--and a.company_name like CONCAT('%',#{companyName},'%')-->
+     <!--</if>-->
+    <if test = "pCompanyIds!=null and pCompanyIds!=''">
+      and a.company_id in
+      <foreach collection="pCompanyIds" item="id" index="index" open="(" close=")" separator=",">
+        #{id}
+      </foreach>
+    </if>
+
+    <if test= "pTaxDicts!=null and pTaxDicts!=''">
+      and d.tax_dict in
+      <foreach collection="pTaxDicts" item="id" index="index" open="(" close=")" separator=",">
+        #{id}
+      </foreach>
+    </if>
+
       <if test="countryCode!=null and countryCode!=''">
       and a.country_code = #{countryCode}
       </if>
