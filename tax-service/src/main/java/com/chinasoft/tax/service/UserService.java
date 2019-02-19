@@ -30,6 +30,13 @@ public interface UserService {
      */
     List<UserVo> getAllUser();
 
+
+    /**
+     * 通过roleCode获取拥有改roleCode的所有用户
+     * @param roleCode
+     * @return
+     */
+    List<UserVo> getAllUserByRoleCode(String roleCode);
     /**
      * @Description:查询某一个用户，如果有多个，则报错
      * @param vo

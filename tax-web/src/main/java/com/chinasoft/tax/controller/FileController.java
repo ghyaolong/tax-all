@@ -95,7 +95,8 @@ public class FileController {
                             // 判断文件大小
                             SysConfigVo vo = sysConfigService.getMsgByKey(CommonConstant.FILE_SIZE);
                             String propertyValue = vo.getPropertyValue();
-                            if (!MyFileUtils.isAllowSize(file.getSize(), Integer.valueOf(propertyValue))) {
+                            System.out.println(file.getSize()/(1024*1024));
+                            if (!MyFileUtils.isAllowSize(file.getSize()/(1024*1024), Integer.valueOf(propertyValue))) {
                                 return ResponseUtil.responseBody(ExceptionCode.FILE_UPLOAD_ERROR.getCode(), "文件过大，不能超过4M");
                             }
 

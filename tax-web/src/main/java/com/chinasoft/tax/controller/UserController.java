@@ -264,5 +264,14 @@ public class UserController {
         return  ResponseUtil.responseBody(userVo);
     }
 
-
+    /**
+     * 获取拥有改角色code的所有用户
+     * @param roleCode
+     * @return
+     */
+    @GetMapping("/getUsers/{roleCode}")
+    public Message getUserByRoleCode(String roleCode){
+        List<UserVo> allUserByRoleCode = userService.getAllUserByRoleCode(roleCode);
+        return ResponseUtil.responseBody(allUserByRoleCode);
+    }
 }

@@ -17,4 +17,6 @@ public interface TUserMapper extends MyMapper<TUser> {
     List<TUser> getPrevReview(Map<String,String> map);
 
     List<TUser> findUserByKey(@Param("key") String key);
+
+    List<TUser> findAllUserByRoleCode(@Param("roleCode") String roleCode);
 }
