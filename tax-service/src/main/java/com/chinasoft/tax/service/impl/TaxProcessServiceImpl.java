@@ -566,7 +566,7 @@ public class TaxProcessServiceImpl implements TaxProcessService {
 
                     UserVo userVo = userService.getUserInfoByUserIdAndKey(bean.getUserId(), historicTaskInstance.getTaskDefinitionKey());
                     if (userVo != null) {
-                        auditLogVo.setName(userVo.getUsername());
+                        auditLogVo.setName(userVo.getRealName());
                         List<RoleVo> roles = userVo.getRoles();
                         if (roles != null) {
                             RoleVo roleVo = roles.get(0);
