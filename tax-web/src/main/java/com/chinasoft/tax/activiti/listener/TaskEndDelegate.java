@@ -44,8 +44,8 @@ public class TaskEndDelegate implements JavaDelegate {
             /** ProcessBusinessService  是获取业务bean的工厂类**/
 
             // 获取流程变量，网关
-            String status = (String) runtimeService.getVariable(execution.getId(), "operateApprove");
-            System.out.println(rpi.getBusinessKey());
+            // String status = (String) runtimeService.getVariable(execution.getId(), "operateApprove");
+            // System.out.println(rpi.getBusinessKey());
             // proEndService.endProcess(rpi.getBusinessKey(),status);
         }
     }

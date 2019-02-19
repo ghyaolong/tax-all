@@ -1,409 +1,362 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" xmlns:tns="http://www.activiti.org/test" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" expressionLanguage="http://www.w3.org/1999/XPath" id="m1543149227690" name="" targetNamespace="http://www.activiti.org/test" typeLanguage="http://www.w3.org/2001/XMLSchema">
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" xmlns:tns="http://www.activiti.org/test" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" expressionLanguage="http://www.w3.org/1999/XPath" id="m1550517107609" name="" targetNamespace="http://www.activiti.org/test" typeLanguage="http://www.w3.org/2001/XMLSchema">
   <process id="taxProcess" isClosed="false" isExecutable="true" name="企业报税流程" processType="None">
     <startEvent id="_2" name="StartEvent"/>
-    <userTask activiti:exclusive="true" id="reviewProcess" name="复核申报">
+    <userTask activiti:exclusive="true" id="approvalProcess" name="发起申请">
       <extensionElements>
         <activiti:taskListener class="com.chinasoft.tax.activiti.listener.ReviewProcessTaskListener" event="create"/>
       </extensionElements>
     </userTask>
-    <userTask activiti:exclusive="true" id="checkEntity" name="核查公司">
+    <userTask activiti:exclusive="true" id="reviewProcess" name="税金核查1">
       <extensionElements>
         <activiti:taskListener class="com.chinasoft.tax.activiti.listener.ReviewProcessTaskListener" event="create"/>
       </extensionElements>
     </userTask>
-    <userTask activiti:exclusive="true" id="examineEntity" name="审查公司">
+    <userTask activiti:exclusive="true" id="checkEntity" name="税金核查2">
       <extensionElements>
         <activiti:taskListener class="com.chinasoft.tax.activiti.listener.ReviewProcessTaskListener" event="create"/>
       </extensionElements>
     </userTask>
-    <userTask activiti:exclusive="true" id="checkPay" name="支付审批">
+    <userTask activiti:exclusive="true" id="examineEntity" name="税金核查3">
       <extensionElements>
         <activiti:taskListener class="com.chinasoft.tax.activiti.listener.ReviewProcessTaskListener" event="create"/>
       </extensionElements>
     </userTask>
-    <userTask activiti:exclusive="true" id="approvalPay" name="审批支付">
+    <userTask activiti:exclusive="true" id="checkPay" name="资金审视">
       <extensionElements>
         <activiti:taskListener class="com.chinasoft.tax.activiti.listener.ReviewProcessTaskListener" event="create"/>
       </extensionElements>
     </userTask>
-    <userTask activiti:exclusive="true" id="reportPaid" name="上报实缴">
+    <userTask activiti:exclusive="true" id="approvalPay" name="税金审批">
       <extensionElements>
         <activiti:taskListener class="com.chinasoft.tax.activiti.listener.ReviewProcessTaskListener" event="create"/>
       </extensionElements>
     </userTask>
-    <userTask activiti:exclusive="true" id="uploadPayFile" name="上传文件">
+    <userTask activiti:exclusive="true" id="reportPaid" name="上报实缴，并补全资料">
       <extensionElements>
         <activiti:taskListener class="com.chinasoft.tax.activiti.listener.ReviewProcessTaskListener" event="create"/>
       </extensionElements>
     </userTask>
-    <endEvent id="_19" name="EndEvent">
+    <endEvent id="_24" name="EndEvent">
       <extensionElements>
         <activiti:executionListener class="com.chinasoft.tax.activiti.listener.TaskEndDelegate" event="start"/>
       </extensionElements>
     </endEvent>
-    <userTask activiti:exclusive="true" id="approvalProcess" name="税金申报申请">
-      <extensionElements>
-        <activiti:taskListener class="com.chinasoft.tax.activiti.listener.ReviewProcessTaskListener" event="create"/>
-      </extensionElements>
-    </userTask>
-    <exclusiveGateway gatewayDirection="Unspecified" id="_15" name="ExclusiveGateway"/>
-    <sequenceFlow id="_16" sourceRef="reviewProcess" targetRef="_15"/>
-    <sequenceFlow id="_17" sourceRef="_15" targetRef="approvalProcess">
-      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${operateApprove == 'false'}]]></conditionExpression>
-    </sequenceFlow>
-    <sequenceFlow id="_18" sourceRef="_15" targetRef="checkEntity">
-      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${operateApprove == 'true'}]]></conditionExpression>
-    </sequenceFlow>
-    <sequenceFlow id="_3" sourceRef="_2" targetRef="reviewProcess"/>
-    <exclusiveGateway gatewayDirection="Unspecified" id="_4" name="ExclusiveGateway"/>
-    <sequenceFlow id="_5" sourceRef="approvalProcess" targetRef="_4"/>
-    <sequenceFlow id="_6" sourceRef="_4" targetRef="reviewProcess">
-      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${operateApprove == 'true'}]]></conditionExpression>
-    </sequenceFlow>
-    <sequenceFlow id="_7" sourceRef="_4" targetRef="_19">
-      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${operateApprove == 'false'}]]></conditionExpression>
-    </sequenceFlow>
-    <exclusiveGateway gatewayDirection="Unspecified" id="_8" name="ExclusiveGateway"/>
-    <sequenceFlow id="_10" sourceRef="checkEntity" targetRef="_8"/>
-    <sequenceFlow id="_11" sourceRef="_8" targetRef="examineEntity">
-      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${operateApprove == 'true'}]]></conditionExpression>
-    </sequenceFlow>
-    <sequenceFlow id="_12" sourceRef="_8" targetRef="approvalProcess">
-      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${operateApprove == 'false'}]]></conditionExpression>
-    </sequenceFlow>
+    <exclusiveGateway gatewayDirection="Unspecified" id="_9" name="ExclusiveGateway"/>
+    <exclusiveGateway gatewayDirection="Unspecified" id="_10" name="ExclusiveGateway"/>
+    <exclusiveGateway gatewayDirection="Unspecified" id="_11" name="ExclusiveGateway"/>
+    <exclusiveGateway gatewayDirection="Unspecified" id="_12" name="ExclusiveGateway"/>
     <exclusiveGateway gatewayDirection="Unspecified" id="_13" name="ExclusiveGateway"/>
-    <sequenceFlow id="_14" sourceRef="examineEntity" targetRef="_13"/>
-    <sequenceFlow id="_20" sourceRef="_13" targetRef="checkPay">
+    <exclusiveGateway gatewayDirection="Unspecified" id="_14" name="ExclusiveGateway"/>
+    <exclusiveGateway gatewayDirection="Unspecified" id="_16" name="ExclusiveGateway"/>
+    <sequenceFlow id="_3" sourceRef="approvalProcess" targetRef="_16"/>
+    <sequenceFlow id="_4" name="同意" sourceRef="_16" targetRef="reviewProcess">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${operateApprove == 'true'}]]></conditionExpression>
     </sequenceFlow>
-    <sequenceFlow id="_9" sourceRef="_13" targetRef="approvalProcess">
+    <sequenceFlow id="_5" sourceRef="reviewProcess" targetRef="_9"/>
+    <sequenceFlow id="_6" name="驳回" sourceRef="_9" targetRef="approvalProcess">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${operateApprove == 'false'}]]></conditionExpression>
     </sequenceFlow>
-    <exclusiveGateway gatewayDirection="Unspecified" id="_21" name="ExclusiveGateway"/>
-    <sequenceFlow id="_22" sourceRef="checkPay" targetRef="_21"/>
-    <sequenceFlow id="_23" sourceRef="_21" targetRef="approvalPay">
+    <sequenceFlow id="_7" name="同意" sourceRef="_9" targetRef="checkEntity">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${operateApprove == 'true'}]]></conditionExpression>
     </sequenceFlow>
-    <sequenceFlow id="_25" sourceRef="_21" targetRef="approvalProcess">
-      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${operateApprove == 'false'}]]></conditionExpression>
-    </sequenceFlow>
-    <exclusiveGateway gatewayDirection="Unspecified" id="_26" name="ExclusiveGateway"/>
-    <sequenceFlow id="_27" sourceRef="approvalPay" targetRef="_26"/>
-    <sequenceFlow id="_29" sourceRef="_26" targetRef="approvalProcess">
-      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${operateApprove == 'false'}]]></conditionExpression>
-    </sequenceFlow>
-    <exclusiveGateway gatewayDirection="Unspecified" id="_30" name="ExclusiveGateway"/>
-    <sequenceFlow id="_32" sourceRef="_30" targetRef="_19">
+    <sequenceFlow id="_8" sourceRef="checkEntity" targetRef="_10"/>
+    <sequenceFlow id="_17" name="同意" sourceRef="_10" targetRef="examineEntity">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${operateApprove == 'true'}]]></conditionExpression>
     </sequenceFlow>
-    <sequenceFlow id="_33" sourceRef="_30" targetRef="approvalProcess">
-      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${operateApprove == 'false'}]]></conditionExpression>
-    </sequenceFlow>
-    <sequenceFlow id="_24" sourceRef="_26" targetRef="reportPaid">
+    <sequenceFlow id="_18" sourceRef="examineEntity" targetRef="_11"/>
+    <sequenceFlow id="_19" name="同意" sourceRef="_11" targetRef="checkPay">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${operateApprove == 'true'}]]></conditionExpression>
     </sequenceFlow>
-    <exclusiveGateway gatewayDirection="Unspecified" id="_28" name="ExclusiveGateway"/>
-    <sequenceFlow id="_34" sourceRef="_28" targetRef="uploadPayFile">
+    <sequenceFlow id="_20" sourceRef="checkPay" targetRef="_12"/>
+    <sequenceFlow id="_21" name="同意" sourceRef="_12" targetRef="approvalPay">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${operateApprove == 'true'}]]></conditionExpression>
     </sequenceFlow>
-    <sequenceFlow id="_35" sourceRef="reportPaid" targetRef="_28"/>
-    <sequenceFlow id="_36" sourceRef="_28" targetRef="approvalProcess">
+    <sequenceFlow id="_22" sourceRef="approvalPay" targetRef="_13"/>
+    <sequenceFlow id="_23" name="驳回" sourceRef="_10" targetRef="approvalProcess">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${operateApprove == 'false'}]]></conditionExpression>
     </sequenceFlow>
-    <sequenceFlow id="_37" sourceRef="uploadPayFile" targetRef="_30"/>
+    <sequenceFlow id="_25" name="驳回" sourceRef="_11" targetRef="approvalProcess">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${operateApprove == 'false'}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="_26" name="驳回" sourceRef="_12" targetRef="approvalProcess">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${operateApprove == 'false'}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="_27" name="同意" sourceRef="_13" targetRef="reportPaid">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${operateApprove == 'true'}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="_28" sourceRef="reportPaid" targetRef="_14"/>
+    <sequenceFlow id="_32" name="放弃" sourceRef="_16" targetRef="_24">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${operateApprove == 'false'}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="_33" sourceRef="_2" targetRef="reviewProcess"/>
+    <sequenceFlow id="_34" name="驳回" sourceRef="_13" targetRef="approvalProcess">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${operateApprove == 'false'}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="_35" name="驳回" sourceRef="_14" targetRef="approvalProcess">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${operateApprove == 'false'}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="_38" name="同意" sourceRef="_14" targetRef="_24">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${operateApprove == 'true'}]]></conditionExpression>
+    </sequenceFlow>
   </process>
   <bpmndi:BPMNDiagram documentation="background=#3C3F41;count=1;horizontalcount=1;orientation=0;width=842.4;height=1195.2;imageableWidth=832.4;imageableHeight=1185.2;imageableX=5.0;imageableY=5.0" id="Diagram-_1" name="New Diagram">
     <bpmndi:BPMNPlane bpmnElement="taxProcess">
       <bpmndi:BPMNShape bpmnElement="_2" id="Shape-_2">
-        <omgdc:Bounds height="32.0" width="32.0" x="10.0" y="75.0"/>
-        <bpmndi:BPMNLabel>
-          <omgdc:Bounds height="32.0" width="32.0" x="0.0" y="0.0"/>
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="reviewProcess" id="Shape-reviewProcess">
-        <omgdc:Bounds height="55.0" width="85.0" x="85.0" y="65.0"/>
-        <bpmndi:BPMNLabel>
-          <omgdc:Bounds height="55.0" width="85.0" x="0.0" y="0.0"/>
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="checkEntity" id="Shape-checkEntity">
-        <omgdc:Bounds height="55.0" width="85.0" x="305.0" y="65.0"/>
-        <bpmndi:BPMNLabel>
-          <omgdc:Bounds height="55.0" width="85.0" x="0.0" y="0.0"/>
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="examineEntity" id="Shape-examineEntity">
-        <omgdc:Bounds height="55.0" width="85.0" x="500.0" y="60.0"/>
-        <bpmndi:BPMNLabel>
-          <omgdc:Bounds height="55.0" width="85.0" x="0.0" y="0.0"/>
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="checkPay" id="Shape-checkPay">
-        <omgdc:Bounds height="55.0" width="85.0" x="815.0" y="60.0"/>
-        <bpmndi:BPMNLabel>
-          <omgdc:Bounds height="55.0" width="85.0" x="0.0" y="0.0"/>
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="approvalPay" id="Shape-approvalPay">
-        <omgdc:Bounds height="55.0" width="85.0" x="830.0" y="290.0"/>
-        <bpmndi:BPMNLabel>
-          <omgdc:Bounds height="55.0" width="85.0" x="0.0" y="0.0"/>
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="uploadPayFile" id="Shape-uploadPayFile">
-        <omgdc:Bounds height="55.0" width="85.0" x="360.0" y="290.0"/>
-        <bpmndi:BPMNLabel>
-          <omgdc:Bounds height="55.0" width="85.0" x="0.0" y="0.0"/>
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="_19" id="Shape-_19">
-        <omgdc:Bounds height="32.0" width="32.0" x="175.0" y="300.0"/>
+        <omgdc:Bounds height="32.0" width="32.0" x="80.0" y="410.0"/>
         <bpmndi:BPMNLabel>
           <omgdc:Bounds height="32.0" width="32.0" x="0.0" y="0.0"/>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="approvalProcess" id="Shape-approvalProcess">
-        <omgdc:Bounds height="55.0" width="85.0" x="195.0" y="185.0"/>
+        <omgdc:Bounds height="55.0" width="85.0" x="185.0" y="190.0"/>
         <bpmndi:BPMNLabel>
           <omgdc:Bounds height="55.0" width="85.0" x="0.0" y="0.0"/>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="_15" id="Shape-_15" isMarkerVisible="false">
-        <omgdc:Bounds height="32.0" width="32.0" x="220.0" y="75.0"/>
+      <bpmndi:BPMNShape bpmnElement="reviewProcess" id="Shape-reviewProcess">
+        <omgdc:Bounds height="55.0" width="85.0" x="190.0" y="395.0"/>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="55.0" width="85.0" x="0.0" y="0.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="checkEntity" id="Shape-checkEntity">
+        <omgdc:Bounds height="55.0" width="85.0" x="330.0" y="505.0"/>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="55.0" width="85.0" x="0.0" y="0.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="examineEntity" id="Shape-examineEntity">
+        <omgdc:Bounds height="55.0" width="85.0" x="470.0" y="625.0"/>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="55.0" width="85.0" x="0.0" y="0.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="checkPay" id="Shape-checkPay">
+        <omgdc:Bounds height="55.0" width="85.0" x="610.0" y="735.0"/>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="55.0" width="85.0" x="0.0" y="0.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="approvalPay" id="Shape-approvalPay">
+        <omgdc:Bounds height="55.0" width="85.0" x="920.0" y="735.0"/>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="55.0" width="85.0" x="0.0" y="0.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="reportPaid" id="Shape-reportPaid">
+        <omgdc:Bounds height="55.0" width="85.0" x="1065.0" y="275.0"/>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="55.0" width="85.0" x="0.0" y="0.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_24" id="Shape-_24">
+        <omgdc:Bounds height="32.0" width="32.0" x="1095.0" y="15.0"/>
         <bpmndi:BPMNLabel>
           <omgdc:Bounds height="32.0" width="32.0" x="0.0" y="0.0"/>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="_4" id="Shape-_4" isMarkerVisible="false">
-        <omgdc:Bounds height="32.0" width="32.0" x="100.0" y="195.0"/>
+      <bpmndi:BPMNShape bpmnElement="_9" id="Shape-_9" isMarkerVisible="false">
+        <omgdc:Bounds height="32.0" width="32.0" x="355.0" y="405.0"/>
         <bpmndi:BPMNLabel>
           <omgdc:Bounds height="32.0" width="32.0" x="0.0" y="0.0"/>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="_8" id="Shape-_8" isMarkerVisible="false">
-        <omgdc:Bounds height="32.0" width="32.0" x="430.0" y="75.0"/>
+      <bpmndi:BPMNShape bpmnElement="_10" id="Shape-_10" isMarkerVisible="false">
+        <omgdc:Bounds height="32.0" width="32.0" x="495.0" y="515.0"/>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="32.0" width="32.0" x="0.0" y="0.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_11" id="Shape-_11" isMarkerVisible="false">
+        <omgdc:Bounds height="32.0" width="32.0" x="640.0" y="635.0"/>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="32.0" width="32.0" x="0.0" y="0.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_12" id="Shape-_12" isMarkerVisible="false">
+        <omgdc:Bounds height="32.0" width="32.0" x="745.0" y="745.0"/>
         <bpmndi:BPMNLabel>
           <omgdc:Bounds height="32.0" width="32.0" x="0.0" y="0.0"/>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="_13" id="Shape-_13" isMarkerVisible="false">
-        <omgdc:Bounds height="32.0" width="32.0" x="620.0" y="75.0"/>
+        <omgdc:Bounds height="32.0" width="32.0" x="1090.0" y="623.0"/>
         <bpmndi:BPMNLabel>
           <omgdc:Bounds height="32.0" width="32.0" x="0.0" y="0.0"/>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="_21" id="Shape-_21" isMarkerVisible="false">
-        <omgdc:Bounds height="32.0" width="32.0" x="850.0" y="195.0"/>
+      <bpmndi:BPMNShape bpmnElement="_14" id="Shape-_14" isMarkerVisible="false">
+        <omgdc:Bounds height="32.0" width="32.0" x="1095.0" y="140.0"/>
         <bpmndi:BPMNLabel>
           <omgdc:Bounds height="32.0" width="32.0" x="0.0" y="0.0"/>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="_26" id="Shape-_26" isMarkerVisible="false">
-        <omgdc:Bounds height="32.0" width="32.0" x="725.0" y="300.0"/>
+      <bpmndi:BPMNShape bpmnElement="_16" id="Shape-_16" isMarkerVisible="false">
+        <omgdc:Bounds height="32.0" width="32.0" x="215.0" y="290.0"/>
         <bpmndi:BPMNLabel>
           <omgdc:Bounds height="32.0" width="32.0" x="0.0" y="0.0"/>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="_30" id="Shape-_30" isMarkerVisible="false">
-        <omgdc:Bounds height="32.0" width="32.0" x="290.0" y="300.0"/>
+      <bpmndi:BPMNEdge bpmnElement="_35" id="BPMNEdge__35" sourceElement="_14" targetElement="approvalProcess">
+        <omgdi:waypoint x="1096.5" y="155.0"/>
+        <omgdi:waypoint x="230.0" y="155.0"/>
+        <omgdi:waypoint x="230.0" y="190.0"/>
         <bpmndi:BPMNLabel>
-          <omgdc:Bounds height="32.0" width="32.0" x="0.0" y="0.0"/>
+          <omgdc:Bounds height="0.0" width="15.0" x="0.0" y="0.0"/>
         </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="reportPaid" id="Shape-reportPaid">
-        <omgdc:Bounds height="55.0" width="85.0" x="580.0" y="290.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_34" id="BPMNEdge__34" sourceElement="_13" targetElement="approvalProcess">
+        <omgdi:waypoint x="1090.5" y="639.0"/>
+        <omgdi:waypoint x="910.0" y="520.0"/>
+        <omgdi:waypoint x="270.5" y="217.5"/>
         <bpmndi:BPMNLabel>
-          <omgdc:Bounds height="55.0" width="85.0" x="0.0" y="0.0"/>
+          <omgdc:Bounds height="78.0" width="19.0" x="0.0" y="0.0"/>
         </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="_28" id="Shape-_28" isMarkerVisible="false">
-        <omgdc:Bounds height="32.0" width="32.0" x="510.0" y="300.0"/>
-        <bpmndi:BPMNLabel>
-          <omgdc:Bounds height="32.0" width="32.0" x="0.0" y="0.0"/>
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge bpmnElement="_35" id="BPMNEdge__35" sourceElement="reportPaid" targetElement="_28">
-        <omgdi:waypoint x="580.0" y="317.5"/>
-        <omgdi:waypoint x="542.0" y="316.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_17" id="BPMNEdge__17" sourceElement="_10" targetElement="examineEntity">
+        <omgdi:waypoint x="511.0" y="546.5"/>
+        <omgdi:waypoint x="511.0" y="625.0"/>
         <bpmndi:BPMNLabel>
           <omgdc:Bounds height="0.0" width="0.0" x="0.0" y="0.0"/>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="_12" id="BPMNEdge__12" sourceElement="_8" targetElement="approvalProcess">
-        <omgdi:waypoint x="445.0" y="106.0"/>
-        <omgdi:waypoint x="445.0" y="210.0"/>
-        <omgdi:waypoint x="280.0" y="210.0"/>
+      <bpmndi:BPMNEdge bpmnElement="_38" id="BPMNEdge__38" sourceElement="_14" targetElement="_24">
+        <omgdi:waypoint x="1110.0" y="141.5"/>
+        <omgdi:waypoint x="1110.0" y="80.0"/>
+        <omgdi:waypoint x="1110.0" y="46.929532322073996"/>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="16.0" width="0.0" x="0.0" y="-5.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_19" id="BPMNEdge__19" sourceElement="_11" targetElement="checkPay">
+        <omgdi:waypoint x="656.0" y="666.5"/>
+        <omgdi:waypoint x="656.0" y="735.0"/>
         <bpmndi:BPMNLabel>
           <omgdc:Bounds height="0.0" width="0.0" x="0.0" y="0.0"/>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="_34" id="BPMNEdge__34" sourceElement="_28" targetElement="uploadPayFile">
-        <omgdi:waypoint x="510.0" y="316.0"/>
-        <omgdi:waypoint x="445.0" y="317.5"/>
+      <bpmndi:BPMNEdge bpmnElement="_18" id="BPMNEdge__18" sourceElement="examineEntity" targetElement="_11">
+        <omgdi:waypoint x="555.5" y="652.5"/>
+        <omgdi:waypoint x="640.5" y="651.0"/>
         <bpmndi:BPMNLabel>
           <omgdc:Bounds height="0.0" width="0.0" x="0.0" y="0.0"/>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="_37" id="BPMNEdge__37" sourceElement="uploadPayFile" targetElement="_30">
-        <omgdi:waypoint x="360.0" y="317.5"/>
-        <omgdi:waypoint x="322.0" y="316.0"/>
+      <bpmndi:BPMNEdge bpmnElement="_20" id="BPMNEdge__20" sourceElement="checkPay" targetElement="_12">
+        <omgdi:waypoint x="695.5" y="762.5"/>
+        <omgdi:waypoint x="745.5" y="761.0"/>
         <bpmndi:BPMNLabel>
           <omgdc:Bounds height="0.0" width="0.0" x="0.0" y="0.0"/>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="_14" id="BPMNEdge__14" sourceElement="examineEntity" targetElement="_13">
-        <omgdi:waypoint x="585.0" y="87.5"/>
-        <omgdi:waypoint x="620.0" y="91.0"/>
+      <bpmndi:BPMNEdge bpmnElement="_22" id="BPMNEdge__22" sourceElement="approvalPay" targetElement="_13">
+        <omgdi:waypoint x="1005.5" y="762.5"/>
+        <omgdi:waypoint x="1105.0" y="725.0"/>
+        <omgdi:waypoint x="1105.0" y="653.5"/>
         <bpmndi:BPMNLabel>
           <omgdc:Bounds height="0.0" width="0.0" x="0.0" y="0.0"/>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="_36" id="BPMNEdge__36" sourceElement="_28" targetElement="approvalProcess">
-        <omgdi:waypoint x="525.0" y="301.0"/>
-        <omgdi:waypoint x="525.0" y="255.0"/>
-        <omgdi:waypoint x="280.0" y="212.5"/>
+      <bpmndi:BPMNEdge bpmnElement="_21" id="BPMNEdge__21" sourceElement="_12" targetElement="approvalPay">
+        <omgdi:waypoint x="777.5" y="761.0"/>
+        <omgdi:waypoint x="920.5" y="762.5"/>
         <bpmndi:BPMNLabel>
           <omgdc:Bounds height="0.0" width="0.0" x="0.0" y="0.0"/>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="_17" id="BPMNEdge__17" sourceElement="_15" targetElement="approvalProcess">
-        <omgdi:waypoint x="236.0" y="107.0"/>
-        <omgdi:waypoint x="236.0" y="185.0"/>
+      <bpmndi:BPMNEdge bpmnElement="_23" id="BPMNEdge__23" sourceElement="_10" targetElement="approvalProcess">
+        <omgdi:waypoint x="510.0" y="516.5"/>
+        <omgdi:waypoint x="510.0" y="375.0"/>
+        <omgdi:waypoint x="270.5" y="217.5"/>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="48.0" width="0.0" x="0.0" y="0.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_26" id="BPMNEdge__26" sourceElement="_12" targetElement="approvalProcess">
+        <omgdi:waypoint x="760.0" y="746.5"/>
+        <omgdi:waypoint x="760.0" y="495.0"/>
+        <omgdi:waypoint x="270.5" y="217.5"/>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="58.0" width="0.0" x="0.0" y="-5.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_25" id="BPMNEdge__25" sourceElement="_11" targetElement="approvalProcess">
+        <omgdi:waypoint x="655.0" y="636.5"/>
+        <omgdi:waypoint x="655.0" y="425.0"/>
+        <omgdi:waypoint x="270.5" y="217.5"/>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="61.0" width="0.0" x="0.0" y="0.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_28" id="BPMNEdge__28" sourceElement="reportPaid" targetElement="_14">
+        <omgdi:waypoint x="1111.0" y="275.0"/>
+        <omgdi:waypoint x="1111.0" y="171.5"/>
         <bpmndi:BPMNLabel>
           <omgdc:Bounds height="0.0" width="0.0" x="0.0" y="0.0"/>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="_16" id="BPMNEdge__16" sourceElement="reviewProcess" targetElement="_15">
-        <omgdi:waypoint x="170.0" y="92.5"/>
-        <omgdi:waypoint x="220.0" y="91.0"/>
+      <bpmndi:BPMNEdge bpmnElement="_27" id="BPMNEdge__27" sourceElement="_13" targetElement="reportPaid">
+        <omgdi:waypoint x="1106.0" y="623.5"/>
+        <omgdi:waypoint x="1106.0" y="330.0"/>
         <bpmndi:BPMNLabel>
           <omgdc:Bounds height="0.0" width="0.0" x="0.0" y="0.0"/>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="_18" id="BPMNEdge__18" sourceElement="_15" targetElement="checkEntity">
-        <omgdi:waypoint x="252.0" y="91.0"/>
-        <omgdi:waypoint x="305.0" y="92.5"/>
+      <bpmndi:BPMNEdge bpmnElement="_3" id="BPMNEdge__3" sourceElement="approvalProcess" targetElement="_16">
+        <omgdi:waypoint x="231.0" y="245.0"/>
+        <omgdi:waypoint x="231.0" y="290.5"/>
         <bpmndi:BPMNLabel>
           <omgdc:Bounds height="0.0" width="0.0" x="0.0" y="0.0"/>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="_20" id="BPMNEdge__20" sourceElement="_13" targetElement="checkPay">
-        <omgdi:waypoint x="652.0" y="91.0"/>
-        <omgdi:waypoint x="815.0" y="87.5"/>
+      <bpmndi:BPMNEdge bpmnElement="_4" id="BPMNEdge__4" sourceElement="_16" targetElement="reviewProcess">
+        <omgdi:waypoint x="231.0" y="321.5"/>
+        <omgdi:waypoint x="231.0" y="395.0"/>
         <bpmndi:BPMNLabel>
           <omgdc:Bounds height="0.0" width="0.0" x="0.0" y="0.0"/>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="_22" id="BPMNEdge__22" sourceElement="checkPay" targetElement="_21">
-        <omgdi:waypoint x="865.0" y="115.0"/>
-        <omgdi:waypoint x="865.0" y="160.0"/>
-        <omgdi:waypoint x="865.0" y="196.0"/>
+      <bpmndi:BPMNEdge bpmnElement="_5" id="BPMNEdge__5" sourceElement="reviewProcess" targetElement="_9">
+        <omgdi:waypoint x="275.5" y="422.5"/>
+        <omgdi:waypoint x="355.5" y="421.0"/>
         <bpmndi:BPMNLabel>
           <omgdc:Bounds height="0.0" width="0.0" x="0.0" y="0.0"/>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="_24" id="BPMNEdge__24" sourceElement="_26" targetElement="reportPaid">
-        <omgdi:waypoint x="725.0" y="316.0"/>
-        <omgdi:waypoint x="665.0" y="317.5"/>
+      <bpmndi:BPMNEdge bpmnElement="_6" id="BPMNEdge__6" sourceElement="_9" targetElement="approvalProcess">
+        <omgdi:waypoint x="370.0" y="406.5"/>
+        <omgdi:waypoint x="370.0" y="315.0"/>
+        <omgdi:waypoint x="270.5" y="217.5"/>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="33.0" width="0.0" x="0.0" y="0.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_7" id="BPMNEdge__7" sourceElement="_9" targetElement="checkEntity">
+        <omgdi:waypoint x="371.0" y="436.5"/>
+        <omgdi:waypoint x="371.0" y="505.0"/>
         <bpmndi:BPMNLabel>
           <omgdc:Bounds height="0.0" width="0.0" x="0.0" y="0.0"/>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="_23" id="BPMNEdge__23" sourceElement="_21" targetElement="approvalPay">
-        <omgdi:waypoint x="865.0" y="226.0"/>
-        <omgdi:waypoint x="865.0" y="250.0"/>
-        <omgdi:waypoint x="865.0" y="290.0"/>
-        <bpmndi:BPMNLabel>
-          <omgdc:Bounds height="16.0" width="0.0" x="0.0" y="2.0"/>
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="_25" id="BPMNEdge__25" sourceElement="_21" targetElement="approvalProcess">
-        <omgdi:waypoint x="851.0" y="210.0"/>
-        <omgdi:waypoint x="655.0" y="210.0"/>
-        <omgdi:waypoint x="280.0" y="210.0"/>
+      <bpmndi:BPMNEdge bpmnElement="_8" id="BPMNEdge__8" sourceElement="checkEntity" targetElement="_10">
+        <omgdi:waypoint x="415.5" y="532.5"/>
+        <omgdi:waypoint x="495.5" y="531.0"/>
         <bpmndi:BPMNLabel>
           <omgdc:Bounds height="0.0" width="0.0" x="0.0" y="0.0"/>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="_27" id="BPMNEdge__27" sourceElement="approvalPay" targetElement="_26">
-        <omgdi:waypoint x="830.0" y="317.5"/>
-        <omgdi:waypoint x="757.0" y="316.0"/>
+      <bpmndi:BPMNEdge bpmnElement="_33" id="BPMNEdge__33" sourceElement="_2" targetElement="reviewProcess">
+        <omgdi:waypoint x="112.5" y="426.0"/>
+        <omgdi:waypoint x="190.5" y="422.5"/>
         <bpmndi:BPMNLabel>
           <omgdc:Bounds height="0.0" width="0.0" x="0.0" y="0.0"/>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="_29" id="BPMNEdge__29" sourceElement="_26" targetElement="approvalProcess">
-        <omgdi:waypoint x="740.0" y="301.0"/>
-        <omgdi:waypoint x="740.0" y="215.0"/>
-        <omgdi:waypoint x="280.0" y="215.0"/>
-        <bpmndi:BPMNLabel>
-          <omgdc:Bounds height="0.0" width="0.0" x="0.0" y="0.0"/>
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="_3" id="BPMNEdge__3" sourceElement="_2" targetElement="reviewProcess">
-        <omgdi:waypoint x="42.0" y="91.0"/>
-        <omgdi:waypoint x="85.0" y="92.5"/>
-        <bpmndi:BPMNLabel>
-          <omgdc:Bounds height="0.0" width="0.0" x="0.0" y="0.0"/>
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="_5" id="BPMNEdge__5" sourceElement="approvalProcess" targetElement="_4">
-        <omgdi:waypoint x="195.0" y="212.5"/>
-        <omgdi:waypoint x="132.0" y="211.0"/>
-        <bpmndi:BPMNLabel>
-          <omgdc:Bounds height="0.0" width="0.0" x="0.0" y="0.0"/>
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="_6" id="BPMNEdge__6" sourceElement="_4" targetElement="reviewProcess">
-        <omgdi:waypoint x="115.0" y="196.0"/>
-        <omgdi:waypoint x="115.0" y="190.0"/>
-        <omgdi:waypoint x="115.0" y="120.0"/>
-        <bpmndi:BPMNLabel>
-          <omgdc:Bounds height="0.0" width="0.0" x="0.0" y="0.0"/>
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="_7" id="BPMNEdge__7" sourceElement="_4" targetElement="_19">
-        <omgdi:waypoint x="115.0" y="226.0"/>
-        <omgdi:waypoint x="115.0" y="315.0"/>
-        <omgdi:waypoint x="175.0312805773287" y="315.0"/>
-        <bpmndi:BPMNLabel>
-          <omgdc:Bounds height="14.0" width="0.0" x="0.0" y="-6.0"/>
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="_9" id="BPMNEdge__9" sourceElement="_13" targetElement="approvalProcess">
-        <omgdi:waypoint x="635.0" y="106.0"/>
-        <omgdi:waypoint x="635.0" y="175.0"/>
-        <omgdi:waypoint x="280.0" y="212.5"/>
-        <bpmndi:BPMNLabel>
-          <omgdc:Bounds height="0.0" width="0.0" x="0.0" y="0.0"/>
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="_11" id="BPMNEdge__11" sourceElement="_8" targetElement="examineEntity">
-        <omgdi:waypoint x="462.0" y="91.0"/>
-        <omgdi:waypoint x="500.0" y="87.5"/>
-        <bpmndi:BPMNLabel>
-          <omgdc:Bounds height="0.0" width="0.0" x="0.0" y="0.0"/>
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="_33" id="BPMNEdge__33" sourceElement="_30" targetElement="approvalProcess">
-        <omgdi:waypoint x="310.0" y="304.0"/>
-        <omgdi:waypoint x="310.0" y="255.0"/>
-        <omgdi:waypoint x="280.0" y="212.5"/>
-        <bpmndi:BPMNLabel>
-          <omgdc:Bounds height="0.0" width="0.0" x="0.0" y="0.0"/>
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="_10" id="BPMNEdge__10" sourceElement="checkEntity" targetElement="_8">
-        <omgdi:waypoint x="390.0" y="92.5"/>
-        <omgdi:waypoint x="430.0" y="91.0"/>
-        <bpmndi:BPMNLabel>
-          <omgdc:Bounds height="0.0" width="0.0" x="0.0" y="0.0"/>
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="_32" id="BPMNEdge__32" sourceElement="_30" targetElement="_19">
-        <omgdi:waypoint x="290.0" y="316.0"/>
-        <omgdi:waypoint x="207.0" y="316.0"/>
+      <bpmndi:BPMNEdge bpmnElement="_32" id="BPMNEdge__32" sourceElement="_16" targetElement="_24">
+        <omgdi:waypoint x="215.5" y="306.0"/>
+        <omgdi:waypoint x="145.0" y="120.0"/>
+        <omgdi:waypoint x="1095.5" y="31.0"/>
         <bpmndi:BPMNLabel>
           <omgdc:Bounds height="0.0" width="0.0" x="0.0" y="0.0"/>
         </bpmndi:BPMNLabel>

@@ -226,7 +226,7 @@ public class TaxProcessServiceImpl implements TaxProcessService {
 
                 UserVo userVo = userService.getUserInfoByUserIdAndKey(commentBean.getUserId(), historicTaskInstance.getTaskDefinitionKey());
                 if (userVo != null) {
-                    auditLogVo.setName(userVo.getUsername());
+                    auditLogVo.setName(userVo.getRealName());
                     List<RoleVo> roles = userVo.getRoles();
                     if (roles != null) {
                         RoleVo roleVo = roles.get(0);
@@ -325,7 +325,7 @@ public class TaxProcessServiceImpl implements TaxProcessService {
 
                     UserVo userVo = userService.getUserInfoByUserIdAndKey(comment.getUserId(), historicTaskInstance.getTaskDefinitionKey());
                     if (userVo != null) {
-                        auditLogVo.setName(userVo.getUsername());
+                        auditLogVo.setName(userVo.getRealName());
                         List<RoleVo> roles = userVo.getRoles();
                         if (roles != null) {
                             RoleVo roleVo = roles.get(0);
@@ -346,6 +346,12 @@ public class TaxProcessServiceImpl implements TaxProcessService {
 
                 bean.setAuditLogVoList(auditLogVoList);
             } else {
+                String processInstanceId = task.getProcessInstanceId();
+                // 添加批注时候的审核人，通常应该从session获取
+                Authentication.setAuthenticatedUserId(task.getAssignee());
+                // 添加审批备注
+                taskService.addComment(taskId, processInstanceId, String.format("放弃,%s", "放弃申报流程"));
+
                 isOperateApprove = "false";
                 bean.setStatus(4);
             }
@@ -424,6 +430,7 @@ public class TaxProcessServiceImpl implements TaxProcessService {
         taxApplicationVo.setBusinessFlowNumber(businessFlowNumber);
 
         taxApplicationVo.setCreateTime(new Date());
+        taxApplicationVo.setSaveTime(new Date());
 
         ProcessInstance pi = null;
 
@@ -506,11 +513,23 @@ public class TaxProcessServiceImpl implements TaxProcessService {
 
                 TaxApplicationVo taxApplicationVo = new TaxApplicationVo();
 
+                // 当前处理人
+                String currentHandler = "";
+                // 当前节点
+                String currentLink = taxApplicationVo.getCurrentLink();
+                if (StringUtils.isEmpty(currentLink)) {
+                    currentLink = "over";
+                }
+
                 ProcessInstance pi = runtimeService.createProcessInstanceQuery().processInstanceId(processInstanceId).singleResult();
                 if (pi != null) {
                     taxApplicationVo = (TaxApplicationVo) runtimeService.getVariable(pi.getId(), "bean");
                     Task task = taskService.createTaskQuery().processInstanceId(processInstanceId).singleResult();
                     taxApplicationVo.setCurrentLink(task.getTaskDefinitionKey());
+                    if (!StringUtils.isEmpty(taxApplicationVo.getCurrentHandler())) {
+                        UserVo user = userService.getUserById(taxApplicationVo.getCurrentHandler());
+                        currentHandler = user.getUsername();
+                    }
                 } else {
                     List<HistoricVariableInstance> historicVariableInstanceList = historyService.createHistoricVariableInstanceQuery().processInstanceId(processInstanceId).list();
                     if (historicVariableInstanceList != null && historicVariableInstanceList.size() > 0) {
@@ -521,16 +540,6 @@ public class TaxProcessServiceImpl implements TaxProcessService {
                             }
                         }
                     }
-                }
-
-                // 当前处理人
-                String currentHandler = "";
-                // 当前节点
-                String currentLink = "over";
-                if (!StringUtils.isEmpty(taxApplicationVo.getCurrentHandler())) {
-                    UserVo user = userService.getUserById(taxApplicationVo.getCurrentHandler());
-                    currentHandler = user.getUsername();
-                    currentLink = taxApplicationVo.getCurrentLink();
                 }
 
                 // 流水号
@@ -589,6 +598,7 @@ public class TaxProcessServiceImpl implements TaxProcessService {
                 doneVo.setCompanyId(companyId);
                 doneVo.setCompanyName(companyName);
                 doneVo.setCreateTime(startTime);
+                doneVo.setSaveTime(startTime);
                 doneVo.setSerialNumber(serialNumber);
 
                 // 已办详情
@@ -684,8 +694,9 @@ public class TaxProcessServiceImpl implements TaxProcessService {
             @Override
             public String getName() {
                 if (userVo != null) {
-                    return userVo.getUsername();
+                    return userVo.getRealName();
                 } else {
+
                     return "";
                 }
             }

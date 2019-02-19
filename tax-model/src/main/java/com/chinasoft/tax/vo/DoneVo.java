@@ -21,6 +21,8 @@ public class DoneVo implements Serializable {
     private String companyName;
     /**创建时间*/
     private Date createTime;
+    /**创建时间*/
+    private Date saveTime;
     /**当前环节*/
     private String currentLink;
     /**当前处理人*/
