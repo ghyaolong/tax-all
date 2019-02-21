@@ -73,6 +73,11 @@ public class CompanyVo implements java.io.Serializable{
      */
     private String userId;
 
+    /**
+     * E编码
+     */
+    private String eCode;
+
     private Integer isAssign;
 
     /**税种id(字典表的id)*/

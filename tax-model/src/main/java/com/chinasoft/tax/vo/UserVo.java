@@ -1,9 +1,7 @@
 package com.chinasoft.tax.vo;
 
-import com.chinasoft.tax.po.TDepartment;
 import lombok.Data;
 
-import javax.persistence.Transient;
 import java.util.Date;
 import java.util.List;
 

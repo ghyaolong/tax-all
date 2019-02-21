@@ -3,15 +3,9 @@ package com.chinasoft.tax.service.impl;
 import com.chinasoft.tax.common.utils.IDGeneratorUtils;
 import com.chinasoft.tax.common.utils.MyBeanUtils;
 import com.chinasoft.tax.constant.CommonConstant;
-import com.chinasoft.tax.dao.TCompanyMapper;
-import com.chinasoft.tax.dao.TCompanyTaxesMapper;
-import com.chinasoft.tax.dao.TDictMapper;
-import com.chinasoft.tax.dao.TUserCompanyMapper;
+import com.chinasoft.tax.dao.*;
 import com.chinasoft.tax.enums.ExceptionCode;
-import com.chinasoft.tax.po.TCompany;
-import com.chinasoft.tax.po.TCompanyTaxes;
-import com.chinasoft.tax.po.TDict;
-import com.chinasoft.tax.po.TUserCompany;
+import com.chinasoft.tax.po.*;
 import com.chinasoft.tax.service.CompanyService;
 import com.chinasoft.tax.vo.*;
 import com.github.pagehelper.PageHelper;
@@ -20,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
-import tk.mybatis.mapper.common.ExampleMapper;
 import tk.mybatis.mapper.entity.Example;
 
 import java.text.ParseException;
@@ -45,6 +38,9 @@ public class CompanyServiceImpl implements CompanyService {
 
     @Autowired
     private TUserCompanyMapper tUserCompanyMapper;
+
+    @Autowired
+    private TUserMapper tUserMapper;
 
 
     @Override
@@ -122,7 +118,7 @@ public class CompanyServiceImpl implements CompanyService {
             }
         }
 
-
+        //companyVo.setECode("001");
 
         PageHelper.startPage(pageVo.getPageNumber(),pageVo.getPageSize());
         Example example = new Example(TCompany.class);
@@ -141,6 +137,30 @@ public class CompanyServiceImpl implements CompanyService {
             }
             if(companyVo.getIsAssign()!=null){
                 criteria.andEqualTo("isAssign",companyVo.getIsAssign());
+            }
+
+            if(!StringUtils.isEmpty(companyVo.getECode())){
+                Example userExa = new Example(TUser.class);
+                userExa.createCriteria().andEqualTo("eCode",companyVo.getECode());
+                List<TUser> tUsers = tUserMapper.selectByExample(userExa);
+                if(!CollectionUtils.isEmpty(tUsers)){
+                    String id = tUsers.get(0).getId();
+                    Example tUserCompany = new Example(TUserCompany.class);
+                    tUserCompany.createCriteria().andEqualTo("userId",id);
+                    List<TUserCompany> tUserCompanies = tUserCompanyMapper.selectByExample(tUserCompany);
+                    StringBuffer sb = new StringBuffer();
+                    for (TUserCompany userCompany : tUserCompanies) {
+                        criteria.orEqualTo("id",userCompany.getCompanyId());
+                        sb.append("'").append(userCompany.getCompanyId()).append("'").append(",");
+                    }
+                    if(!StringUtils.isEmpty(sb.toString())){
+                        log.info(sb.substring(0,sb.length()-1));
+                        criteria.andCondition("id in","("+sb.substring(0,sb.length()-1)+")");
+                    }
+
+                }else{
+                    criteria.andEqualTo("id","!@$%^&*(");
+                }
             }
 
             if(searchVo!=null){
@@ -168,13 +188,8 @@ public class CompanyServiceImpl implements CompanyService {
                     criteria.orIn("id",(Iterable)companyIds);
                 }
             }
-
-
         }
         List<TCompany> tCompaniesList = tCompanyMapper.selectByExample(example);
-
-
-
         int count = tCompanyMapper.selectCountByExample(example);
         List<CompanyVo> companyVos = MyBeanUtils.copyList(tCompaniesList, CompanyVo.class);
 
@@ -184,10 +199,10 @@ public class CompanyServiceImpl implements CompanyService {
             List<DictVo> dictVos = MyBeanUtils.copyList(tDicts, DictVo.class);
             vo.setDicts(dictVos);
 
-            //查询改公司下分配的人
-            String taxationIds = getUserOfCompany(CommonConstant.USER_TAXATION);
-            String reviewerIds = getUserOfCompany(CommonConstant.USER_REVIEWS);
-            String viewerIds = getUserOfCompany(CommonConstant.USER_VIEWS);
+            //查询该公司下分配的人
+            String taxationIds = getUserOfCompany(vo.getId(),CommonConstant.USER_TAXATION);
+            String reviewerIds = getUserOfCompany(vo.getId(),CommonConstant.USER_REVIEWS);
+            String viewerIds = getUserOfCompany(vo.getId(),CommonConstant.USER_VIEWS);
             vo.setTaxationIds(taxationIds);
             vo.setReviewerIds(reviewerIds);
             vo.setViewerIds(viewerIds);
@@ -199,16 +214,16 @@ public class CompanyServiceImpl implements CompanyService {
 
     }
 
-    private String getUserOfCompany(String roleCode){
+    private String getUserOfCompany(String companyId,String roleCode){
         Example userComExmaple = new Example(TUserCompany.class);
         Example.Criteria criteria1 = userComExmaple.createCriteria();
-        criteria1.andEqualTo("roleCode",roleCode);
+        criteria1.andEqualTo("roleCode",roleCode).andEqualTo("companyId",companyId);
         List<TUserCompany> tUserCompanies = tUserCompanyMapper.selectByExample(userComExmaple);
         StringBuffer sb = new StringBuffer();
         for (TUserCompany tUserCompany : tUserCompanies) {
-            sb.append(tUserCompany.getId()).append(",");
+            sb.append(tUserCompany.getUserId()).append(",");
         }
-        if(!StringUtils.isEmpty(sb)){
+        if(!StringUtils.isEmpty(sb.toString())){
            return sb.substring(0,sb.length()-1);
         }
         return "";
@@ -228,7 +243,7 @@ public class CompanyServiceImpl implements CompanyService {
         TCompany tCompany = MyBeanUtils.copy(companyVo, TCompany.class);
         tCompany.setId(IDGeneratorUtils.getUUID32());
         tCompany.setCreateTime(new Date());
-        tCompany.setEstablishmentTime(new Date());
+        //tCompany.setEstablishmentTime(new Date());
         tCompany.setIsAssign(CommonConstant.COMPANY_UNASSGINED);
         tCompanyMapper.insertSelective(tCompany);
 
@@ -337,10 +352,23 @@ public class CompanyServiceImpl implements CompanyService {
         saveUserCompany(companyId, reviewerIds,CommonConstant.USER_REVIEWS);
 
         saveUserCompany(companyId, viewerIds,CommonConstant.USER_VIEWS);
+        TCompany company = new TCompany();
+        company.setId(companyId);
+        if(!StringUtils.isEmpty(taxationIds)||!StringUtils.isEmpty(reviewerIds)||!StringUtils.isEmpty(viewerIds)){
+            company.setIsAssign(CommonConstant.COMPANY_ASSGINED);
+        }else{
+            company.setIsAssign(CommonConstant.COMPANY_UNASSGINED);
+        }
+        tCompanyMapper.updateByPrimaryKeySelective(company);
 
     }
 
     private void saveUserCompany(String companyId, String userIds,String roleCode) {
+
+        //通过roleCode先删除
+        Example example = new Example(TUserCompany.class);
+        example.createCriteria().andEqualTo("roleCode",roleCode).andEqualTo("companyId",companyId);
+        tUserCompanyMapper.deleteByExample(example);
         if(!StringUtils.isEmpty(userIds)){
             String[] split = userIds.split(",");
             for (String s : split) {

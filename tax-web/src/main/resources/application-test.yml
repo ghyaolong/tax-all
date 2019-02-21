@@ -23,8 +23,8 @@ spring:
     type: com.alibaba.druid.pool.DruidDataSource
     driverClassName: com.mysql.jdbc.Driver
     multipart:
-      max-file-size: 5Mb
-      max-request-size: 5Mb
+      max-file-size: 200Mb
+      max-request-size: 200Mb
   #java mail
   mail:
     host: smtp.qq.com

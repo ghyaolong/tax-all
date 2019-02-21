@@ -44,7 +44,7 @@
 
   <select id="findUserByKey" resultMap="BaseResultMap" parameterType="java.lang.String">
 
-    select u.id,u.user_name,u.real_name,u.status,u.is_del from t_user u where u.id in (
+    select * from t_user u where u.id in (
       select ur.user_id from t_user_role ur where 1=1 and ur.role_id in
       (select id from t_role r where 1=1
       <if test="key!=null and key!=''">

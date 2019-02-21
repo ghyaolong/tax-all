@@ -221,53 +221,55 @@ public class UserServiceImpl implements UserService {
         log.info("添加用户中....,参数为[" + tuser.toString() + "]");
         tUserMapper.insertSelective(tuser);
 
+        if(!StringUtils.isEmpty(vo.getRoleIds())){
+            //保存用户-角色关系
+            String[] roleIds = vo.getRoleIds().split(",");
+            for (String roleId : roleIds) {
+                TUserRole tUserRole = new TUserRole();
+                tUserRole.setId(IDGeneratorUtils.getUUID32());
+                tUserRole.setUserId(tuser.getId());
+                tUserRole.setRoleId(roleId);
+                tUserRoleMapper.insert(tUserRole);
+                log.debug("保存用户-角色成功，结果:" + tUserRole);
+            }
+        }
 
-        //保存用户-角色关系
-        String[] roleIds = vo.getRoleIds().split(",");
-        for (String roleId : roleIds) {
-            TUserRole tUserRole = new TUserRole();
-            tUserRole.setId(IDGeneratorUtils.getUUID32());
-            tUserRole.setUserId(tuser.getId());
-            tUserRole.setRoleId(roleId);
-            tUserRoleMapper.insert(tUserRole);
-            log.debug("保存用户-角色成功，结果:" + tUserRole);
-        }
-        //保存用户-部门关系
-        String[] departmentIds = vo.getDepartmentIds().split(",");
-        for (String departmentId : departmentIds) {
-            TUserDepartment tUserDepartment = new TUserDepartment();
-            tUserDepartment.setId(IDGeneratorUtils.getUUID32());
-            tUserDepartment.setUserId(tuser.getId());
-            tUserDepartment.setDepartmentId(departmentId);
-            tUserDepartmentMapper.insert(tUserDepartment);
-            log.debug("保存用户-部门成功，结果:" + tUserDepartment);
-        }
+//        //保存用户-部门关系
+//        String[] departmentIds = vo.getDepartmentIds().split(",");
+//        for (String departmentId : departmentIds) {
+//            TUserDepartment tUserDepartment = new TUserDepartment();
+//            tUserDepartment.setId(IDGeneratorUtils.getUUID32());
+//            tUserDepartment.setUserId(tuser.getId());
+//            tUserDepartment.setDepartmentId(departmentId);
+//            tUserDepartmentMapper.insert(tUserDepartment);
+//            log.debug("保存用户-部门成功，结果:" + tUserDepartment);
+//        }
 
         //保存用户-公司关系
-        String companyIds = vo.getCompanyIds();
-        saveUserCompany(tuser.getId(), companyIds);
+        //String companyIds = vo.getCompanyIds();
+        //saveUserCompany(tuser.getId(), companyIds);
         log.info("添加用户成功");
     }
 
 
 
-    private void saveUserCompany(String userId, String companyIds) {
-        String[] ids = companyIds.split(",");
-        for (String id : ids) {
-            TUserCompany tUserCompany = new TUserCompany();
-            tUserCompany.setId(IDGeneratorUtils.getUUID32());
-            tUserCompany.setUserId(userId);
-            tUserCompany.setCompanyId(id);
-            tUserCompany.setCreateTime(new Date());
-            tUserCompanyMapper.insertSelective(tUserCompany);
-
-            //设置该公司已被分配
-            TCompany tCompany = new TCompany();
-            tCompany.setId(id);
-            tCompany.setIsAssign(CommonConstant.COMPANY_ASSIGNED);
-            tCompanyMapper.updateByPrimaryKeySelective(tCompany);
-        }
-    }
+//    private void saveUserCompany(String userId, String companyIds) {
+//        String[] ids = companyIds.split(",");
+//        for (String id : ids) {
+//            TUserCompany tUserCompany = new TUserCompany();
+//            tUserCompany.setId(IDGeneratorUtils.getUUID32());
+//            tUserCompany.setUserId(userId);
+//            tUserCompany.setCompanyId(id);
+//            tUserCompany.setCreateTime(new Date());
+//            tUserCompanyMapper.insertSelective(tUserCompany);
+//
+//            //设置该公司已被分配
+//            TCompany tCompany = new TCompany();
+//            tCompany.setId(id);
+//            tCompany.setIsAssign(CommonConstant.COMPANY_ASSIGNED);
+//            tCompanyMapper.updateByPrimaryKeySelective(tCompany);
+//        }
+//    }
 
     /**
      * 判断用户是否存在，
@@ -357,6 +359,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void editUser(UserVo vo) {
+        vo.setRealName(vo.getUsername());
         //TUser tuser = new TUser();
 
         Example queryExample = new Example(TUser.class);
@@ -390,11 +393,14 @@ public class UserServiceImpl implements UserService {
         String departmentIds = vo.getDepartmentIds();
         String companyIds = vo.getCompanyIds();
 
+        Example userRoleExample = new Example(TUserRole.class);
+        userRoleExample.createCriteria().andEqualTo("userId", vo.getId());
+        tUserRoleMapper.deleteByExample(userRoleExample);
         if (!StringUtils.isEmpty(roleIds)) {
             //清除用户先前的角色，重新添加角色
-            Example userRoleExample = new Example(TUserRole.class);
-            userRoleExample.createCriteria().andEqualTo("userId", vo.getId());
-            tUserRoleMapper.deleteByExample(userRoleExample);
+//            Example userRoleExample = new Example(TUserRole.class);
+//            userRoleExample.createCriteria().andEqualTo("userId", vo.getId());
+//            tUserRoleMapper.deleteByExample(userRoleExample);
             log.debug("修改用户中，清除用户原有的角色成功");
             String[] split = roleIds.split(",");
             for (String s : split) {
@@ -405,42 +411,44 @@ public class UserServiceImpl implements UserService {
                 tUserRoleMapper.insertSelective(tUserRole);
             }
             log.debug("修改用户.....重新给用户添加角色成功");
+        }else{
+
         }
 
-        if (!StringUtils.isEmpty(departmentIds)) {
-            Example userDepartmentExample = new Example(TUserDepartment.class);
-            userDepartmentExample.createCriteria().andEqualTo("userId", vo.getId());
-            tUserDepartmentMapper.deleteByExample(userDepartmentExample);
-            log.info("修改用户......删除用户原有的部门信息成功");
-            String[] split = departmentIds.split(",");
-            for (String s : split) {
-                TUserDepartment tUserDepartment = new TUserDepartment();
-                tUserDepartment.setId(IDGeneratorUtils.getUUID32());
-                tUserDepartment.setUserId(vo.getId());
-                tUserDepartment.setDepartmentId(s);
-                tUserDepartment.setCreateTime(new Date());
-                tUserDepartmentMapper.insertSelective(tUserDepartment);
-            }
-            log.debug("修改用户......重新给用户添加部门成功");
-        }
+//        if (!StringUtils.isEmpty(departmentIds)) {
+//            Example userDepartmentExample = new Example(TUserDepartment.class);
+//            userDepartmentExample.createCriteria().andEqualTo("userId", vo.getId());
+//            tUserDepartmentMapper.deleteByExample(userDepartmentExample);
+//            log.info("修改用户......删除用户原有的部门信息成功");
+//            String[] split = departmentIds.split(",");
+//            for (String s : split) {
+//                TUserDepartment tUserDepartment = new TUserDepartment();
+//                tUserDepartment.setId(IDGeneratorUtils.getUUID32());
+//                tUserDepartment.setUserId(vo.getId());
+//                tUserDepartment.setDepartmentId(s);
+//                tUserDepartment.setCreateTime(new Date());
+//                tUserDepartmentMapper.insertSelective(tUserDepartment);
+//            }
+//            log.debug("修改用户......重新给用户添加部门成功");
+//        }
 
         //重新分配公司
         //先查询该用户分配了的公司
-        Example tuserCompanyExample = new Example(TUserCompany.class);
-        tuserCompanyExample.createCriteria().andEqualTo("userId", vo.getId());
-        List<TUserCompany> selectedCompanies = tUserCompanyMapper.selectByExample(tuserCompanyExample);
-        for (TUserCompany selectedCompany : selectedCompanies) {
-            TCompany tCompany = new TCompany();
-            tCompany.setId(selectedCompany.getCompanyId());
-            tCompany.setIsAssign(CommonConstant.COMPANY_UNASSGINED);
-            tCompanyMapper.updateByPrimaryKeySelective(tCompany);
-        }
+//        Example tuserCompanyExample = new Example(TUserCompany.class);
+//        tuserCompanyExample.createCriteria().andEqualTo("userId", vo.getId());
+//        List<TUserCompany> selectedCompanies = tUserCompanyMapper.selectByExample(tuserCompanyExample);
+//        for (TUserCompany selectedCompany : selectedCompanies) {
+//            TCompany tCompany = new TCompany();
+//            tCompany.setId(selectedCompany.getCompanyId());
+//            tCompany.setIsAssign(CommonConstant.COMPANY_UNASSGINED);
+//            tCompanyMapper.updateByPrimaryKeySelective(tCompany);
+//        }
 
-        tUserCompanyMapper.deleteByExample(tuserCompanyExample);
-        log.info("修改用户......删除用户原来的公司信息");
-        if(!StringUtils.isEmpty(companyIds)){
-            saveUserCompany(vo.getId(), companyIds);
-        }
+        //tUserCompanyMapper.deleteByExample(tuserCompanyExample);
+        //log.info("修改用户......删除用户原来的公司信息");
+//        if(!StringUtils.isEmpty(companyIds)){
+//            saveUserCompany(vo.getId(), companyIds);
+//        }
         tuser.setDepartid(vo.getDepartmentIds());
         tUserMapper.updateByPrimaryKeySelective(tuser);
     }
@@ -625,7 +633,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserVo> getUserInfoByKey(String key) {
         List<TUser> tUsers = tUserMapper.findUserByKey(key);
-        List<UserVo> userVos = MyBeanUtils.copyList(tUsers, UserVo.class);
+        List<UserVo> userVos = MyBeanUtils.copyList(tUsers, UserVo.class,new String[]{"password"});
         return userVos;
     }
 }
