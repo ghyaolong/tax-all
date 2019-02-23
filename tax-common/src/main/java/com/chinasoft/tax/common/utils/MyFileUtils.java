@@ -2,10 +2,7 @@ package com.chinasoft.tax.common.utils;
 
 import org.springframework.util.StringUtils;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FilenameFilter;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.text.ParseException;
@@ -86,10 +83,14 @@ public class MyFileUtils {
                         //将临时文件挪到正式目录
                         File endDir = new File(filePath);
                         File endFile = new File(endDir+File.separator+fileName);
+                        //copyFile(tempPath+fileName,filePath+fileName);
                         try {
                             boolean bbo = endFile.createNewFile();
+                            System.out.println(bbo);
                         } catch (IOException e) {
                             e.printStackTrace();
+                        }finally{
+
                         }
                         return false;
                     }
@@ -120,6 +121,47 @@ public class MyFileUtils {
             }
         }
 
+
+    }
+
+    public static void copyFile(String src, String target){
+        InputStream is = null;
+        OutputStream os = null ;
+
+        try {
+            is = new FileInputStream(src);
+            os = new FileOutputStream(target);
+            byte[] buff = new byte[1024];
+            int len = 0;
+            while((len = is.read(buff, 0, buff.length)) != -1) {
+                os.write(buff, 0, len);
+            }
+            System.out.println("文件拷贝成功！");
+        } catch (FileNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } finally {
+            if(os!= null){
+                try {
+                    os.close();
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } finally {
+                    if(is!=null){
+                        try {
+                            is.close();
+                        } catch (IOException e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+        }
 
     }
 }

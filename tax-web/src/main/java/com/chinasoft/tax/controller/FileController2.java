@@ -1,3 +1,4 @@
+/*
 package com.chinasoft.tax.controller;
 
 import com.chinasoft.tax.annotation.SystemLog;
@@ -30,7 +31,7 @@ import java.nio.file.Paths;
 @Slf4j
 @RequestMapping("/file")
 @RestController
-public class FileController {
+public class FileController2 {
 
 
     @Value("${tax.file.upload}")
@@ -51,18 +52,20 @@ public class FileController {
 
 
     @Autowired
-    public FileController(ResourceLoader resourceLoader) {
+    public FileController2(ResourceLoader resourceLoader) {
         this.resourceLoader = resourceLoader;
     }
 
 
-    /**
+    */
+/**
      * 上传图片
      * 使用NIO可以提高图片上传效率。
      *
      * @param files 图片
      * @return
-     */
+     *//*
+
     @SystemLog(description = "上传资料")
     @PostMapping("/upload")
     public Message uploadFile(@RequestParam(value = "file", required = false) MultipartFile[] files,
@@ -74,8 +77,7 @@ public class FileController {
         if(StringUtils.isEmpty(materialTypeDict)){
             throw new BizException(ExceptionCode.REQUEST_PARAM_ERROR);
         }
-        //tempPath = filePath+"temp"+File.separator;
-        tempPath = filePath;
+        tempPath = filePath+"temp"+File.separator;
         if (files != null && files.length>0) {
             //filePath=filePath+"temp"+File.separator;
             if(StringUtils.isEmpty(tempPath)){
@@ -98,7 +100,7 @@ public class FileController {
                             String propertyValue = vo.getPropertyValue();
                             System.out.println(file.getSize()/(1024*1024));
                             if (!MyFileUtils.isAllowSize(file.getSize()/(1024*1024), Integer.valueOf(propertyValue))) {
-                                return ResponseUtil.responseBody(ExceptionCode.FILE_UPLOAD_ERROR.getCode(), "文件过大，不能超过"+propertyValue+"M");
+                                return ResponseUtil.responseBody(ExceptionCode.FILE_UPLOAD_ERROR.getCode(), "文件过大，不能超过4M");
                             }
 
                             //判断文件类型
@@ -142,11 +144,13 @@ public class FileController {
     }
 
 
-    /**
+    */
+/**
      * 预览相关文件
      * @param filename
      * @return
-     */
+     *//*
+
     @SystemLog(description = "预览文件")
     @RequestMapping(method = RequestMethod.GET, value = "/{filename:.+}")
     @ResponseBody
@@ -163,11 +167,13 @@ public class FileController {
         }
     }
 
-    /**
+    */
+/**
      * 下载文件
      * @param res
      * @param fileName
-     */
+     *//*
+
     @GetMapping("/download/{fileName:.+}")
     public void download(HttpServletResponse res,@PathVariable String fileName) {
         res.setHeader("content-type", "application/octet-stream");
@@ -202,10 +208,12 @@ public class FileController {
         log.info("download success");
     }
 
-    /**
+    */
+/**
      * @fileName 例如：0e3ef28c0f704f2d9b78f4cc9a2c38e2.xls
      * @return
-     */
+     *//*
+
     @DeleteMapping("delete/{fileName:.+}")
     public Message deleteFile(@PathVariable String fileName){
         //正式目录和临时目录都要删除
@@ -224,3 +232,4 @@ public class FileController {
     }
 
 }
+*/

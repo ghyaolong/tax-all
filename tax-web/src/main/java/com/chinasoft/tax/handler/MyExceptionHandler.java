@@ -32,7 +32,7 @@ public class MyExceptionHandler {
         BizException bizException = null;
         SysConfigVo msgByKey = sysConfigService.getMsgByKey(CommonConstant.FILE_SIZE);
         if(ex instanceof MultipartException){
-            return ResponseUtil.responseBody("A-000046", "上传文件不能超过"+msgByKey.getPropertyValue()+msgByKey.getUnit(),null);
+            return ResponseUtil.responseBody("A-000046", "上传文件不能超过"+msgByKey.getPropertyValue()+msgByKey.getUnit(),"");
         }
         if( ex instanceof BizException){
             builder.append("\n【业务异常】"+ex);
