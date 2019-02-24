@@ -61,6 +61,7 @@ public class TaxApplicationVo implements Serializable {
     /**
      * 备注
      */
+    @Excel(name = "备注")
     private String remarks;
 
     private Integer status;

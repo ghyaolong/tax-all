@@ -219,6 +219,44 @@ public class TaxProcessController {
     }
 
     /**
+     * 导出Excel
+     * @param procInstId
+     * @param userId
+     * @return
+     */
+    @GetMapping("/exportExcel/{procInstId}/{userId}")
+    public Message exportExcelByProceIdAndUserId(@PathVariable String procInstId,@PathVariable String userId,HttpServletResponse response){
+
+        DoneVo doneVo = taxProcessService.searchExportInfo(procInstId);
+
+
+        // 获取导出excel指定模版，第二个参数true代表显示一个Excel中的所有 sheet
+        TemplateExportParams params = new TemplateExportParams(convertTemplatePath("/templates/template.xlsx"), true);
+
+        Map<String, Object> data = new HashMap<String, Object>();
+        data.put("date", new Date());//导出一般都要日期
+        data.put("one", doneVo.getTaxApplicationVo());//导出一个对象
+        List<TaxApplicationDetailVo> details = doneVo.getTaxApplicationVo().getDetails();
+        for (TaxApplicationDetailVo detail : details) {
+            detail.setActualTaxPayment(detail.getTaxPaid()+detail.getOverduePayment());
+        }
+        data.put("list", details);//导出list集合
+        //审批记录
+        data.put("auditList",doneVo.getAuditLogVoList());
+
+        try {
+            // 简单模板导出方法
+            Workbook book = ExcelExportUtil.exportExcel(params, data);
+            //下载方法
+            export(response, book, "税金申请");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return ResponseUtil.responseBody("导出成功");
+    }
+
+    /**
      * export导出请求头设置
      *
      * @param response
