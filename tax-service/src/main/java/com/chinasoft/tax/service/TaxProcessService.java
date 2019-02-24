@@ -20,4 +20,6 @@ public interface TaxProcessService {
     MyPageInfo<DoneVo> searchHistory(PageVo pageVo, SearchVo searchVo);
 
     List<Comment> searchAuditComment(String taskId);
+
+    DoneVo searchExportInfo(String processInstanceId);
 }

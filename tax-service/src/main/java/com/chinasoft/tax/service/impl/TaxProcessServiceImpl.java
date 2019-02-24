@@ -681,6 +681,115 @@ public class TaxProcessServiceImpl implements TaxProcessService {
     }
 
     /**
+     * 查询导出信息
+     * @param processInstanceId
+     */
+    public DoneVo searchExportInfo(String processInstanceId) {
+        HistoricProcessInstance historicProcessInstance = historyService.createHistoricProcessInstanceQuery().processInstanceId(processInstanceId).singleResult();
+
+        Date startTime = historicProcessInstance.getStartTime();
+
+        TaxApplicationVo taxApplicationVo = new TaxApplicationVo();
+
+        // 当前处理人
+        String currentHandler = "";
+        // 当前节点
+        String currentLink = taxApplicationVo.getCurrentLink();
+        if (StringUtils.isEmpty(currentLink)) {
+            currentLink = "over";
+        }
+
+        ProcessInstance pi = runtimeService.createProcessInstanceQuery().processInstanceId(processInstanceId).singleResult();
+        if (pi != null) {
+            taxApplicationVo = (TaxApplicationVo) runtimeService.getVariable(pi.getId(), "bean");
+            Task task = taskService.createTaskQuery().processInstanceId(processInstanceId).singleResult();
+            taxApplicationVo.setCurrentLink(task.getTaskDefinitionKey());
+            if (!StringUtils.isEmpty(taxApplicationVo.getCurrentHandler())) {
+                UserVo user = userService.getUserById(taxApplicationVo.getCurrentHandler());
+                currentHandler = user.getUsername();
+            }
+        } else {
+            List<HistoricVariableInstance> historicVariableInstanceList = historyService.createHistoricVariableInstanceQuery().processInstanceId(processInstanceId).list();
+            if (historicVariableInstanceList != null && historicVariableInstanceList.size() > 0) {
+                for (HistoricVariableInstance hvi : historicVariableInstanceList) {
+                    if ("bean".equals(hvi.getVariableName())) {
+                        Object value = hvi.getValue();
+                        BeanUtils.copyProperties(value, taxApplicationVo);
+                    }
+                }
+            }
+        }
+
+        // 流水号
+        String serialNumber = taxApplicationVo.getSerialNumber();
+        // 公司名称
+        String companyId = taxApplicationVo.getCompanyId();
+        String companyName = taxApplicationVo.getCompanyName();
+        // 审批意见
+        List<Comment> commentList = taskService.getProcessInstanceComments(processInstanceId);
+
+        List<AuditLogVo> auditLogVoList = new ArrayList<>();
+
+        // 处理启动流程审批记录
+        AuditLogVo startAuditLogVo = getStartAuditLogVo(historicProcessInstance.getStartUserId(), historicProcessInstance.getStartTime());
+        auditLogVoList.add(startAuditLogVo);
+
+        // 处理正常审批记录
+        commentList.stream().forEach(bean -> {
+
+            HistoricTaskInstance historicTaskInstance = historyService.createHistoricTaskInstanceQuery().taskId(bean.getTaskId()).singleResult();
+
+            AuditLogVo auditLogVo = new AuditLogVo();
+            auditLogVo.setTaskName(historicTaskInstance.getName());
+
+            UserVo userVo = userService.getUserInfoByUserIdAndKey(bean.getUserId(), historicTaskInstance.getTaskDefinitionKey());
+            if (userVo != null) {
+                auditLogVo.setName(userVo.getRealName());
+                List<RoleVo> roles = userVo.getRoles();
+                if (roles != null) {
+                    RoleVo roleVo = roles.get(0);
+                    auditLogVo.setRoleName(roleVo.getName());
+                }
+            }
+
+            String fullMessage = bean.getFullMessage();
+            if (!StringUtils.isEmpty(fullMessage)) {
+                String[] split = fullMessage.split(",");
+                if (split != null && split.length > 1) {
+                    auditLogVo.setAuditResult(split[0]);
+                    if (split.length > 1) {
+                        auditLogVo.setAdvice(split[1]);
+                    }
+                }
+            }
+            auditLogVo.setAuditDate(bean.getTime());
+
+            auditLogVoList.add(auditLogVo);
+        });
+
+        DoneVo doneVo = new DoneVo();
+
+        // 已办数据
+        doneVo.setProcInstId(processInstanceId);
+        doneVo.setCurrentHandler(currentHandler);
+        doneVo.setCurrentLink(currentLink);
+        doneVo.setFlowNum(processInstanceId);
+        doneVo.setCompanyId(companyId);
+        doneVo.setCompanyName(companyName);
+        doneVo.setCreateTime(startTime);
+        doneVo.setSaveTime(startTime);
+        doneVo.setSerialNumber(serialNumber);
+
+        // 已办详情
+        doneVo.setTaxApplicationVo(taxApplicationVo);
+
+        // 已办评论
+        doneVo.setAuditLogVoList(auditLogVoList);
+
+        return doneVo;
+    }
+
+    /**
      * 处理启动流程审批记录
      * @param userId 发起人
      * @param startTime 发起时间
@@ -859,7 +968,6 @@ public class TaxProcessServiceImpl implements TaxProcessService {
             return isCreateImage;
         }
     }
-
 
     private void initService() {
         myRuntimeService = runtimeService;
