@@ -194,4 +194,6 @@ public interface CommonConstant {
     String USER_REVIEWS="reviewerIds";
     String USER_VIEWS ="viewerIds";
 
+    String ADMIN_CODE = "ROLE_ADMINISTRATOR";
+
 }

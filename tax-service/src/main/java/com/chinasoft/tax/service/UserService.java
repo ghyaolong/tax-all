@@ -30,6 +30,12 @@ public interface UserService {
      */
     List<UserVo> getAllUser();
 
+    /**
+     * 判断当前用户是否是管理员
+     * @return
+     */
+    boolean isAdmin();
+
 
     /**
      * 通过roleCode获取拥有改roleCode的所有用户

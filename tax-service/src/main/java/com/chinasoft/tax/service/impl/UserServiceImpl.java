@@ -15,6 +15,8 @@ import com.github.pagehelper.PageHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -635,5 +637,24 @@ public class UserServiceImpl implements UserService {
         List<TUser> tUsers = tUserMapper.findUserByKey(key);
         List<UserVo> userVos = MyBeanUtils.copyList(tUsers, UserVo.class,new String[]{"password"});
         return userVos;
+    }
+
+    @Override
+    public boolean isAdmin() {
+        UserDetails user = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String username = user.getUsername();
+        Example example = new Example(TUser.class);
+        example.createCriteria().andEqualTo("username",username);
+        TUser tUser = tUserMapper.selectOneByExample(example);
+        if(tUser!=null){
+
+            List<TRole> byUserId = tUserRoleMapper.findByUserId(tUser.getId());
+            for (TRole tRole : byUserId) {
+                if(tRole.getCode().equals(CommonConstant.ADMIN_CODE)){
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

@@ -275,4 +275,9 @@ public class UserController {
         List<UserVo> allUserByRoleCode = userService.getAllUserByRoleCode(roleCode);
         return ResponseUtil.responseBody(allUserByRoleCode);
     }
+
+    @GetMapping("/isAdmin")
+    public Message isAdmin(){
+        return ResponseUtil.responseBody(userService.isAdmin());
+    }
 }
