@@ -592,6 +592,7 @@ public class TaxProcessServiceImpl implements TaxProcessService {
                 DoneVo doneVo = new DoneVo();
 
                 // 已办数据
+                doneVo.setProcInstId(processInstanceId);
                 doneVo.setCurrentHandler(currentHandler);
                 doneVo.setCurrentLink(currentLink);
                 doneVo.setFlowNum(processInstanceId);
