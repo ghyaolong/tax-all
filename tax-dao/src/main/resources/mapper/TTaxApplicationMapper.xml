@@ -30,6 +30,36 @@
     
     <result column="current_link" jdbcType="VARCHAR" property="currentLink" />
     <result column="current_handler" jdbcType="VARCHAR" property="currentHandler" />
+
+    <result column="business_flow_number" jdbcType="VARCHAR" property="businessFlowNumber" />
+
+    <collection property="details" ofType="com.chinasoft.tax.po.TTaxApplicationDetail" column="id">
+      <id column="tad_id" jdbcType="VARCHAR" property="id" />
+      <result column="tad_taxPeriod" jdbcType="VARCHAR" property="taxPeriod" />
+      <result column="tad_taxDict" jdbcType="VARCHAR" property="taxDict" />
+      <result column="tad_payableTax" jdbcType="DECIMAL" property="payableTax" />
+      <result column="tad_lateFeePayable" jdbcType="DECIMAL" property="lateFeePayable" />
+      <result column="tad_applTaxPayment" jdbcType="DECIMAL" property="applTaxPayment" />
+      <result column="tad_deadline" jdbcType="TIMESTAMP" property="deadline" />
+      <result column="tad_taxPaid" jdbcType="DECIMAL" property="taxPaid" />
+      <result column="tad_overduePayment" jdbcType="DECIMAL" property="overduePayment" />
+      <result column="tad_actualTaxPayment" jdbcType="DECIMAL" property="actualTaxPayment" />
+      <result column="tad_paymentTime" jdbcType="TIMESTAMP" property="paymentTime" />
+      <result column="tad_remarks" jdbcType="VARCHAR" property="remarks" />
+      <result column="tad_status" jdbcType="INTEGER" property="status" />
+      <result column="tad_taxApplicationId" jdbcType="VARCHAR" property="taxApplicationId" />
+      <result column="tad_taxReturns" jdbcType="VARCHAR" property="taxReturns" />
+      <result column="tad_taxReturnsPath" jdbcType="VARCHAR" property="taxReturnsPath" />
+      <result column="tad_isUploadTaxReturns" jdbcType="INTEGER" property="isUploadTaxReturns" />
+      <result column="tad_paymentCertificate" jdbcType="VARCHAR" property="paymentCertificate" />
+      <result column="tad_paymentCertificatePath" jdbcType="VARCHAR" property="paymentCertificatePath" />
+      <result column="tad_isUploadCertificate" jdbcType="INTEGER" property="isUploadCertificate" />
+      <result column="tad_otherUpload" jdbcType="VARCHAR" property="otherUpload" />
+      <result column="tad_otherUploadId" jdbcType="VARCHAR" property="otherUploadId" />
+      <result column="tad_preTaxReturns" jdbcType="VARCHAR" property="preTaxReturns" />
+      <result column="tad_preTaxReturnsPath" jdbcType="VARCHAR" property="preTaxReturnsPath" />
+      <result column="tad_isUploadPreTaxReturns" jdbcType="INTEGER" property="isUploadPreTaxReturns" />
+    </collection>
   </resultMap>
 
   <select id="searchDoneByUserId" parameterType="java.lang.String" resultType="com.chinasoft.tax.vo.DoneVo">
@@ -56,5 +86,65 @@
     FROM act_hi_taskinst aht
     LEFT JOIN act_hi_comment ahc ON ahc.TASK_ID_ = aht.ID_
     WHERE aht.PROC_INST_ID_ = #{processInstanceId} AND aht.END_TIME_ is not null;
+  </select>
+
+  <select id="searchHistory" parameterType="java.lang.String" resultMap="BaseResultMap">
+    SELECT
+      ta.id as id,
+      ta.company_id as company_id,
+      ta.company_name as company_name,
+      ta.TIN as tin,
+      ta.country_code as country_code,
+      ta.country_name as country_name,
+      ta.applicant_id as applicant_id,
+      ta.applicant_name as applicant_name,
+      ta.remarks as remarks,
+      ta.status as status,
+      ta.currency as currency,
+      ta.financial_report as financial_report,
+      ta.financial_report_path as financial_report_path,
+      ta.is_upload_report as is_upload_report,
+      ta.creator as creator,
+      ta.create_time as create_time,
+      ta.save_time as save_time,
+      ta.is_del as is_del,
+      ta.del_time as del_time,
+      ta.deletor as deletor,
+      ta.current_link as current_link,
+      ta.current_handler as current_handler,
+      ta.business_flow_number as business_flow_number,
+
+      tad.id as tad_id,
+      tad.tax_period as tad_taxPeriod,
+      tad.tax_dict as tad_taxDict,
+      tad.payable_tax as tad_payableTax,
+      tad.late_fee_payable as tad_lateFeePayable,
+      tad.appl_tax_payment as tad_applTaxPayment,
+      tad.deadline as tad_deadline,
+      tad.tax_paid as tad_taxPaid,
+      tad.overdue_payment as tad_overduePayment,
+      tad.actual_tax_payment as tad_actualTaxPayment,
+      tad.payment_time as tad_paymentTime,
+      tad.remarks as tad_remarks,
+      tad.status as tad_status,
+      tad.tax_application_id as tad_taxApplicationId,
+      tad.tax_returns as tad_taxReturns,
+      tad.tax_returns_path as tad_taxReturnsPath,
+      tad.is_upload_tax_returns as tad_isUploadTaxReturns,
+      tad.payment_certificate as tad_paymentCertificate,
+      tad.payment_certificate_path as tad_paymentCertificatePath,
+      tad.is_upload_certificate as tad_isUploadCertificate,
+      tad.other_upload as tad_otherUpload,
+      tad.other_upload_id as tad_otherUploadId,
+      tad.pre_tax_returns as tad_preTaxReturns,
+      tad.pre_tax_returns_path as tad_preTaxReturnsPath,
+      tad.is_upload_pre_tax_returns as tad_isUploadPreTaxReturns
+    FROM t_tax_application ta
+    LEFT JOIN t_tax_application_detail tad ON tad.tax_application_id = ta.id
+    WHERE
+    ta.status = 6
+    <if test="userId != null">
+      AND ta.applicant_id = #{userId}
+    </if>
   </select>
 </mapper>

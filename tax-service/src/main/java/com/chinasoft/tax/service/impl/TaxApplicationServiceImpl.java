@@ -1,9 +1,6 @@
 package com.chinasoft.tax.service.impl;
 
-import com.chinasoft.tax.common.utils.DateUtil;
-import com.chinasoft.tax.common.utils.IDGeneratorUtils;
-import com.chinasoft.tax.common.utils.MyBeanUtils;
-import com.chinasoft.tax.common.utils.MyFileUtils;
+import com.chinasoft.tax.common.utils.*;
 import com.chinasoft.tax.constant.CommonConstant;
 import com.chinasoft.tax.dao.TApplicationMaterialMapper;
 import com.chinasoft.tax.dao.TAuditLogMapper;
@@ -111,6 +108,10 @@ public class TaxApplicationServiceImpl implements TaxApplicationService {
     @Override
     public void input(TaxApplicationVo taxApplicationVo) {
         TTaxApplication tTaxApplication = MyBeanUtils.copy(taxApplicationVo, TTaxApplication.class);
+        // 生成流水号
+        String businessFlowNumber = BusinessFlowNumberUtil.getBusinessFlowNumber();
+        tTaxApplication.setBusinessFlowNumber(businessFlowNumber);
+
         tTaxApplication.setId(IDGeneratorUtils.getUUID32());
         tTaxApplication.setSaveTime(new Date());
         tTaxApplication.setCreateTime(new Date());

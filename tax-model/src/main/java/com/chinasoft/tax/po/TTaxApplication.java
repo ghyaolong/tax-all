@@ -2,6 +2,7 @@ package com.chinasoft.tax.po;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Table(name = "t_tax_application")
 public class TTaxApplication {
@@ -119,6 +120,8 @@ public class TTaxApplication {
 
     @Column(name = "current_handler")
     private String currentHandler;
+
+    private List<TTaxApplicationDetail> details;
 
     public String getFinancialReportPath() {
         return financialReportPath;
@@ -440,5 +443,13 @@ public class TTaxApplication {
 
     public void setBusinessFlowNumber(String businessFlowNumber) {
         this.businessFlowNumber = businessFlowNumber;
+    }
+
+    public List<TTaxApplicationDetail> getDetails() {
+        return details;
+    }
+
+    public void setDetails(List<TTaxApplicationDetail> details) {
+        this.details = details;
     }
 }

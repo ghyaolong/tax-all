@@ -180,7 +180,7 @@ public interface CommonConstant {
     Integer TAX_CHIEF_FINANCIAL_OFFICER = 6;
 
     /**补充完成*/
-    Integer TAX_DONE = 7;
+    Integer TAX_DONE = 6;
 
     /**驳回*/
     Integer TAX_REJECT = 8;
