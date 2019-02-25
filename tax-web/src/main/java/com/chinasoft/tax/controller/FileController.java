@@ -206,20 +206,41 @@ public class FileController {
      * @fileName 例如：0e3ef28c0f704f2d9b78f4cc9a2c38e2.xls
      * @return
      */
-    @DeleteMapping("delete/{fileName:.+}")
+//    @DeleteMapping("/delete/{fileName:.+}")
+//    public Message deleteFile(@PathVariable String fileName){
+//        //正式目录和临时目录都要删除
+//        File file = new File(filePath+"temp"+File.separator+fileName);
+//        if(file.exists()){
+//            file.deleteOnExit();
+//            return ResponseUtil.responseBody("删除成功");
+//        }
+//
+//        File file1 = new File(filePath+fileName);
+//        if(file1.exists()){
+//            file1.delete();
+//            return ResponseUtil.responseBody("删除成功");
+//        }
+//        throw new BizException(ExceptionCode.DATA_NOT_EXIST.getCode(),"文件不存在");
+//    }
+
+    /**
+     * @fileName 例如：0e3ef28c0f704f2d9b78f4cc9a2c38e2.xls
+     * @return
+     */
+    @DeleteMapping("/delete/{fileName:.+}")
     public Message deleteFile(@PathVariable String fileName){
         //正式目录和临时目录都要删除
-        File file = new File(filePath+"temp"+File.separator+fileName);
+        File file = new File(filePath+fileName);
         if(file.exists()){
-            file.deleteOnExit();
+            file.delete();
             return ResponseUtil.responseBody("删除成功");
         }
 
-        File file1 = new File(filePath+fileName);
-        if(file1.exists()){
-            file1.delete();
-            return ResponseUtil.responseBody("删除成功");
-        }
+//        File file1 = new File(filePath+fileName);
+//        if(file1.exists()){
+//            file1.delete();
+//            return ResponseUtil.responseBody("删除成功");
+//        }
         throw new BizException(ExceptionCode.DATA_NOT_EXIST.getCode(),"文件不存在");
     }
 

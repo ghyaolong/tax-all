@@ -12,6 +12,8 @@ import org.springframework.boot.web.servlet.MultipartConfigFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import tk.mybatis.spring.annotation.MapperScan;
 
 import javax.servlet.MultipartConfigElement;
@@ -22,7 +24,8 @@ import javax.servlet.MultipartConfigElement;
 //启用自带定时任务
 @EnableScheduling
 //@EnableAutoConfiguration(exclude={DataSourceAutoConfiguration.class})
-public class TaxWebApplication {
+public class TaxWebApplication extends WebMvcConfigurerAdapter {
+
 
     @Autowired
     private SysConfigService sysConfigService;
@@ -41,5 +44,10 @@ public class TaxWebApplication {
         /// 设置总上传数据总大小
         factory.setMaxRequestSize(propertyValue+vo.getUnit());
         return factory.createMultipartConfig();
+    }
+
+    @Override
+    public void configureContentNegotiation(ContentNegotiationConfigurer configurer) {
+        configurer.favorPathExtension(false);
     }
 }
