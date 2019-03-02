@@ -25,8 +25,8 @@ spring:
     type: com.alibaba.druid.pool.DruidDataSource
     driverClassName: com.mysql.jdbc.Driver
     multipart:
-      max-file-size: 5Mb
-      max-request-size: 5Mb
+      max-file-size: 200Mb
+      max-request-size: 200Mb
   #java mail
   mail:
     host: smtp.qq.com
@@ -44,8 +44,8 @@ spring:
   # 限制文件大小
   http:
     multipart:
-      max-file-size: 4MB
-      max-request-size: 4MB
+      max-file-size: 200MB
+      max-request-size: 200MB
 #MyBatis配置
 mybatis:
   type-aliases-package: com.chinasoft.tax.po
