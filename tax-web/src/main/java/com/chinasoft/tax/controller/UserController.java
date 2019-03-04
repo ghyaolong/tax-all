@@ -163,11 +163,11 @@ public class UserController {
             throw new BizException(ExceptionCode.REQUEST_PARAM_ERROR);
         }
 
-        //用户名：英文+数字
-        boolean b = checkInput(vo.getUsername());
-        if(!b){
-            throw new BizException(ExceptionCode.REQUEST_PARAM_ERROR.getCode(),"用户名只能包含数字＋英文");
-        }
+//        //用户名：英文+数字
+//        boolean b = checkInput(vo.getUsername());
+//        if(!b){
+//            throw new BizException(ExceptionCode.REQUEST_PARAM_ERROR.getCode(),"用户名只能包含数字＋英文");
+//        }
         vo.setRealName(vo.getUsername());
         userService.addUser(vo);
         return ResponseUtil.responseBody("添加成功");

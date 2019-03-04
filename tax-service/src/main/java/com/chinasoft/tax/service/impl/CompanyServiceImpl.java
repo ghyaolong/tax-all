@@ -161,6 +161,21 @@ public class CompanyServiceImpl implements CompanyService {
                 }else{
                     criteria.andEqualTo("id","!@$%^&*(");
                 }
+            }else{
+                if(!isAdmin){
+
+                    List<String> companyIds = new ArrayList<>();
+                    Example ucExample = new Example(TUserCompany.class);
+                    ucExample.createCriteria().andEqualTo("userId",userId);
+                    List<TUserCompany> tUserCompanies = tUserCompanyMapper.selectByExample(ucExample);
+                    for (TUserCompany tUserCompany : tUserCompanies) {
+                        companyIds.add(tUserCompany.getCompanyId());
+                    }
+
+                    if(!CollectionUtils.isEmpty(companyIds)){
+                        criteria.orIn("id",(Iterable)companyIds);
+                    }
+                }
             }
 
             if(searchVo!=null){
@@ -174,20 +189,8 @@ public class CompanyServiceImpl implements CompanyService {
                 }
             }
 
-            if(!isAdmin){
 
-                List<String> companyIds = new ArrayList<>();
-                Example ucExample = new Example(TUserCompany.class);
-                ucExample.createCriteria().andEqualTo("userId",userId);
-                List<TUserCompany> tUserCompanies = tUserCompanyMapper.selectByExample(ucExample);
-                for (TUserCompany tUserCompany : tUserCompanies) {
-                    companyIds.add(tUserCompany.getCompanyId());
-                }
 
-                if(!CollectionUtils.isEmpty(companyIds)){
-                    criteria.orIn("id",(Iterable)companyIds);
-                }
-            }
         }
         List<TCompany> tCompaniesList = tCompanyMapper.selectByExample(example);
         int count = tCompanyMapper.selectCountByExample(example);

@@ -7,6 +7,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.chinasoft.tax.common.utils.Base64Util;
 import com.chinasoft.tax.common.utils.ResponseUtil;
 import com.chinasoft.tax.qo.TaxQo;
+import com.chinasoft.tax.service.DictService;
 import com.chinasoft.tax.service.TaxApplicationService;
 import com.chinasoft.tax.service.TaxProcessService;
 import com.chinasoft.tax.vo.*;
@@ -47,6 +48,9 @@ public class TaxProcessController {
 
     @Autowired
     private TaxApplicationService taxApplicationService;
+
+    @Autowired
+    private DictService dictService;
 
     @Autowired
     public TaxProcessController(ResourceLoader resourceLoader) {
@@ -190,6 +194,7 @@ public class TaxProcessController {
      * @param
      * @return
      */
+    @Deprecated
     @GetMapping("/exportExcel/{json}")
     public Message exportExcelByFlowNum(@PathVariable String json,HttpServletResponse response){
 
@@ -238,6 +243,11 @@ public class TaxProcessController {
         data.put("one", doneVo.getTaxApplicationVo());//导出一个对象
         List<TaxApplicationDetailVo> details = doneVo.getTaxApplicationVo().getDetails();
         for (TaxApplicationDetailVo detail : details) {
+            String taxDict = detail.getTaxDict();
+            DictVo byCode = dictService.findByCode(taxDict);
+            if(byCode!=null){
+                detail.setTaxDict(byCode.getName());
+            }
             detail.setActualTaxPayment(detail.getTaxPaid()+detail.getOverduePayment());
         }
         data.put("list", details);//导出list集合

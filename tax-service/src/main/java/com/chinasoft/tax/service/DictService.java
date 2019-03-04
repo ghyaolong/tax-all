@@ -41,4 +41,11 @@ public interface DictService {
      * @param id
      */
     void del(String id);
+
+    /**
+     * 通过code查询字典
+     * @param code
+     * @return
+     */
+    DictVo findByCode(String code);
 }

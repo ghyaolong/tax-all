@@ -121,4 +121,16 @@ public class DictServiceImpl implements DictService {
         tDictMapper.deleteByPrimaryKey(id);
         log.info("删除字典成功");
     }
+
+    @Override
+    public DictVo findByCode(String code) {
+        Example example = new Example(TDict.class);
+        example.createCriteria().andEqualTo("code",code);
+        TDict tDict = tDictMapper.selectOneByExample(example);
+        if(tDict!=null){
+            DictVo copy = MyBeanUtils.copy(tDict, DictVo.class);
+            return copy;
+        }
+        return null;
+    }
 }
