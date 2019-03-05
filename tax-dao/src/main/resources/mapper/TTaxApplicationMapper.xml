@@ -146,5 +146,8 @@
     <if test="userId != null">
       AND ta.applicant_id = #{userId}
     </if>
+    <if test="id != null">
+      AND ta.id = #{id}
+    </if>
   </select>
 </mapper>

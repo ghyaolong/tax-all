@@ -15,5 +15,5 @@ public interface TTaxApplicationMapper extends MyMapper<TTaxApplication> {
 
     List<AuditLogVo> searchCommentByTaskId(String processInstanceId);
 
-    List<TTaxApplication> searchHistory(@Param("userId") String userId);
+    List<TTaxApplication> searchHistory(@Param("id") String id, @Param("userId") String userId);
 }

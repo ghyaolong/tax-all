@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.chinasoft.tax.common.utils.DateUtil;
 import com.chinasoft.tax.common.utils.IDGeneratorUtils;
 import com.chinasoft.tax.common.utils.BusinessFlowNumberUtil;
+import com.chinasoft.tax.common.utils.MyBeanUtils;
 import com.chinasoft.tax.dao.TTaxApplicationDetailMapper;
 import com.chinasoft.tax.dao.TTaxApplicationMapper;
 import com.chinasoft.tax.dao.TUserMapper;
@@ -13,6 +14,7 @@ import com.chinasoft.tax.service.TaxProcessService;
 import com.chinasoft.tax.service.UserService;
 import com.chinasoft.tax.vo.*;
 import com.github.pagehelper.PageHelper;
+import com.google.gson.Gson;
 import org.activiti.engine.*;
 import org.activiti.engine.history.*;
 import org.activiti.engine.impl.identity.Authentication;
@@ -533,9 +535,9 @@ public class TaxProcessServiceImpl implements TaxProcessService {
             // 补充历史数据
             List<TTaxApplication> taxApplications;
             if (isAdmin) {
-                taxApplications = taxApplicationMapper.searchHistory(null);
+                taxApplications = taxApplicationMapper.searchHistory(null, null);
             } else {
-                taxApplications = taxApplicationMapper.searchHistory(userId);
+                taxApplications = taxApplicationMapper.searchHistory(null, userId);
             }
 
             taxApplications.stream().forEach(taxApplication -> {
@@ -559,7 +561,12 @@ public class TaxProcessServiceImpl implements TaxProcessService {
 
                 DoneVo doneVo = new DoneVo();
                 // 已办数据
-                doneVo.setProcInstId(taxApplication.getSerialNumber());
+                String serialNumber = taxApplication.getSerialNumber();
+                if (!StringUtils.isEmpty(serialNumber)) {
+                    doneVo.setProcInstId(serialNumber);
+                } else {
+                    doneVo.setProcInstId(taxApplication.getId());
+                }
                 doneVo.setCurrentHandler("");
                 doneVo.setCurrentLink(currentLink);
                 doneVo.setFlowNum(taxApplication.getBusinessFlowNumber());
@@ -598,7 +605,7 @@ public class TaxProcessServiceImpl implements TaxProcessService {
                 if (!StringUtils.isEmpty(userId) && taxApplicationVo != null) {
                     String currentHandler = taxApplicationVo.getCurrentHandler();
                     if (!StringUtils.isEmpty(currentHandler)) {
-                        boolean equals = userId.equals(currentHandler);
+                        boolean equals = userId.equals(currentHandler) && !currentLink.equals("over") && !currentLink.equals("overAbnormalData");
                         if (equals) {
                             return false;
                         }
@@ -762,6 +769,15 @@ public class TaxProcessServiceImpl implements TaxProcessService {
             public Date getAuditDate() {
                 return startTime;
             }
+
+            @Override
+            public String getPoiAuditDate() {
+                if (startTime == null) {
+                    return "";
+                } else {
+                    return DATE_FORMAT.format(startTime);
+                }
+            }
         };
         return startAuditLogVo;
     }
@@ -782,13 +798,13 @@ public class TaxProcessServiceImpl implements TaxProcessService {
                 bean.setCurrentLink(task.getTaskDefinitionKey());
                 // 处理启动流程审批记录
                 List<AuditLogVo> auditLogVoList = new ArrayList<>();
-                HistoricProcessInstance historicProcessInstance = historyService.createHistoricProcessInstanceQuery().processInstanceId(pi.getId()).singleResult();
-                AuditLogVo auditLogVo = getStartAuditLogVo(historicProcessInstance.getStartUserId(), historicProcessInstance.getStartTime());
-                auditLogVoList.add(auditLogVo);
                 List<AuditLogVo> auditLogVoListByBean = bean.getAuditLogVoList();
                 if (auditLogVoListByBean != null && auditLogVoListByBean.size() > 0) {
                     auditLogVoList.addAll(bean.getAuditLogVoList());
                 }
+                HistoricProcessInstance historicProcessInstance = historyService.createHistoricProcessInstanceQuery().processInstanceId(pi.getId()).singleResult();
+                AuditLogVo auditLogVo = getStartAuditLogVo(historicProcessInstance.getStartUserId(), historicProcessInstance.getStartTime());
+                auditLogVoList.add(auditLogVo);
                 bean.setAuditLogVoList(auditLogVoList);
                 result.add(bean);
             }
@@ -903,7 +919,7 @@ public class TaxProcessServiceImpl implements TaxProcessService {
 
         HistoricProcessInstance historicProcessInstance = historyService.createHistoricProcessInstanceQuery().processInstanceId(processInstanceId).singleResult();
 
-        Date startTime = historicProcessInstance.getStartTime();
+        Date startTime;
 
         TaxApplicationVo taxApplicationVo = new TaxApplicationVo();
 
@@ -915,23 +931,41 @@ public class TaxProcessServiceImpl implements TaxProcessService {
             currentLink = "over";
         }
 
-        ProcessInstance pi = runtimeService.createProcessInstanceQuery().processInstanceId(processInstanceId).singleResult();
-        if (pi != null) {
-            taxApplicationVo = (TaxApplicationVo) runtimeService.getVariable(pi.getId(), "bean");
-            Task task = taskService.createTaskQuery().processInstanceId(processInstanceId).singleResult();
-            taxApplicationVo.setCurrentLink(task.getTaskDefinitionKey());
-            currentLink = task.getTaskDefinitionKey();
-            if (!StringUtils.isEmpty(taxApplicationVo.getCurrentHandler())) {
-                UserVo user = userService.getUserById(taxApplicationVo.getCurrentHandler());
-                currentHandler = user.getUsername();
+        // 该流程为导入的历史数据
+        if (historicProcessInstance == null) {
+            List<TTaxApplication> taxApplications = taxApplicationMapper.searchHistory(processInstanceId, null);
+            if (taxApplications != null && taxApplications.size() > 0) {
+                TTaxApplication tTaxApplication = taxApplications.get(0);
+                startTime = tTaxApplication.getSaveTime();
+                Gson gson = new Gson();
+                String json = gson.toJson(tTaxApplication);
+                taxApplicationVo = gson.fromJson(json, TaxApplicationVo.class);
+            } else {
+                return null;
             }
         } else {
-            List<HistoricVariableInstance> historicVariableInstanceList = historyService.createHistoricVariableInstanceQuery().processInstanceId(processInstanceId).list();
-            if (historicVariableInstanceList != null && historicVariableInstanceList.size() > 0) {
-                for (HistoricVariableInstance hvi : historicVariableInstanceList) {
-                    if ("bean".equals(hvi.getVariableName())) {
-                        Object value = hvi.getValue();
-                        BeanUtils.copyProperties(value, taxApplicationVo);
+            startTime = historicProcessInstance.getStartTime();
+            ProcessInstance pi = runtimeService.createProcessInstanceQuery().processInstanceId(processInstanceId).singleResult();
+            if (pi != null) {
+                taxApplicationVo = (TaxApplicationVo) runtimeService.getVariable(pi.getId(), "bean");
+                Task task = taskService.createTaskQuery().processInstanceId(processInstanceId).singleResult();
+                taxApplicationVo.setCurrentLink(task.getTaskDefinitionKey());
+                currentLink = task.getTaskDefinitionKey();
+                if (!StringUtils.isEmpty(taxApplicationVo.getCurrentHandler())) {
+                    UserVo user = userService.getUserById(taxApplicationVo.getCurrentHandler());
+                    currentHandler = user.getUsername();
+                }
+            } else {
+                List<HistoricVariableInstance> historicVariableInstanceList = historyService.createHistoricVariableInstanceQuery().processInstanceId(processInstanceId).list();
+                if (historicVariableInstanceList != null && historicVariableInstanceList.size() > 0) {
+                    for (HistoricVariableInstance hvi : historicVariableInstanceList) {
+                        if ("bean".equals(hvi.getVariableName())) {
+                            Object value = hvi.getValue();
+                            // taxApplicationVo = MyBeanUtils.copy(value, TaxApplicationVo.class);
+                            Gson gson = new Gson();
+                            String json = gson.toJson(value);
+                            taxApplicationVo = gson.fromJson(json, TaxApplicationVo.class);
+                        }
                     }
                 }
             }
@@ -993,9 +1027,11 @@ public class TaxProcessServiceImpl implements TaxProcessService {
             auditLogVoList.add(auditLogVo);
         });
 
-        // 处理启动流程审批记录
-        AuditLogVo startAuditLogVo = getStartAuditLogVo(historicProcessInstance.getStartUserId(), historicProcessInstance.getStartTime());
-        auditLogVoList.add(startAuditLogVo);
+        if (historicProcessInstance != null) {
+            // 处理启动流程审批记录
+            AuditLogVo startAuditLogVo = getStartAuditLogVo(historicProcessInstance.getStartUserId(), historicProcessInstance.getStartTime());
+            auditLogVoList.add(startAuditLogVo);
+        }
 
         DoneVo doneVo = new DoneVo();
 

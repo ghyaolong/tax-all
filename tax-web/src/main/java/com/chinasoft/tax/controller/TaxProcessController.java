@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.math.BigDecimal;
 import java.net.URLDecoder;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
@@ -242,6 +243,20 @@ public class TaxProcessController {
         data.put("date", new Date());//导出一般都要日期
         data.put("one", doneVo.getTaxApplicationVo());//导出一个对象
         List<TaxApplicationDetailVo> details = doneVo.getTaxApplicationVo().getDetails();
+
+        // 应缴税额合计
+        Double payableTaxSum = 0.00;
+        // 应缴滞纳金合计
+        Double lateFeePayableSum = 0.00;
+        // 申请缴纳税款合计
+        Double applTaxPaymentSum = 0.00;
+        // 实缴税额合计
+        Double taxPaidSum = 0.00;
+        // 实缴滞纳金合计
+        Double overduePaymentSum = 0.00;
+        // 实际缴纳税款合计
+        Double actualTaxPaymentSum = 0.00;
+
         for (TaxApplicationDetailVo detail : details) {
             String taxDict = detail.getTaxDict();
             DictVo byCode = dictService.findByCode(taxDict);
@@ -249,8 +264,34 @@ public class TaxProcessController {
                 detail.setTaxDict(byCode.getName());
             }
             detail.setActualTaxPayment(detail.getTaxPaid()+detail.getOverduePayment());
+
+            Double payableTax = detail.getPayableTax();
+            Double lateFeePayable = detail.getLateFeePayable();
+            Double applTaxPayment = detail.getApplTaxPayment();
+            Double taxPaid = detail.getTaxPaid();
+            Double overduePayment = detail.getOverduePayment();
+            Double actualTaxPayment = detail.getActualTaxPayment();
+
+            payableTaxSum = sum(payableTaxSum, payableTax);
+            lateFeePayableSum = sum(lateFeePayableSum, lateFeePayable);
+            applTaxPaymentSum = sum(applTaxPaymentSum, applTaxPayment);
+            taxPaidSum = sum(taxPaidSum, taxPaid);
+            overduePaymentSum = sum(overduePaymentSum, overduePayment);
+            actualTaxPaymentSum = sum(actualTaxPaymentSum, actualTaxPayment);
+
         }
+
+        // 求合计
+        data.put("payableTaxSum", payableTaxSum);//导出list集合
+        data.put("lateFeePayableSum", lateFeePayableSum);//导出list集合
+        data.put("applTaxPaymentSum", applTaxPaymentSum);//导出list集合
+        data.put("taxPaidSum", taxPaidSum);//导出list集合
+        data.put("overduePaymentSum", overduePaymentSum);//导出list集合
+        data.put("actualTaxPaymentSum", actualTaxPaymentSum);//导出list集合
+
+
         data.put("list", details);//导出list集合
+
         //审批记录
         data.put("auditList",doneVo.getAuditLogVoList());
 
@@ -266,6 +307,21 @@ public class TaxProcessController {
         return ResponseUtil.responseBody("导出成功");
     }
 
+    /**
+     * Double 求和
+     * @param a
+     * @param b
+     * @return
+     */
+    private static Double sum(Double a, Double b) {
+        if (b == null) {
+            b = 0.00;
+        }
+        BigDecimal bigDecimalA = new BigDecimal(a.toString());
+        BigDecimal bigDecimalB = new BigDecimal(b.toString());
+        BigDecimal add = bigDecimalA.add(bigDecimalB);
+        return add.doubleValue();
+    }
     /**
      * export导出请求头设置
      *
