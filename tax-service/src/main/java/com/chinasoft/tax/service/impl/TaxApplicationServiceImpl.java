@@ -152,6 +152,7 @@ public class TaxApplicationServiceImpl implements TaxApplicationService {
         List<TTaxApplicationDetail> tTaxApplicationDetails = MyBeanUtils.copyList(detailVos, TTaxApplicationDetail.class);
         for (TTaxApplicationDetail tTaxApplicationDetail : tTaxApplicationDetails) {
 
+            String id = tTaxApplicationDetail.getId();
             //提交需要上传 预申报表
             if(taxApplicationVo.getExecuteType() == CommonConstant.EXECUTE_TYPE_COMMIT){
                 if(StringUtils.isEmpty(tTaxApplicationDetail.getPreTaxReturns())){
@@ -161,8 +162,15 @@ public class TaxApplicationServiceImpl implements TaxApplicationService {
                     tTaxApplicationDetail.setIsUploadPreTaxReturns(CommonConstant.FILE_UPLOADED);
                 }
             }
+
             tTaxApplicationDetail.setTaxApplicationId(tTaxApplication.getId());
-            tTaxApplicationDetailMapper.updateByPrimaryKeySelective(tTaxApplicationDetail);
+
+            if (!StringUtils.isEmpty(id)) {
+                tTaxApplicationDetailMapper.updateByPrimaryKeySelective(tTaxApplicationDetail);
+            } else {
+                tTaxApplicationDetail.setId(IDGeneratorUtils.getUUID32());
+                tTaxApplicationDetailMapper.insertSelective(tTaxApplicationDetail);
+            }
         }
     }
 

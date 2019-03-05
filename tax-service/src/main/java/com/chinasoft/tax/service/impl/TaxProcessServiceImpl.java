@@ -559,7 +559,7 @@ public class TaxProcessServiceImpl implements TaxProcessService {
 
                 DoneVo doneVo = new DoneVo();
                 // 已办数据
-                doneVo.setProcInstId(taxApplication.getBusinessFlowNumber());
+                doneVo.setProcInstId(taxApplication.getSerialNumber());
                 doneVo.setCurrentHandler("");
                 doneVo.setCurrentLink(currentLink);
                 doneVo.setFlowNum(taxApplication.getBusinessFlowNumber());
@@ -567,7 +567,7 @@ public class TaxProcessServiceImpl implements TaxProcessService {
                 doneVo.setCompanyName(companyName);
                 doneVo.setCreateTime(startTime);
                 doneVo.setSaveTime(startTime);
-                doneVo.setSerialNumber(taxApplication.getBusinessFlowNumber());
+                doneVo.setSerialNumber(taxApplication.getSerialNumber());
                 // 已办详情
                 TaxApplicationVo taxApplicationVo = new TaxApplicationVo();
                 BeanUtils.copyProperties(taxApplication, taxApplicationVo);
@@ -594,6 +594,16 @@ public class TaxProcessServiceImpl implements TaxProcessService {
                 String applicationId = searchVo.getApplicationId();
                 Integer flowStatus = searchVo.getFlowStatus();
                 String serialNumber = searchVo.getSerialNumber();
+                TaxApplicationVo taxApplicationVo = bean.getTaxApplicationVo();
+                if (!StringUtils.isEmpty(userId) && taxApplicationVo != null) {
+                    String currentHandler = taxApplicationVo.getCurrentHandler();
+                    if (!StringUtils.isEmpty(currentHandler)) {
+                        boolean equals = userId.equals(currentHandler);
+                        if (equals) {
+                            return false;
+                        }
+                    }
+                }
 
                 if (!StringUtils.isEmpty(companyId)) {
                     boolean equals = companyId.equals(bean.getCompanyId());
@@ -940,6 +950,8 @@ public class TaxProcessServiceImpl implements TaxProcessService {
 
         // 流水号
         String serialNumber = taxApplicationVo.getSerialNumber();
+        // 业务流水号
+        String businessFlowNumber = taxApplicationVo.getBusinessFlowNumber();
         // 公司名称
         String companyId = taxApplicationVo.getCompanyId();
         String companyName = taxApplicationVo.getCompanyName();
@@ -991,7 +1003,7 @@ public class TaxProcessServiceImpl implements TaxProcessService {
         doneVo.setProcInstId(processInstanceId);
         doneVo.setCurrentHandler(currentHandler);
         doneVo.setCurrentLink(currentLink);
-        doneVo.setFlowNum(processInstanceId);
+        doneVo.setFlowNum(businessFlowNumber);
         doneVo.setCompanyId(companyId);
         doneVo.setCompanyName(companyName);
         doneVo.setCreateTime(startTime);
