@@ -104,7 +104,9 @@ public class FileController {
                             //判断文件类型
                             SysConfigVo msgByKey = sysConfigService.getMsgByKey(CommonConstant.FILE_TYPE);
                             String fileTypes = msgByKey.getPropertyValue();
-                            if(MyFileUtils.isAllFileType(ext,fileTypes.split(",")));
+                            if(!MyFileUtils.isAllFileType(ext,fileTypes.split(","))){
+                                return ResponseUtil.responseBody(ExceptionCode.FILE_UPLOAD_ERROR.getCode(), "不支持的文件类型");
+                            }
                         }
                         newFileName = IDGeneratorUtils.getUUID32() + ext;
                         //Files.copy(file.getInputStream(), Paths.get(filePath+imgPath, newFileName));
