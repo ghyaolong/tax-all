@@ -477,21 +477,35 @@ public class UserServiceImpl implements UserService {
 
 
         //去空格处理
-        String username = userVo.getUsername();
+        if(!StringUtils.isEmpty(userVo.getUsername())){
+            String username = userVo.getUsername().trim();
+            userVo.setUsername(username);
+        }
+        if(!StringUtils.isEmpty(userVo.getECode())){
+            String eCode = userVo.getECode().trim();
+            userVo.setECode(eCode);
+        }
+
         String email = userVo.getEmail();
         Integer sex = userVo.getSex();
         Integer status = userVo.getStatus();
         //Date createTime = userVo.getCreateTime();
         Example example = new Example(TUser.class);
         Example.Criteria criteria = example.createCriteria();
+        if(!StringUtils.isEmpty(searchVo.getStartDate())){
+            userVo.setStartDate(searchVo.getStartDate()+" 00:00:00");
+        }
+        if(!StringUtils.isEmpty(searchVo.getEndDate())){
+            userVo.setEndDate(searchVo.getEndDate()+ " 23:59:59");
+        }
 
         //
         //userVo.setRoleIds("496138616573952");
         //
 
-        if (!StringUtils.isEmpty(username)) {
-            criteria.andLike("username", "%" + username.trim() + "%");
-        }
+//        if (!StringUtils.isEmpty(username)) {
+//            criteria.andLike("username", "%" + username.trim() + "%");
+//        }
 //        if (!StringUtils.isEmpty(email)) {
 //            criteria.andLike("email", "%" + email.trim() + "%");
 //        }
@@ -505,13 +519,13 @@ public class UserServiceImpl implements UserService {
 //            criteria.andLike("tel",""+userVo.getTel().trim()+"%");
 //        }
 
-        if(!StringUtils.isEmpty(userVo.getECode())){
-            criteria.andLike("eCode",""+userVo.getECode().trim()+"%");
-        }
+//        if(!StringUtils.isEmpty(userVo.getECode())){
+//            criteria.andLike("eCode",""+userVo.getECode().trim()+"%");
+//        }
 
 
 
-        if (searchVo != null) {
+        /*if (searchVo != null) {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
             if (!StringUtils.isEmpty(searchVo.getStartDate()) && !StringUtils.isEmpty(searchVo.getEndDate())) {
 
@@ -535,10 +549,11 @@ public class UserServiceImpl implements UserService {
                     e.printStackTrace();
                 }
             }
-        }
+        }*/
 
         PageHelper.startPage(pageVo.getPageNumber(), pageVo.getPageSize(), true);
-        List<TUser> tUsers = tUserMapper.selectByExample(example);
+        //List<TUser> tUsers = tUserMapper.selectByExample(example);
+        List<TUser> tUsers = tUserMapper.findAll(userVo);
         int count = tUserMapper.selectCountByExample(example);
         List<UserVo> userVoList = MyBeanUtils.copyList(tUsers, UserVo.class, "password", "password2");
         Iterator<UserVo> iterator = userVoList.iterator();

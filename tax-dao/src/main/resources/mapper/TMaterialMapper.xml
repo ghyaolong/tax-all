@@ -37,7 +37,7 @@
     m.id = d.tax_returns
     or m.id = d.payment_certificate
     or m.id = d.pre_tax_returns
-    or m.id = d.other_upload_id
+    or m.id = d.other_upload
     )
     left join
     t_tax_application a

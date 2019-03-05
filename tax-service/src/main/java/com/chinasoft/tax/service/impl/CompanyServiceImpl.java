@@ -148,15 +148,15 @@ public class CompanyServiceImpl implements CompanyService {
                     Example tUserCompany = new Example(TUserCompany.class);
                     tUserCompany.createCriteria().andEqualTo("userId",id);
                     List<TUserCompany> tUserCompanies = tUserCompanyMapper.selectByExample(tUserCompany);
-                    StringBuffer sb = new StringBuffer();
+                    //StringBuffer sb = new StringBuffer();
                     for (TUserCompany userCompany : tUserCompanies) {
                         criteria.orEqualTo("id",userCompany.getCompanyId());
-                        sb.append("'").append(userCompany.getCompanyId()).append("'").append(",");
+                        //sb.append("'").append(userCompany.getCompanyId()).append("'").append(",");
                     }
-                    if(!StringUtils.isEmpty(sb.toString())){
-                        log.info(sb.substring(0,sb.length()-1));
-                        criteria.andCondition("id in","("+sb.substring(0,sb.length()-1)+")");
-                    }
+//                    if(!StringUtils.isEmpty(sb.toString())){
+//                        log.info(sb.substring(0,sb.length()-1));
+//                        //criteria.andCondition("id in","("+sb.substring(0,sb.length()-1)+")");
+//                    }
 
                 }else{
                     criteria.andEqualTo("id","!@$%^&*(");

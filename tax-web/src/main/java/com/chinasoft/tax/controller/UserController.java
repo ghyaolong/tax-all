@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -279,5 +280,20 @@ public class UserController {
     @GetMapping("/isAdmin")
     public Message isAdmin(){
         return ResponseUtil.responseBody(userService.isAdmin());
+    }
+
+    /**
+     * 查询申请人(也就是税务专员)
+     * @return
+     */
+    @GetMapping("/getTaxCommissioner")
+    public Message getTaxCommissioner(){
+        List<UserVo> list = new ArrayList<>();
+        List<UserVo> allUserByRoleCode = userService.getAllUserByRoleCode("ROLE_TAX_COMMISSIONER");
+        int count =allUserByRoleCode.size()>10?10:allUserByRoleCode.size();
+        for (int i = 0; i < count; i++) {
+            list.add(allUserByRoleCode.get(i));
+        }
+        return ResponseUtil.responseBody(list);
     }
 }
