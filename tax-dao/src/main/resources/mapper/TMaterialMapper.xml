@@ -43,6 +43,7 @@
     t_tax_application a
     on d.tax_application_id = a.id
     where 1=1 and a.company_id != '' and m.tax_dict != ''
+    AND a.status = 4
     <!--<if test= "companyName!=null and companyName!=''">-->
       <!--and a.company_name LIKE CONCAT('%',#{companyName},'%')-->
     <!--</if>-->
@@ -79,7 +80,7 @@
     t_material m
     left join t_tax_application ta on
     m.id = ta.financial_report
-    where 1=1 and ta.company_id != '' and m.tax_dict!= ''
+    where 1=1 and ta.company_id != '' and m.tax_dict!= '' and ta.status = 4
     <!--<if test= "companyName!=null and companyName!=''">-->
       <!--and ta.company_name LIKE CONCAT('%',#{companyName},'%')-->
     <!--</if>-->
@@ -100,6 +101,7 @@
     <if test="startTime!=null and startTime!='' and endTime!=null and endTime!=''">
       and m.create_time between str_to_date(#{startTime},'%Y-%m-%d %H:%i:%s') and str_to_date(#{endTime},'%Y-%m-%d %H:%i:%s')
     </if>
+
 
   </select>
 </mapper>
