@@ -978,6 +978,7 @@ public class TaxProcessServiceImpl implements TaxProcessService {
             int index = taxApplicationVoDetails.size();
             for (int i = 0; i < index; i++) {
                 TaxApplicationDetailVo bean = taxApplicationVoDetails.get(i);
+
                 Double payableTax = bean.getPayableTax();
                 Double taxPaid = bean.getTaxPaid();
                 Double lateFeePayable = bean.getLateFeePayable();
