@@ -975,7 +975,20 @@ public class TaxProcessServiceImpl implements TaxProcessService {
         List<TaxApplicationDetailVo> taxApplicationVoDetails = taxApplicationVo.getDetails();
         boolean anyMatch = false;
         if (taxApplicationVoDetails != null && taxApplicationVoDetails.size() > 0) {
-            anyMatch = taxApplicationVoDetails.stream().anyMatch(bean -> !StringUtils.equals(bean.getPayableTax().toString(), bean.getTaxPaid().toString()) || !StringUtils.equals(bean.getLateFeePayable().toString(), bean.getOverduePayment().toString()));
+            int index = taxApplicationVoDetails.size();
+            for (int i = 0; i < index; i++) {
+                TaxApplicationDetailVo bean = taxApplicationVoDetails.get(i);
+                Double payableTax = bean.getPayableTax();
+                Double taxPaid = bean.getTaxPaid();
+                Double lateFeePayable = bean.getLateFeePayable();
+                Double overduePayment = bean.getOverduePayment();
+                if (payableTax != null && taxPaid != null) {
+                    if (!payableTax.equals(taxPaid) || !lateFeePayable.equals(overduePayment)) {
+                        anyMatch = true;
+                        break;
+                    }
+                }
+            }
         }
         if (anyMatch && StringUtils.isEmpty(taxApplicationVo.getCurrentHandler())) {
             currentLink = "overAbnormalData";
