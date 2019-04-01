@@ -15,11 +15,11 @@ server:
 spring:
   # 数据源
   datasource:
-    url: jdbc:mysql://114.116.93.197:3306/tax_test?useUnicode=true&characterEncoding=utf-8&useSSL=false
+    url: jdbc:mysql://localhost:3306/tax?useUnicode=true&characterEncoding=utf-8&useSSL=false
     username: root
     # Jasypt加密 可到common-utils中找到JasyptUtil加解密工具类生成加密结果 格式为ENC(加密结果)
     #password: ENC(ngsRLf40KOVqOJ0PatYiOQ==)
-    password: Yaolong0827!
+    password: 123456789
     type: com.alibaba.druid.pool.DruidDataSource
     driverClassName: com.mysql.jdbc.Driver
     multipart:
@@ -44,6 +44,16 @@ spring:
     multipart:
       max-file-size: 200MB
       max-request-size: 200MB
+  # Redis
+  redis:
+    host: localhost
+    password: 123456
+    # 数据库索引 默认0
+    database: 0
+    port: 6379
+    timeout: 3000
+
+
 #MyBatis配置
 mybatis:
   type-aliases-package: com.chinasoft.tax.po
@@ -57,14 +67,7 @@ pagehelper:
   helper-dialect: mysql
 
 
-  # Redis
-  redis:
-    host: localhost
-    password: 123456
-    # 数据库索引 默认0
-    database: 0
-    port: 6379
-    timeout: 3000
+
 
 
 tax:
