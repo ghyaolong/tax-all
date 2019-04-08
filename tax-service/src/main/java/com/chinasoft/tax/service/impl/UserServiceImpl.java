@@ -13,6 +13,7 @@ import com.chinasoft.tax.service.UserService;
 import com.chinasoft.tax.vo.*;
 import com.github.pagehelper.PageHelper;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.IteratorUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -499,62 +500,11 @@ public class UserServiceImpl implements UserService {
             userVo.setEndDate(searchVo.getEndDate()+ " 23:59:59");
         }
 
-        //
-        //userVo.setRoleIds("496138616573952");
-        //
-
-//        if (!StringUtils.isEmpty(username)) {
-//            criteria.andLike("username", "%" + username.trim() + "%");
-//        }
-//        if (!StringUtils.isEmpty(email)) {
-//            criteria.andLike("email", "%" + email.trim() + "%");
-//        }
-//        if (sex != null) {
-//            criteria.andEqualTo("sex", sex);
-//        }
-//        if (status != null) {
-//            criteria.andEqualTo("status", status);
-//        }
-//        if(!StringUtils.isEmpty(userVo.getTel())){
-//            criteria.andLike("tel",""+userVo.getTel().trim()+"%");
-//        }
-
-//        if(!StringUtils.isEmpty(userVo.getECode())){
-//            criteria.andLike("eCode",""+userVo.getECode().trim()+"%");
-//        }
-
-
-
-        /*if (searchVo != null) {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-            if (!StringUtils.isEmpty(searchVo.getStartDate()) && !StringUtils.isEmpty(searchVo.getEndDate())) {
-
-                try {
-                    criteria.andBetween("createTime", sdf.parse(searchVo.getStartDate()+" 00:00:00"), sdf.parse(searchVo.getEndDate()+" 23:59:59"));
-
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-
-            }else if(!StringUtils.isEmpty(searchVo.getStartDate()) && StringUtils.isEmpty(searchVo.getEndDate())){
-                try {
-                    criteria.andGreaterThanOrEqualTo("createTime",sdf.parse(searchVo.getStartDate()+" 00:00:00"));
-                }catch (ParseException e){
-                    e.printStackTrace();
-                }
-            }else if(StringUtils.isEmpty(searchVo.getStartDate()) && !StringUtils.isEmpty(searchVo.getEndDate())){
-                try {
-                    criteria.andLessThanOrEqualTo("createTime",sdf.parse(searchVo.getEndDate()+" 23:59:59"));
-                }catch (ParseException e){
-                    e.printStackTrace();
-                }
-            }
-        }*/
-
         PageHelper.startPage(pageVo.getPageNumber(), pageVo.getPageSize(), true);
         //List<TUser> tUsers = tUserMapper.selectByExample(example);
         List<TUser> tUsers = tUserMapper.findAll(userVo);
-        int count = tUserMapper.selectCountByExample(example);
+        List<TUser> tUsers123 = tUserMapper.findAll(userVo);
+        int count = tUsers123.size();
         List<UserVo> userVoList = MyBeanUtils.copyList(tUsers, UserVo.class, "password", "password2");
         Iterator<UserVo> iterator = userVoList.iterator();
         String roleName="";
