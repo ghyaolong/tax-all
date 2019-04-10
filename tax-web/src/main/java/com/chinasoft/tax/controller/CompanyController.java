@@ -50,9 +50,13 @@ public class CompanyController {
         List<RoleVo> currUserRole = currentUserUtils.getCurrUserRole();
         boolean flag = false;
         for (RoleVo roleVo : currUserRole) {
+            if("ROLE_ADMINISTRATOR".equalsIgnoreCase(roleVo.getCode())){
+                flag = false;
+                //break;
+            }
             if("ROLE_COMMISSIONER_OF_TAX".equals(roleVo.getCode())||"ROLE_ REVIEWER".equals(roleVo.getCode())){
                 flag = true;
-                break;
+                //break;
             }
         }
         if(flag){
