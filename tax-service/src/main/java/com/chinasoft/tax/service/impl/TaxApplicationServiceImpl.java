@@ -61,20 +61,20 @@ public class TaxApplicationServiceImpl implements TaxApplicationService {
     public void add(TaxApplicationVo taxApplicationVo) {
         TTaxApplication tTaxApplication = MyBeanUtils.copy(taxApplicationVo, TTaxApplication.class);
         tTaxApplication.setId(IDGeneratorUtils.getUUID32());
-        if(taxApplicationVo.getExecuteType() == CommonConstant.EXECUTE_TYPE_SAVE){
+        if (taxApplicationVo.getExecuteType() == CommonConstant.EXECUTE_TYPE_SAVE) {
             tTaxApplication.setSaveTime(new Date());
             tTaxApplication.setStatus(CommonConstant.EXECUTE_TYPE_SAVE);
-        }else{
+        } else {
             tTaxApplication.setSaveTime(new Date());
             tTaxApplication.setCreateTime(new Date());
             tTaxApplication.setSerialNumber(IDGeneratorUtils.getFlowNum());
             tTaxApplication.setStatus(CommonConstant.EXECUTE_TYPE_COMMIT);
 
             //如果是提交，则必须上传财务报表
-            if(StringUtils.isEmpty(tTaxApplication.getFinancialReport())){
-                throw new BizException(ExceptionCode.REQUEST_PARAM_ERROR.getCode(),"请上传财务报表");
-            }else{
-                MyFileUtils.evictUselessFile(filePath,taxApplicationVo.getOriName());
+            if (StringUtils.isEmpty(tTaxApplication.getFinancialReport())) {
+                throw new BizException(ExceptionCode.REQUEST_PARAM_ERROR.getCode(), "请上传财务报表");
+            } else {
+                MyFileUtils.evictUselessFile(filePath, taxApplicationVo.getOriName());
                 saveApplicationMaterial(taxApplicationVo, tTaxApplication);
                 tTaxApplication.setIsUploadReport(CommonConstant.FILE_UPLOADED);
             }
@@ -86,11 +86,11 @@ public class TaxApplicationServiceImpl implements TaxApplicationService {
         for (TTaxApplicationDetail tTaxApplicationDetail : tTaxApplicationDetails) {
 
             //提交需要上传 预申报表
-            if(taxApplicationVo.getExecuteType() == CommonConstant.EXECUTE_TYPE_COMMIT){
-                if(StringUtils.isEmpty(tTaxApplicationDetail.getPreTaxReturns())){
-                    throw new BizException(ExceptionCode.REQUEST_PARAM_ERROR.getCode(),"请上传预申报表");
-                }else{
-                    MyFileUtils.evictUselessFile(filePath,tTaxApplicationDetail.getPreTaxReturnsPathFileName());
+            if (taxApplicationVo.getExecuteType() == CommonConstant.EXECUTE_TYPE_COMMIT) {
+                if (StringUtils.isEmpty(tTaxApplicationDetail.getPreTaxReturns())) {
+                    throw new BizException(ExceptionCode.REQUEST_PARAM_ERROR.getCode(), "请上传预申报表");
+                } else {
+                    MyFileUtils.evictUselessFile(filePath, tTaxApplicationDetail.getPreTaxReturnsPathFileName());
                     tTaxApplicationDetail.setIsUploadPreTaxReturns(CommonConstant.FILE_UPLOADED);
                 }
             }
@@ -104,23 +104,59 @@ public class TaxApplicationServiceImpl implements TaxApplicationService {
     }
 
 
-
     @Override
     public void input(TaxApplicationVo taxApplicationVo) {
+//        TTaxApplication tTaxApplication = MyBeanUtils.copy(taxApplicationVo, TTaxApplication.class);
+//        // 生成流水号
+//        String businessFlowNumber = BusinessFlowNumberUtil.getBusinessFlowNumber();
+//        tTaxApplication.setBusinessFlowNumber(businessFlowNumber);
+//
+//        tTaxApplication.setId(IDGeneratorUtils.getUUID32());
+//        tTaxApplication.setSaveTime(new Date());
+//        tTaxApplication.setCreateTime(new Date());
+//        tTaxApplication.setStatus(CommonConstant.TAX_DONE);
+//
+//        tTaxApplicationMapper.insertSelective(tTaxApplication);
+//        List<TaxApplicationDetailVo> detailVos = taxApplicationVo.getDetails();
+//        List<TTaxApplicationDetail> tTaxApplicationDetails = MyBeanUtils.copyList(detailVos, TTaxApplicationDetail.class);
+//        for (TTaxApplicationDetail tTaxApplicationDetail : tTaxApplicationDetails) {
+//            tTaxApplicationDetail.setId(IDGeneratorUtils.getUUID32());
+//            tTaxApplicationDetail.setTaxApplicationId(tTaxApplication.getId());
+//            tTaxApplicationDetailMapper.insertSelective(tTaxApplicationDetail);
+//        }
+
         TTaxApplication tTaxApplication = MyBeanUtils.copy(taxApplicationVo, TTaxApplication.class);
+
         // 生成流水号
         String businessFlowNumber = BusinessFlowNumberUtil.getBusinessFlowNumber();
         tTaxApplication.setBusinessFlowNumber(businessFlowNumber);
-
         tTaxApplication.setId(IDGeneratorUtils.getUUID32());
+
         tTaxApplication.setSaveTime(new Date());
         tTaxApplication.setCreateTime(new Date());
+        tTaxApplication.setSerialNumber(IDGeneratorUtils.getFlowNum());
         tTaxApplication.setStatus(CommonConstant.TAX_DONE);
+
+        if (StringUtils.isEmpty(tTaxApplication.getFinancialReport())) {
+            throw new BizException(ExceptionCode.REQUEST_PARAM_ERROR.getCode(), "请上传财务报表");
+        } else {
+            MyFileUtils.evictUselessFile(filePath, taxApplicationVo.getOriName());
+            saveApplicationMaterial(taxApplicationVo, tTaxApplication);
+            tTaxApplication.setIsUploadReport(CommonConstant.FILE_UPLOADED);
+        }
 
         tTaxApplicationMapper.insertSelective(tTaxApplication);
         List<TaxApplicationDetailVo> detailVos = taxApplicationVo.getDetails();
         List<TTaxApplicationDetail> tTaxApplicationDetails = MyBeanUtils.copyList(detailVos, TTaxApplicationDetail.class);
         for (TTaxApplicationDetail tTaxApplicationDetail : tTaxApplicationDetails) {
+
+            //提交需要上传 预申报表
+            if (StringUtils.isEmpty(tTaxApplicationDetail.getPreTaxReturns())) {
+                throw new BizException(ExceptionCode.REQUEST_PARAM_ERROR.getCode(), "请上传预申报表");
+            } else {
+                MyFileUtils.evictUselessFile(filePath, tTaxApplicationDetail.getPreTaxReturnsPathFileName());
+                tTaxApplicationDetail.setIsUploadPreTaxReturns(CommonConstant.FILE_UPLOADED);
+            }
             tTaxApplicationDetail.setId(IDGeneratorUtils.getUUID32());
             tTaxApplicationDetail.setTaxApplicationId(tTaxApplication.getId());
             tTaxApplicationDetailMapper.insertSelective(tTaxApplicationDetail);
@@ -130,17 +166,17 @@ public class TaxApplicationServiceImpl implements TaxApplicationService {
     @Override
     public void edit(TaxApplicationVo taxApplicationVo) {
         TTaxApplication tTaxApplication = MyBeanUtils.copy(taxApplicationVo, TTaxApplication.class);
-        if(taxApplicationVo.getExecuteType() == CommonConstant.EXECUTE_TYPE_SAVE){
+        if (taxApplicationVo.getExecuteType() == CommonConstant.EXECUTE_TYPE_SAVE) {
             tTaxApplication.setStatus(CommonConstant.EXECUTE_TYPE_SAVE);
-        }else{
+        } else {
             tTaxApplication.setCreateTime(new Date());
             tTaxApplication.setStatus(CommonConstant.EXECUTE_TYPE_COMMIT);
 
             //如果是提交，则必须上传财务报表
-            if(StringUtils.isEmpty(tTaxApplication.getFinancialReport())){
-                throw new BizException(ExceptionCode.REQUEST_PARAM_ERROR.getCode(),"请上传财务报表");
-            }else{
-                MyFileUtils.evictUselessFile(filePath,taxApplicationVo.getOriName());
+            if (StringUtils.isEmpty(tTaxApplication.getFinancialReport())) {
+                throw new BizException(ExceptionCode.REQUEST_PARAM_ERROR.getCode(), "请上传财务报表");
+            } else {
+                MyFileUtils.evictUselessFile(filePath, taxApplicationVo.getOriName());
                 saveApplicationMaterial(taxApplicationVo, tTaxApplication);
                 tTaxApplication.setIsUploadReport(CommonConstant.FILE_UPLOADED);
             }
@@ -154,11 +190,11 @@ public class TaxApplicationServiceImpl implements TaxApplicationService {
 
             String id = tTaxApplicationDetail.getId();
             //提交需要上传 预申报表
-            if(taxApplicationVo.getExecuteType() == CommonConstant.EXECUTE_TYPE_COMMIT){
-                if(StringUtils.isEmpty(tTaxApplicationDetail.getPreTaxReturns())){
-                    throw new BizException(ExceptionCode.REQUEST_PARAM_ERROR.getCode(),"请上传预申报表");
-                }else{
-                    MyFileUtils.evictUselessFile(filePath,tTaxApplicationDetail.getPreTaxReturnsPathFileName());
+            if (taxApplicationVo.getExecuteType() == CommonConstant.EXECUTE_TYPE_COMMIT) {
+                if (StringUtils.isEmpty(tTaxApplicationDetail.getPreTaxReturns())) {
+                    throw new BizException(ExceptionCode.REQUEST_PARAM_ERROR.getCode(), "请上传预申报表");
+                } else {
+                    MyFileUtils.evictUselessFile(filePath, tTaxApplicationDetail.getPreTaxReturnsPathFileName());
                     tTaxApplicationDetail.setIsUploadPreTaxReturns(CommonConstant.FILE_UPLOADED);
                 }
             }
@@ -176,12 +212,13 @@ public class TaxApplicationServiceImpl implements TaxApplicationService {
 
     /**
      * 补充税金申请，主要补充 申报表 ，扣款凭证
+     *
      * @param taxApplicationVo
      */
     @Override
     public void replenishment(TaxApplicationVo taxApplicationVo) {
-        if(StringUtils.isEmpty(taxApplicationVo.getFinancialReport())&&taxApplicationVo.getIsUploadReport()==CommonConstant.FILE_UPLOADED){
-            throw new BizException(ExceptionCode.REQUEST_PARAM_ERROR.getCode(),"请再一次上传财务报表");
+        if (StringUtils.isEmpty(taxApplicationVo.getFinancialReport()) && taxApplicationVo.getIsUploadReport() == CommonConstant.FILE_UPLOADED) {
+            throw new BizException(ExceptionCode.REQUEST_PARAM_ERROR.getCode(), "请再一次上传财务报表");
         }
         //2表示最终版都财务报表已经上传
         taxApplicationVo.setIsUploadReport(2);
@@ -191,12 +228,12 @@ public class TaxApplicationServiceImpl implements TaxApplicationService {
 
         for (TTaxApplicationDetail tTaxApplicationDetail : tTaxApplicationDetails) {
 
-            if(StringUtils.isEmpty(tTaxApplicationDetail.getPaymentCertificate())){
-                throw new BizException(ExceptionCode.REQUEST_PARAM_ERROR.getCode(),"请上传扣款凭证");
+            if (StringUtils.isEmpty(tTaxApplicationDetail.getPaymentCertificate())) {
+                throw new BizException(ExceptionCode.REQUEST_PARAM_ERROR.getCode(), "请上传扣款凭证");
             }
 
-            if(StringUtils.isEmpty(tTaxApplicationDetail.getTaxReturns())){
-                throw new BizException(ExceptionCode.REQUEST_PARAM_ERROR.getCode(),"请上传税务申报表");
+            if (StringUtils.isEmpty(tTaxApplicationDetail.getTaxReturns())) {
+                throw new BizException(ExceptionCode.REQUEST_PARAM_ERROR.getCode(), "请上传税务申报表");
             }
 
             tTaxApplicationDetail.setTaxApplicationId(tTaxApplicationDetail.getId());
@@ -211,6 +248,7 @@ public class TaxApplicationServiceImpl implements TaxApplicationService {
 
     /**
      * 保存税金申请的资料文件
+     *
      * @param taxApplicationVo
      * @param tTaxApplication
      */
@@ -229,19 +267,19 @@ public class TaxApplicationServiceImpl implements TaxApplicationService {
 
 
     @Override
-    public MyPageInfo<TaxApplicationVo> getReadyCommit(PageVo pageVo, SearchVo searchVo,String userId,Integer status){
+    public MyPageInfo<TaxApplicationVo> getReadyCommit(PageVo pageVo, SearchVo searchVo, String userId, Integer status) {
         //PageHelper.startPage(pageVo.getPageNumber(),pageVo.getPageSize(),true);
         Example example = new Example(TTaxApplication.class);
         example.setOrderByClause("save_time desc");
         Example.Criteria criteria = example.createCriteria();
-        if(status == CommonConstant.EXECUTE_TYPE_COMMIT){
-            criteria.andCondition("status","1,7");
-        }else{
-            criteria.andEqualTo("status",status);
+        if (status == CommonConstant.EXECUTE_TYPE_COMMIT) {
+            criteria.andCondition("status", "1,7");
+        } else {
+            criteria.andEqualTo("status", status);
         }
-        criteria.andEqualTo("applicantId",userId);
+        criteria.andEqualTo("applicantId", userId);
 
-        if(searchVo!=null){
+        if (searchVo != null) {
 //            if(!StringUtils.isEmpty(searchVo.getStartDate())){
 //                DateTime startTime = DateUtil.parse(searchVo.getStartDate());
 //                criteria.andGreaterThanOrEqualTo("saveTime",startTime);
@@ -253,7 +291,7 @@ public class TaxApplicationServiceImpl implements TaxApplicationService {
 //                DateTime endTime = DateUtil.parse(searchVo.getEndDate());
 //                criteria.andLessThanOrEqualTo("saveTime",endTime);
 //            }
-            if(!StringUtils.isEmpty(searchVo.getStartDate())&&!StringUtils.isEmpty(searchVo.getEndDate())) {
+            if (!StringUtils.isEmpty(searchVo.getStartDate()) && !StringUtils.isEmpty(searchVo.getEndDate())) {
                 String startDate = String.format("%s 00:00:00", searchVo.getStartDate());
                 String endDate = String.format("%s 23:59:59", searchVo.getEndDate());
                 criteria.andBetween("saveTime", startDate, endDate);
@@ -272,12 +310,12 @@ public class TaxApplicationServiceImpl implements TaxApplicationService {
     @Override
     public void delById(String id) {
         TTaxApplication tTaxApplication = tTaxApplicationMapper.selectByPrimaryKey(id);
-        if(tTaxApplication!=null && tTaxApplication.getStatus() == CommonConstant.EXECUTE_TYPE_SAVE){
+        if (tTaxApplication != null && tTaxApplication.getStatus() == CommonConstant.EXECUTE_TYPE_SAVE) {
             tTaxApplicationMapper.deleteByPrimaryKey(id);
-            Example  example = new Example(TTaxApplicationDetail.class);
-            example.createCriteria().andEqualTo("taxApplicationId",tTaxApplication.getId());
+            Example example = new Example(TTaxApplicationDetail.class);
+            example.createCriteria().andEqualTo("taxApplicationId", tTaxApplication.getId());
             tTaxApplicationDetailMapper.deleteByExample(example);
-        }else{
+        } else {
             throw new BizException(ExceptionCode.DEL_TAX_ERROR);
         }
     }
@@ -285,29 +323,29 @@ public class TaxApplicationServiceImpl implements TaxApplicationService {
     @Override
     public TaxApplicationVo getById(String id) {
         TTaxApplication tTaxApplication = tTaxApplicationMapper.selectByPrimaryKey(id);
-        if(tTaxApplication!=null){
+        if (tTaxApplication != null) {
             TaxApplicationVo vo = MyBeanUtils.copy(tTaxApplication, TaxApplicationVo.class);
-            Example  example = new Example(TTaxApplicationDetail.class);
-            example.createCriteria().andEqualTo("taxApplicationId",tTaxApplication.getId());
+            Example example = new Example(TTaxApplicationDetail.class);
+            example.createCriteria().andEqualTo("taxApplicationId", tTaxApplication.getId());
             List<TTaxApplicationDetail> tTaxApplicationDetails = tTaxApplicationDetailMapper.selectByExample(example);
-            if(!CollectionUtils.isEmpty(tTaxApplicationDetails)){
+            if (!CollectionUtils.isEmpty(tTaxApplicationDetails)) {
                 List<TaxApplicationDetailVo> detailVos = MyBeanUtils.copyList(tTaxApplicationDetails, TaxApplicationDetailVo.class);
 
                 for (TaxApplicationDetailVo detailVo : detailVos) {
-                    if(!StringUtils.isEmpty(detailVo.getTaxReturnsPath())){
+                    if (!StringUtils.isEmpty(detailVo.getTaxReturnsPath())) {
                         MaterialVo taxReturnPath = materialService.findByFileName(detailVo.getTaxReturnsPath());
                         detailVo.setTaxReturnsPathFileName(taxReturnPath.getOriName());
                     }
-                    if(!StringUtils.isEmpty(detailVo.getPaymentCertificatePath())) {
+                    if (!StringUtils.isEmpty(detailVo.getPaymentCertificatePath())) {
                         MaterialVo certificatePath = materialService.findByFileName(detailVo.getPaymentCertificatePath());
                         detailVo.setPaymentCertificateFileName(certificatePath.getOriName());
-                     }
-                    if(!StringUtils.isEmpty(detailVo.getPreTaxReturnsPath())){
+                    }
+                    if (!StringUtils.isEmpty(detailVo.getPreTaxReturnsPath())) {
 
                         MaterialVo preTaxReturn = materialService.findByFileName(detailVo.getPreTaxReturnsPath());
                         detailVo.setPreTaxReturnsPathFileName(preTaxReturn.getOriName());
                     }
-                    if(!StringUtils.isEmpty(detailVo.getOtherUpload())){
+                    if (!StringUtils.isEmpty(detailVo.getOtherUpload())) {
                         MaterialVo otherName = materialService.findByFileName(detailVo.getOtherUpload());
                         detailVo.setOtherUploadFileName(otherName.getOriName());
                     }
@@ -322,19 +360,19 @@ public class TaxApplicationServiceImpl implements TaxApplicationService {
     @Override
     public List<TaxApplicationVo> getTaxAuditLog(String flowNum) {
         Example example = new Example(TTaxApplication.class);
-        example.createCriteria().andEqualTo("serialNumber",flowNum);
+        example.createCriteria().andEqualTo("serialNumber", flowNum);
         List<TTaxApplication> tTaxApplications = tTaxApplicationMapper.selectByExample(example);
         List<TaxApplicationVo> taxApplicationVos = MyBeanUtils.copyList(tTaxApplications, TaxApplicationVo.class);
         for (TaxApplicationVo taxApplicationVo : taxApplicationVos) {
             Example detailExample = new Example(TTaxApplicationDetail.class);
-            detailExample.createCriteria().andEqualTo("taxApplicationId",taxApplicationVo.getId());
+            detailExample.createCriteria().andEqualTo("taxApplicationId", taxApplicationVo.getId());
             List<TTaxApplicationDetail> tTaxApplicationDetails = tTaxApplicationDetailMapper.selectByExample(detailExample);
             List<TaxApplicationDetailVo> taxApplicationDetailVos = MyBeanUtils.copyList(tTaxApplicationDetails, TaxApplicationDetailVo.class);
             taxApplicationVo.setDetails(taxApplicationDetailVos);
 
             //查询审批记录
             Example auditLogExmaple = new Example(TAuditLog.class);
-            auditLogExmaple.createCriteria().andEqualTo("flowNum",taxApplicationVo.getSerialNumber());
+            auditLogExmaple.createCriteria().andEqualTo("flowNum", taxApplicationVo.getSerialNumber());
             List<TAuditLog> tAuditLogs = tAuditLogMapper.selectByExample(auditLogExmaple);
             List<AuditLogVo> auditLogVos = MyBeanUtils.copyList(tAuditLogs, AuditLogVo.class);
             taxApplicationVo.setAuditLogVoList(auditLogVos);
