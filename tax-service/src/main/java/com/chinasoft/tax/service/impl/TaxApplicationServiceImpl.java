@@ -14,6 +14,7 @@ import com.chinasoft.tax.po.TTaxApplicationDetail;
 import com.chinasoft.tax.service.MaterialService;
 import com.chinasoft.tax.service.TaxApplicationService;
 import com.chinasoft.tax.vo.*;
+import com.github.pagehelper.PageHelper;
 import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -268,7 +269,7 @@ public class TaxApplicationServiceImpl implements TaxApplicationService {
 
     @Override
     public MyPageInfo<TaxApplicationVo> getReadyCommit(PageVo pageVo, SearchVo searchVo, String userId, Integer status) {
-        //PageHelper.startPage(pageVo.getPageNumber(),pageVo.getPageSize(),true);
+        PageHelper.startPage(pageVo.getPageNumber(),pageVo.getPageSize(),true);
         Example example = new Example(TTaxApplication.class);
         example.setOrderByClause("save_time desc");
         Example.Criteria criteria = example.createCriteria();
