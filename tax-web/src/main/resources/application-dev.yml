@@ -31,7 +31,7 @@ spring:
   #java mail
   mail:
     host: smtp.qq.com
-    username: 289911401@qq.com
+    username: 69057739@qq.com
     password: daydayup.yao0827
     properties:
       mail:
@@ -63,7 +63,7 @@ pagehelper:
   # Redis
   redis:
     host: localhost
-    password: 123456
+    password:
     # 数据库索引 默认0
     database: 0
     port: 6379
